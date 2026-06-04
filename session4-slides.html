@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4회차 — Codex & AI 도구 심화 | 미세먼지 연구자 특강</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1a0a;
+    --border: rgba(255,255,255,0.08);
+    --accent: #ffb74d;
+    --accent2: #69f0ae;
+    --accent3: #4fc3f7;
+    --accent4: #ce93d8;
+    --text: #fff8e1;
+    --muted: #5a4a1a;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'Noto Sans KR', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); }
+  #deck { width: 100%; height: 100vh; position: relative; }
+  .slide { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 52px 72px; opacity: 0; pointer-events: none; transition: opacity 0.35s ease, transform 0.35s ease; transform: translateX(40px); overflow: hidden; }
+  .slide.active { opacity: 1; pointer-events: all; transform: translateX(0); }
+  .slide.exit   { opacity: 0; transform: translateX(-40px); }
+  #progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 0.4s ease; z-index: 100; }
+  #nav { position: fixed; bottom: 32px; right: 40px; display: flex; align-items: center; gap: 12px; z-index: 100; }
+  .nav-btn { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border); background: rgba(255,255,255,0.04); color: var(--text); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  .nav-btn:hover { background: rgba(255,183,77,0.15); border-color: var(--accent); color: var(--accent); }
+  #slide-counter { font-family: var(--mono); font-size: 12px; color: var(--muted); min-width: 52px; text-align: center; }
+  .slide-num { position: absolute; top: 28px; right: 40px; font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .session-tag { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,183,77,0.08); border: 1px solid rgba(255,183,77,0.22); color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: 2px; padding: 5px 14px; border-radius: 20px; text-transform: uppercase; margin-bottom: 22px; width: fit-content; }
+  .h-giant { font-family: var(--sans); font-size: clamp(34px,5vw,62px); font-weight: 900; line-height: 1.1; color: var(--text); }
+  .h-large { font-family: var(--sans); font-size: clamp(24px,3.2vw,42px); font-weight: 800; line-height: 1.2; color: var(--text); }
+  .body { font-family: var(--sans); font-size: 15px; line-height: 1.75; color: #8a7040; }
+  .accent{color:var(--accent);} .accent2{color:var(--accent2);} .accent3{color:var(--accent3);} .accent4{color:var(--accent4);}
+  .highlight { background: rgba(255,183,77,0.07); border-left: 3px solid var(--accent); padding: 14px 20px; border-radius: 0 10px 10px 0; font-family: var(--sans); font-size: 15px; color: #d4b880; line-height: 1.7; }
+  .code-block { background: #050e02; border: 1px solid rgba(255,183,77,0.12); border-radius: 12px; overflow: hidden; margin: 8px 0; }
+  .code-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 16px; background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .code-lang { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .copy-btn { font-family: var(--mono); font-size: 11px; color: var(--muted); background: none; border: 1px solid var(--border); padding: 3px 10px; border-radius: 6px; cursor: pointer; transition: all 0.15s; }
+  .copy-btn:hover, .copy-btn.copied { color: var(--accent); border-color: var(--accent); }
+  pre { padding: 16px 20px; overflow-x: auto; font-family: var(--mono); font-size: 13.5px; line-height: 1.7; color: #ffe0b2; }
+  .kw{color:#ff79c6;} .cm{color:#5a4a2a;font-style:italic;} .st{color:#f1fa8c;} .fn{color:#ffb74d;} .num{color:#bd93f9;} .va{color:#8be9fd;}
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .card { background: rgba(255,255,255,0.025); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; }
+  .card-title { font-family: var(--sans); font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+  .card-body { font-family: var(--sans); font-size: 13px; color: #5a4a1a; line-height: 1.65; }
+  .steps { display: flex; flex-direction: column; gap: 13px; }
+  .step { display: flex; gap: 14px; align-items: flex-start; }
+  .step-num { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 12px; font-weight: 700; background: rgba(255,183,77,0.1); border: 1px solid rgba(255,183,77,0.28); color: var(--accent); }
+  .step-text { font-family: var(--sans); font-size: 15px; color: #8a7040; line-height: 1.6; padding-top: 4px; }
+  .step-text strong { color: var(--text); }
+  .pill { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; font-family: var(--mono); }
+  .tip { background: rgba(105,240,174,0.07); border: 1px solid rgba(105,240,174,0.2); border-radius: 10px; padding: 12px 18px; font-family: var(--sans); font-size: 14px; color: #b2dfdb; line-height: 1.6; }
+  .tip-label { color: var(--accent2); font-weight: 700; font-size: 11px; letter-spacing: 1px; margin-bottom: 4px; }
+  .warn { background: rgba(239,154,154,0.07); border: 1px solid rgba(239,154,154,0.22); border-radius: 10px; padding: 12px 18px; font-family: var(--sans); font-size: 14px; color: #ffcdd2; line-height: 1.6; }
+  .warn-label { color: #ef9a9a; font-weight: 700; font-size: 11px; letter-spacing: 1px; margin-bottom: 4px; }
+  .agenda { display: flex; flex-direction: column; }
+  .agenda-row { display: flex; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .agenda-row:last-child { border-bottom: none; }
+  .agenda-time { width: 130px; flex-shrink: 0; padding: 11px 0; font-family: var(--mono); font-size: 12px; color: var(--accent); font-weight: 600; }
+  .agenda-content { flex: 1; padding: 11px 0 11px 20px; font-family: var(--sans); font-size: 14px; color: #8a7040; border-left: 1px solid rgba(255,183,77,0.12); line-height: 1.5; }
+  .agenda-content strong { color: var(--text); }
+  .cover-bg { position: absolute; inset: 0; overflow: hidden; z-index: 0; }
+  .cover-bg::before { content:''; position:absolute; top:-20%; right:-5%; width:55vw; height:55vw; background: radial-gradient(circle, rgba(255,183,77,0.09) 0%, transparent 65%); border-radius:50%; }
+  .cover-bg::after  { content:''; position:absolute; bottom:-15%; left:5%;  width:40vw; height:40vw; background: radial-gradient(circle, rgba(105,240,174,0.05) 0%, transparent 65%); border-radius:50%; }
+  .cover-content { position: relative; z-index: 1; }
+  .slide-body { flex: 1; overflow-y: auto; padding-right: 4px; }
+  .slide-body::-webkit-scrollbar { width: 4px; }
+  .slide-body::-webkit-scrollbar-thumb { background: rgba(255,183,77,0.15); border-radius: 2px; }
+  table { width: 100%; border-collapse: collapse; font-family: var(--sans); font-size: 14px; }
+  th { text-align: left; padding: 10px 16px; background: rgba(255,183,77,0.07); color: var(--accent); font-size: 12px; letter-spacing: 1px; border-bottom: 1px solid var(--border); }
+  td { padding: 10px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); color: #8a7040; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  td:first-child { color: var(--text); font-weight: 600; font-family: var(--mono); font-size: 12px; }
+  .prompt-box { background: rgba(255,183,77,0.06); border: 1px solid rgba(255,183,77,0.2); border-radius: 12px; padding: 16px 20px; font-family: var(--sans); font-size: 14px; color: #d4b880; line-height: 1.8; }
+  .prompt-label { color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: 1px; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<div id="deck">
+
+<!-- 01 COVER -->
+<div class="slide active" id="s1">
+  <div class="cover-bg"></div>
+  <div class="cover-content" style="flex:1;display:flex;flex-direction:column;justify-content:center;">
+    <div class="session-tag">📅 4회차 · 2시간 · Zoom</div>
+    <div class="h-giant" style="margin-bottom:14px;">Codex &amp; AI<br><span class="accent">도구 심화</span></div>
+    <div class="body" style="font-size:17px;max-width:540px;margin-bottom:36px;">
+      OpenAI Codex 개념 · Claude Code와 비교 ·<br>
+      시계열 분석 · 논문용 시각화 · AI 사용 윤리
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <span class="pill" style="background:rgba(255,183,77,0.1);color:var(--accent);border:1px solid rgba(255,183,77,0.28);">Codex API</span>
+      <span class="pill" style="background:rgba(105,240,174,0.1);color:var(--accent2);border:1px solid rgba(105,240,174,0.28);">시계열 분석</span>
+      <span class="pill" style="background:rgba(79,195,247,0.1);color:var(--accent3);border:1px solid rgba(79,195,247,0.28);">시각화</span>
+      <span class="pill" style="background:rgba(206,147,216,0.1);color:var(--accent4);border:1px solid rgba(206,147,216,0.28);">AI 윤리</span>
+    </div>
+  </div>
+  <div class="slide-num">01 / 15</div>
+</div>
+
+<!-- 02 일정 -->
+<div class="slide" id="s2">
+  <div class="session-tag">📋 오늘의 일정</div>
+  <div class="h-large" style="margin-bottom:24px;">오늘 <span class="accent">2시간</span> 일정</div>
+  <div class="slide-body">
+    <div class="agenda">
+      <div class="agenda-row"><div class="agenda-time">0:00–0:20</div><div class="agenda-content"><strong>Codex 개요</strong> — Claude Code와 비교 분석, 각각 언제 쓰나</div></div>
+      <div class="agenda-row"><div class="agenda-time">0:20–0:50</div><div class="agenda-content"><strong>Codex API 실습</strong> — 환경 설정 & 첫 API 호출</div></div>
+      <div class="agenda-row"><div class="agenda-time">0:50–1:20</div><div class="agenda-content"><strong>시계열 분석 실습</strong> — PM2.5 계절 분해, 이상값 탐지</div></div>
+      <div class="agenda-row"><div class="agenda-time">1:20–1:45</div><div class="agenda-content"><strong>논문용 시각화</strong> — matplotlib/seaborn 고급 Figure 생성</div></div>
+      <div class="agenda-row"><div class="agenda-time">1:45–2:00</div><div class="agenda-content"><strong>AI 사용 윤리</strong> — 논문 표기 방법 · Q&A</div></div>
+    </div>
+  </div>
+  <div class="slide-num">02 / 15</div>
+</div>
+
+<!-- 03 Codex vs Claude Code -->
+<div class="slide" id="s3">
+  <div class="session-tag">⚖️ 비교</div>
+  <div class="h-large" style="margin-bottom:22px;"><span class="accent">Codex</span> vs <span style="color:var(--accent4);">Claude Code</span></div>
+  <div class="slide-body">
+    <table style="margin-bottom:16px;">
+      <thead><tr><th>항목</th><th style="color:var(--accent);">OpenAI Codex</th><th style="color:var(--accent4);">Claude Code</th></tr></thead>
+      <tbody>
+        <tr><td>형태</td><td>API (프로그래밍으로 호출)</td><td>CLI 터미널 에이전트</td></tr>
+        <tr><td>파일 접근</td><td>직접 X, 코드 생성만</td><td>프로젝트 폴더 직접 읽고 수정</td></tr>
+        <tr><td>반복 작업 자동화</td><td>✅ 스크립트로 대량 처리</td><td>대화형 작업에 최적</td></tr>
+        <tr><td>주요 활용</td><td>배치 자동화, 파이프라인</td><td>대화형 개발, 디버깅</td></tr>
+        <tr><td>비용</td><td>API 호출 건당 과금</td><td>구독 기반</td></tr>
+      </tbody>
+    </table>
+    <div class="highlight">
+      💡 실전 팁: <strong style="color:var(--accent);">Claude Code</strong>로 코드를 만들고 검증 →<br>반복 실행이 필요한 배치 작업은 <strong style="color:var(--accent);">Codex API</strong>로 자동화
+    </div>
+  </div>
+  <div class="slide-num">03 / 15</div>
+</div>
+
+<!-- 04 Codex API 설정 -->
+<div class="slide" id="s4">
+  <div class="session-tag">🛠 설정</div>
+  <div class="h-large" style="margin-bottom:20px;">Codex API <span class="accent">환경 설정</span></div>
+  <div class="slide-body">
+    <div class="code-block" style="margin-bottom:14px;">
+      <div class="code-header"><span class="code-lang">bash — 설치 & API 키 설정</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="cm"># OpenAI 라이브러리 설치</span>
+pip install openai
+
+<span class="cm"># API 키를 환경변수로 설정 (절대 코드에 직접 쓰지 말 것!)</span>
+<span class="cm"># Mac/Linux</span>
+export OPENAI_API_KEY=<span class="st">"sk-..."</span>
+
+<span class="cm"># Windows (PowerShell)</span>
+$env:OPENAI_API_KEY=<span class="st">"sk-..."</span>
+
+<span class="cm"># 또는 .env 파일에 저장 (gitignore에 추가 필수!)</span>
+echo <span class="st">"OPENAI_API_KEY=sk-..."</span> >> .env</pre>
+    </div>
+    <div class="warn">
+      <div class="warn-label">🔑 API 키 보안</div>
+      API 키를 코드에 직접 쓰거나 GitHub에 올리면 요금 폭탄! 반드시 <strong>.env 파일 + .gitignore</strong>로 관리하세요.
+    </div>
+  </div>
+  <div class="slide-num">04 / 15</div>
+</div>
+
+<!-- 05 첫 API 호출 -->
+<div class="slide" id="s5">
+  <div class="session-tag">⌨️ 실습 1</div>
+  <div class="h-large" style="margin-bottom:20px;">Codex API <span class="accent">첫 호출</span></div>
+  <div class="slide-body">
+    <div class="code-block" style="margin-bottom:14px;">
+      <div class="code-header"><span class="code-lang">python — codex_test.py</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="kw">from</span> openai <span class="kw">import</span> OpenAI
+<span class="kw">import</span> os
+
+client = OpenAI(api_key=os.environ[<span class="st">"OPENAI_API_KEY"</span>])
+
+response = client.chat.completions.create(
+    model=<span class="st">"gpt-4o"</span>,
+    messages=[
+        {<span class="st">"role"</span>: <span class="st">"system"</span>,
+         <span class="st">"content"</span>: <span class="st">"당신은 대기환경 데이터 분석 전문 코딩 어시스턴트입니다."</span>},
+        {<span class="st">"role"</span>: <span class="st">"user"</span>,
+         <span class="st">"content"</span>: <span class="st">"PM2.5 일별 데이터에서 7일 이동평균을 계산하는 pandas 코드를 작성해줘"</span>}
+    ]
+)
+
+<span class="fn">print</span>(response.choices[<span class="num">0</span>].message.content)</pre>
+    </div>
+    <div class="tip">
+      <div class="tip-label">💡 system 프롬프트 활용</div>
+      system 메시지에 <strong>"대기환경 분석 전문가"</strong> 역할을 부여하면 더 전문적인 코드를 생성합니다.
+    </div>
+  </div>
+  <div class="slide-num">05 / 15</div>
+</div>
+
+<!-- 06 배치 자동화 -->
+<div class="slide" id="s6">
+  <div class="session-tag">⌨️ 실습 2</div>
+  <div class="h-large" style="margin-bottom:20px;">반복 분석 <span class="accent">자동화</span></div>
+  <div class="slide-body">
+    <div class="prompt-box" style="margin-bottom:14px;">
+      <div class="prompt-label">🎯 시나리오</div>
+      서울 25개 구 각각의 PM2.5 CSV 파일을 자동으로 읽어서, 구별 통계 요약 + 트렌드 그래프를 일괄 생성
+    </div>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">python — 구별 자동 분석 배치 스크립트</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="kw">from</span> openai <span class="kw">import</span> OpenAI
+<span class="kw">import</span> pandas <span class="kw">as</span> pd, glob
+
+client = OpenAI()
+districts = glob.glob(<span class="st">"data/processed/district_*.csv"</span>)
+
+<span class="kw">for</span> filepath <span class="kw">in</span> districts:
+    df = pd.read_csv(filepath)
+    sample = df.head(<span class="num">3</span>).to_string()  <span class="cm"># 데이터 구조 전달</span>
+
+    response = client.chat.completions.create(
+        model=<span class="st">"gpt-4o"</span>,
+        messages=[{
+            <span class="st">"role"</span>: <span class="st">"user"</span>,
+            <span class="st">"content"</span>: f<span class="st">"다음 데이터 구조로 연도별 트렌드 분석 코드 작성:\n{sample}"</span>
+        }]
+    )
+    <span class="cm"># 생성된 코드를 파일로 저장</span>
+    code = response.choices[<span class="num">0</span>].message.content
+    Path(f<span class="st">"src/auto_{Path(filepath).stem}.py"</span>).write_text(code)</pre>
+    </div>
+  </div>
+  <div class="slide-num">06 / 15</div>
+</div>
+
+<!-- 07 시계열 분석 -->
+<div class="slide" id="s7">
+  <div class="session-tag">📈 실습 3</div>
+  <div class="h-large" style="margin-bottom:20px;">PM2.5 <span class="accent">시계열 분석</span></div>
+  <div class="slide-body">
+    <div class="code-block" style="margin-bottom:14px;">
+      <div class="code-header"><span class="code-lang">python — 계절 분해 (STL Decomposition)</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="kw">from</span> statsmodels.tsa.seasonal <span class="kw">import</span> STL
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+<span class="cm"># STL 계절 분해: 추세 / 계절성 / 잔차 분리</span>
+stl = STL(df.set_index(<span class="st">'datetime'</span>)[<span class="st">'pm25'</span>],
+          period=<span class="num">12</span>, robust=<span class="kw">True</span>)
+result = stl.fit()
+
+fig = result.plot()
+fig.suptitle(<span class="st">'서울 PM2.5 STL 계절 분해 (2015–2023)'</span>)
+fig.savefig(<span class="st">'figures/fig_stl.tiff'</span>, dpi=<span class="num">300</span>)</pre>
+    </div>
+    <div class="grid-2" style="gap:14px;">
+      <div class="card" style="border-color:rgba(255,183,77,0.2);">
+        <div class="card-title" style="color:var(--accent);">STL이 분리하는 것</div>
+        <div class="card-body"><strong style="color:var(--text);">Trend</strong> — 장기 감소 추세<br><strong style="color:var(--text);">Seasonal</strong> — 계절 패턴 (겨울↑ 여름↓)<br><strong style="color:var(--text);">Residual</strong> — 황사 등 이벤트</div>
+      </div>
+      <div class="card" style="border-color:rgba(105,240,174,0.2);">
+        <div class="card-title" style="color:var(--accent2);">Claude Code 프롬프트</div>
+        <div class="card-body" style="font-family:var(--sans);font-size:13px;">
+          "STL 분해 결과에서 계절 진폭이 연도별로 변하는지 확인하는 코드 추가해줘"
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-num">07 / 15</div>
+</div>
+
+<!-- 08 이상값 탐지 -->
+<div class="slide" id="s8">
+  <div class="session-tag">🔍 실습 4</div>
+  <div class="h-large" style="margin-bottom:20px;">이상값 <span class="accent">자동 탐지</span> (황사 이벤트)</div>
+  <div class="slide-body">
+    <div class="code-block" style="margin-bottom:14px;">
+      <div class="code-header"><span class="code-lang">python — IQR 기반 이상값 탐지 & 표시</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># IQR 방법으로 이상값 탐지</span>
+Q1 = df[<span class="st">'pm25'</span>].quantile(<span class="num">0.25</span>)
+Q3 = df[<span class="st">'pm25'</span>].quantile(<span class="num">0.75</span>)
+IQR = Q3 - Q1
+outliers = df[df[<span class="st">'pm25'</span>] > Q3 + <span class="num">1.5</span> * IQR]
+
+<span class="fn">print</span>(f<span class="st">"이상값(황사 의심) 날짜: {len(outliers)}일"</span>)
+<span class="fn">print</span>(outliers[[<span class="st">'datetime'</span>, <span class="st">'pm25'</span>]].head(<span class="num">10</span>))
+
+<span class="cm"># 시각화에 표시</span>
+ax.scatter(outliers[<span class="st">'datetime'</span>], outliers[<span class="st">'pm25'</span>],
+           color=<span class="st">'red'</span>, s=<span class="num">20</span>, zorder=<span class="num">5</span>, label=<span class="st">'이상값'</span>)</pre>
+    </div>
+    <div class="tip">
+      <div class="tip-label">💡 AI 활용 팁</div>
+      탐지된 이상값 날짜를 Claude Code에 붙여넣고 "이 날짜들의 공통점을 기상청 황사 기록과 비교하는 방법 알려줘" 라고 물어보세요.
+    </div>
+  </div>
+  <div class="slide-num">08 / 15</div>
+</div>
+
+<!-- 09 논문용 시각화 고급 -->
+<div class="slide" id="s9">
+  <div class="session-tag">🎨 시각화</div>
+  <div class="h-large" style="margin-bottom:20px;">논문 품질 <span class="accent">Figure 고급 설정</span></div>
+  <div class="slide-body">
+    <div class="code-block" style="margin-bottom:14px;">
+      <div class="code-header"><span class="code-lang">python — 저널 제출 기준 맞춤 Figure</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">import</span> matplotlib <span class="kw">as</span> mpl
+
+<span class="cm"># 저널 공통 설정</span>
+mpl.rcParams.update({
+    <span class="st">'font.size'</span>: <span class="num">8</span>, <span class="st">'axes.labelsize'</span>: <span class="num">9</span>,
+    <span class="st">'font.family'</span>: <span class="st">'NanumGothic'</span>,
+    <span class="st">'axes.linewidth'</span>: <span class="num">0.8</span>, <span class="st">'xtick.major.width'</span>: <span class="num">0.8</span>,
+})
+
+<span class="cm"># 단컬럼(88mm) / 이중컬럼(180mm) 설정</span>
+fig, axes = plt.subplots(<span class="num">1</span>, <span class="num">2</span>,
+    figsize=(<span class="num">7.09</span>, <span class="num">3.0</span>))  <span class="cm"># 180mm × 76mm</span>
+
+<span class="cm"># 저장: 300dpi TIFF (대부분 저널 요구사항)</span>
+fig.savefig(<span class="st">'figures/fig2_analysis.tiff'</span>,
+            dpi=<span class="num">300</span>, format=<span class="st">'tiff'</span>,
+            bbox_inches=<span class="st">'tight'</span>, pil_kwargs={<span class="st">'compression'</span>:<span class="st">'tiff_lzw'</span>})</pre>
+    </div>
+    <div class="tip">
+      <div class="tip-label">💡 저널별 Figure 규정</div>
+      투고 전 "저널명 + figure guidelines" 검색 필수. 일반적으로 300dpi, TIFF/EPS, 컬럼 너비 준수.
+    </div>
+  </div>
+  <div class="slide-num">09 / 15</div>
+</div>
+
+<!-- 10 seaborn 시각화 -->
+<div class="slide" id="s10">
+  <div class="session-tag">🎨 시각화 2</div>
+  <div class="h-large" style="margin-bottom:20px;">seaborn으로 <span class="accent">다중 패널 Figure</span></div>
+  <div class="slide-body">
+    <div class="code-block" style="margin-bottom:14px;">
+      <div class="code-header"><span class="code-lang">python — 계절별 박스플롯 + 히트맵</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+      <pre><span class="kw">import</span> seaborn <span class="kw">as</span> sns
+
+fig, (ax1, ax2) = plt.subplots(<span class="num">1</span>, <span class="num">2</span>, figsize=(<span class="num">7.09</span>, <span class="num">3.0</span>))
+
+<span class="cm"># 계절별 박스플롯</span>
+df[<span class="st">'season'</span>] = df[<span class="st">'month'</span>].map({
+    <span class="num">12</span>:<span class="st">'겨울'</span>,<span class="num">1</span>:<span class="st">'겨울'</span>,<span class="num">2</span>:<span class="st">'겨울'</span>,
+    <span class="num">3</span>:<span class="st">'봄'</span>,<span class="num">4</span>:<span class="st">'봄'</span>,<span class="num">5</span>:<span class="st">'봄'</span>,
+    <span class="num">6</span>:<span class="st">'여름'</span>,<span class="num">7</span>:<span class="st">'여름'</span>,<span class="num">8</span>:<span class="st">'여름'</span>,
+    <span class="num">9</span>:<span class="st">'가을'</span>,<span class="num">10</span>:<span class="st">'가을'</span>,<span class="num">11</span>:<span class="st">'가을'</span>})
+sns.boxplot(data=df, x=<span class="st">'season'</span>, y=<span class="st">'pm25'</span>, ax=ax1,
+            order=[<span class="st">'봄'</span>,<span class="st">'여름'</span>,<span class="st">'가을'</span>,<span class="st">'겨울'</span>])
+
+<span class="cm"># 월별 연도별 히트맵</span>
+pivot = df.pivot_table(<span class="st">'pm25'</span>, <span class="st">'year'</span>, <span class="st">'month'</span>)
+sns.heatmap(pivot, ax=ax2, cmap=<span class="st">'YlOrRd'</span>, cbar_kws={<span class="st">'label'</span>:<span class="st">'μg/m³'</span>})</pre>
+    </div>
+    <div class="prompt-box">
+      <div class="prompt-label">💬 Claude Code 프롬프트</div>
+      "위 Figure를 저널 투고 기준에 맞게 다듬어줘. 폰트 크기 8pt, 박스플롯에 평균값 다이아몬드 표시 추가, 패널 레이블 (a) (b) 붙이기"
+    </div>
+  </div>
+  <div class="slide-num">10 / 15</div>
+</div>
+
+<!-- 11 AI 도구 비교 -->
+<div class="slide" id="s11">
+  <div class="session-tag">🗺 전략</div>
+  <div class="h-large" style="margin-bottom:22px;">AI 도구 <span class="accent">선택 가이드</span></div>
+  <div class="slide-body">
+    <table style="margin-bottom:16px;">
+      <thead><tr><th>상황</th><th>추천 도구</th><th>이유</th></tr></thead>
+      <tbody>
+        <tr><td>코드 처음 작성</td><td style="color:var(--accent4);">Claude Code</td><td>대화형으로 맥락 설명하며 개발</td></tr>
+        <tr><td>25개 구 일괄 분석</td><td style="color:var(--accent);">Codex API</td><td>루프로 반복 자동화</td></tr>
+        <tr><td>오류 디버깅</td><td style="color:var(--accent4);">Claude Code</td><td>파일 직접 수정, 실행 결과 반영</td></tr>
+        <tr><td>논문 작성 중 빠른 코드 조각</td><td style="color:var(--accent3);">claude.ai 웹</td><td>채팅 인터페이스로 빠른 확인</td></tr>
+        <tr><td>방법론 설명·리뷰</td><td style="color:var(--accent3);">claude.ai 웹</td><td>긴 텍스트 논의에 최적</td></tr>
+      </tbody>
+    </table>
+    <div class="highlight">
+      도구에 집착하지 말고 <strong style="color:var(--accent);">목적에 맞게 조합</strong>하는 게 핵심입니다.
+    </div>
+  </div>
+  <div class="slide-num">11 / 15</div>
+</div>
+
+<!-- 12 AI 윤리 -->
+<div class="slide" id="s12">
+  <div class="session-tag">⚖️ 윤리</div>
+  <div class="h-large" style="margin-bottom:22px;">논문에서의 <span class="accent">AI 사용 윤리</span></div>
+  <div class="slide-body">
+    <div class="grid-2" style="gap:16px;margin-bottom:16px;">
+      <div class="card" style="border-color:rgba(105,240,174,0.3);">
+        <div class="card-title" style="color:var(--accent2);">✅ 해야 할 것</div>
+        <div class="card-body" style="line-height:2;">
+          AI 도구 사용 사실 Methods에 명시<br>
+          생성 코드를 직접 검증 후 사용<br>
+          재현 가능한 코드를 GitHub에 공개<br>
+          AI 생성 텍스트는 반드시 직접 수정
+        </div>
+      </div>
+      <div class="card" style="border-color:rgba(239,154,154,0.3);">
+        <div class="card-title" style="color:#ef9a9a;">❌ 하지 말아야 할 것</div>
+        <div class="card-body" style="line-height:2;">
+          AI 생성 텍스트를 그대로 논문에 사용<br>
+          검증 없이 통계 결과 그대로 인용<br>
+          원본 데이터를 AI에 무단 업로드<br>
+          저자 기여를 AI로 대체
+        </div>
+      </div>
+    </div>
+    <div class="card" style="border-color:rgba(255,183,77,0.2);">
+      <div class="card-title" style="color:var(--accent);">📄 Methods 섹션 표기 예시</div>
+      <div style="font-family:var(--sans);font-size:13px;color:#8a7040;line-height:1.8;font-style:italic;">
+        "Data preprocessing and visualization scripts were developed with assistance from Claude Code (Anthropic, version 2025) and verified by the authors. All analysis code is available at github.com/[저장소]."
+      </div>
+    </div>
+  </div>
+  <div class="slide-num">12 / 15</div>
+</div>
+
+<!-- 13 저널별 AI 정책 -->
+<div class="slide" id="s13">
+  <div class="session-tag">📋 저널 정책</div>
+  <div class="h-large" style="margin-bottom:22px;">주요 저널 <span class="accent">AI 사용 정책</span></div>
+  <div class="slide-body">
+    <table style="margin-bottom:16px;">
+      <thead><tr><th>저널/출판사</th><th>AI 정책 요약</th></tr></thead>
+      <tbody>
+        <tr><td>Nature</td><td>AI를 저자로 등재 불가. 사용 시 Methods에 명시 필수</td></tr>
+        <tr><td>Elsevier</td><td>코드/데이터 분석 보조는 허용. 텍스트 생성은 투명하게 공개</td></tr>
+        <tr><td>AMS (대기과학)</td><td>AI 보조 허용, 최종 책임은 저자에게 있음</td></tr>
+        <tr><td>AGU Journals</td><td>AI 도구 사용 공개 권장. 데이터 생성에 AI 사용 금지</td></tr>
+        <tr><td>한국대기환경학회지</td><td>투고 전 학회 가이드라인 직접 확인 필요</td></tr>
+      </tbody>
+    </table>
+    <div class="tip">
+      <div class="tip-label">💡 원칙</div>
+      투고 전 <strong>해당 저널 Author Guidelines</strong>에서 "AI" 또는 "generative AI" 항목을 반드시 확인하세요.
+    </div>
+  </div>
+  <div class="slide-num">13 / 15</div>
+</div>
+
+<!-- 14 과제 -->
+<div class="slide" id="s14">
+  <div class="session-tag">📝 과제</div>
+  <div class="h-large" style="margin-bottom:26px;">오늘의 <span class="accent">과제</span></div>
+  <div class="slide-body">
+    <div class="steps" style="margin-bottom:22px;">
+      <div class="step"><div class="step-num">1</div><div class="step-text">Codex API 또는 Claude Code로 <strong>PM2.5 시계열 분석 코드</strong> 생성</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text">논문 Figure 기준(300dpi)에 맞는 <strong>시각화 1개</strong> 생성 → figures/ 저장</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text">투고 목표 저널의 <strong>AI 사용 정책 조사</strong> → 이슈에 정리 등록</div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-text">모든 작업을 GitHub에 <strong>커밋 & PR</strong> 완료</div></div>
+    </div>
+    <div class="warn">
+      <div class="warn-label">⚠️ 주의</div>
+      생성된 Figure를 반드시 <strong>직접 확인</strong>하세요. 축 단위, 레전드, 데이터 범위가 맞는지 검증 필수.
+    </div>
+  </div>
+  <div class="slide-num">14 / 15</div>
+</div>
+
+<!-- 15 마무리 -->
+<div class="slide" id="s15">
+  <div class="cover-bg"></div>
+  <div class="cover-content" style="flex:1;display:flex;flex-direction:column;justify-content:center;">
+    <div class="session-tag">✅ 4회차 완료</div>
+    <div class="h-giant" style="margin-bottom:20px;">오늘 배운 것 <span class="accent">정리</span></div>
+    <div class="grid-2" style="margin-bottom:28px;gap:13px;">
+      <div class="card" style="border-color:rgba(255,183,77,0.2);">
+        <div class="card-title" style="color:var(--accent);">Codex API</div>
+        <div class="card-body">환경 설정 · 첫 호출 · 배치 자동화</div>
+      </div>
+      <div class="card" style="border-color:rgba(105,240,174,0.2);">
+        <div class="card-title" style="color:var(--accent2);">시계열 분석</div>
+        <div class="card-body">STL 분해 · 이상값 탐지 · 트렌드 검정</div>
+      </div>
+      <div class="card" style="border-color:rgba(79,195,247,0.2);">
+        <div class="card-title" style="color:var(--accent3);">논문 시각화</div>
+        <div class="card-body">저널 기준 Figure · 300dpi TIFF · 다중 패널</div>
+      </div>
+      <div class="card" style="border-color:rgba(206,147,216,0.2);">
+        <div class="card-title" style="color:var(--accent4);">다음 시간</div>
+        <div class="card-body">Overleaf + BibTeX로 논문 레퍼런스 완성</div>
+      </div>
+    </div>
+    <div class="body">질문이 있으신가요? 💬</div>
+  </div>
+  <div class="slide-num">15 / 15</div>
+</div>
+
+</div>
+<div id="nav">
+  <button class="nav-btn" onclick="changeSlide(-1)">←</button>
+  <span id="slide-counter">1 / 15</span>
+  <button class="nav-btn" onclick="changeSlide(1)">→</button>
+</div>
+<script>
+  const TOTAL=15;let cur=1;
+  function goTo(n){const prev=document.getElementById('s'+cur);if(prev){prev.classList.remove('active');prev.classList.add('exit');}setTimeout(()=>{if(prev)prev.classList.remove('exit');},350);cur=Math.max(1,Math.min(TOTAL,n));const next=document.getElementById('s'+cur);if(next)next.classList.add('active');document.getElementById('slide-counter').textContent=cur+' / '+TOTAL;document.getElementById('progress-bar').style.width=(cur/TOTAL*100)+'%';}
+  function changeSlide(d){goTo(cur+d);}
+  document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown')changeSlide(1);if(e.key==='ArrowLeft'||e.key==='ArrowUp')changeSlide(-1);});
+  let tx=0;document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;});document.addEventListener('touchend',e=>{const dx=tx-e.changedTouches[0].clientX;if(Math.abs(dx)>40)changeSlide(dx>0?1:-1);});
+  function copyCode(btn){const pre=btn.closest('.code-block').querySelector('pre');navigator.clipboard.writeText(pre.innerText).then(()=>{btn.textContent='copied!';btn.classList.add('copied');setTimeout(()=>{btn.textContent='copy';btn.classList.remove('copied');},1800);});}
+  goTo(1);document.getElementById('progress-bar').style.width=(1/TOTAL*100)+'%';
+</script>
+</body>
+</html>
