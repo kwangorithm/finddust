@@ -3,852 +3,800 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>1회차 — Git & GitHub 기초 | 미세먼지 연구자 특강</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<title>Session 1 — Git & GitHub 기초 | 미세먼지관리전공</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0b0f1a;
-    --surface: #111827;
-    --border: rgba(255,255,255,0.08);
-    --accent: #4fc3f7;
-    --accent2: #69f0ae;
-    --accent3: #ffb74d;
-    --text: #e2e8f0;
-    --muted: #64748b;
-    --mono: 'IBM Plex Mono', monospace;
-    --sans: 'Noto Sans KR', sans-serif;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); }
-
-  /* ── Slide Container ── */
-  #deck { width: 100%; height: 100vh; position: relative; }
-  .slide {
-    position: absolute; inset: 0;
-    display: flex; flex-direction: column;
-    padding: 56px 72px;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.35s ease, transform 0.35s ease;
-    transform: translateX(40px);
-    overflow: hidden;
-  }
-  .slide.active {
-    opacity: 1; pointer-events: all; transform: translateX(0);
-  }
-  .slide.exit {
-    opacity: 0; transform: translateX(-40px);
-  }
-
-  /* ── Progress Bar ── */
-  #progress-bar {
-    position: fixed; top: 0; left: 0; height: 3px;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    transition: width 0.4s ease; z-index: 100;
-  }
-
-  /* ── Nav ── */
-  #nav {
-    position: fixed; bottom: 32px; right: 40px;
-    display: flex; align-items: center; gap: 12px; z-index: 100;
-  }
-  .nav-btn {
-    width: 44px; height: 44px; border-radius: 50%;
-    border: 1px solid var(--border);
-    background: rgba(255,255,255,0.04);
-    color: var(--text); font-size: 18px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s; backdrop-filter: blur(8px);
-  }
-  .nav-btn:hover { background: rgba(79,195,247,0.15); border-color: var(--accent); color: var(--accent); }
-  #slide-counter {
-    font-family: var(--mono); font-size: 12px; color: var(--muted);
-    min-width: 48px; text-align: center;
-  }
-
-  /* ── Slide # badge ── */
-  .slide-num {
-    position: absolute; top: 28px; right: 40px;
-    font-family: var(--mono); font-size: 11px; color: var(--muted);
-    letter-spacing: 1px;
-  }
-
-  /* ── Session label ── */
-  .session-tag {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: rgba(79,195,247,0.1);
-    border: 1px solid rgba(79,195,247,0.25);
-    color: var(--accent); font-size: 11px; font-weight: 700;
-    letter-spacing: 2px; padding: 5px 14px; border-radius: 20px;
-    text-transform: uppercase; margin-bottom: 24px; width: fit-content;
-  }
-
-  /* ── Typography helpers ── */
-  .h-giant {
-    font-family: var(--sans); font-size: clamp(36px, 5vw, 64px);
-    font-weight: 900; line-height: 1.1; color: var(--text);
-  }
-  .h-large {
-    font-family: var(--sans); font-size: clamp(26px, 3.5vw, 44px);
-    font-weight: 800; line-height: 1.2; color: var(--text);
-  }
-  .h-med {
-    font-family: var(--sans); font-size: clamp(18px, 2vw, 26px);
-    font-weight: 700; color: var(--text);
-  }
-  .body { font-family: var(--sans); font-size: 16px; line-height: 1.75; color: #94a3b8; }
-  .accent { color: var(--accent); }
-  .accent2 { color: var(--accent2); }
-  .accent3 { color: var(--accent3); }
-  .highlight {
-    background: rgba(79,195,247,0.12);
-    border-left: 3px solid var(--accent);
-    padding: 14px 20px; border-radius: 0 10px 10px 0;
-    font-family: var(--sans); font-size: 15px; color: #cbd5e1; line-height: 1.7;
-  }
-
-  /* ── Code block ── */
-  .code-block {
-    background: #0d1117; border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 12px; overflow: hidden; margin: 8px 0;
-  }
-  .code-header {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 8px 16px; background: rgba(255,255,255,0.04);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-  }
-  .code-lang { font-family: var(--mono); font-size: 11px; color: var(--muted); }
-  .copy-btn {
-    font-family: var(--mono); font-size: 11px; color: var(--muted);
-    background: none; border: 1px solid var(--border); padding: 3px 10px;
-    border-radius: 6px; cursor: pointer; transition: all 0.15s;
-  }
-  .copy-btn:hover { color: var(--accent2); border-color: var(--accent2); }
-  .copy-btn.copied { color: var(--accent2); border-color: var(--accent2); }
-  pre {
-    padding: 18px 20px; overflow-x: auto;
-    font-family: var(--mono); font-size: 14px; line-height: 1.7;
-    color: #e2e8f0;
-  }
-  .kw { color: #ff79c6; }
-  .cm { color: #6272a4; font-style: italic; }
-  .st { color: #f1fa8c; }
-  .fn { color: #50fa7b; }
-  .op { color: #ff79c6; }
-  .num { color: #bd93f9; }
-
-  /* ── Grid layouts ── */
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-
-  /* ── Card ── */
-  .card {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid var(--border);
-    border-radius: 14px; padding: 20px 22px;
-  }
-  .card-title { font-family: var(--sans); font-size: 14px; font-weight: 700; margin-bottom: 8px; }
-  .card-body { font-family: var(--sans); font-size: 13px; color: #64748b; line-height: 1.6; }
-
-  /* ── Step list ── */
-  .steps { display: flex; flex-direction: column; gap: 14px; }
-  .step { display: flex; gap: 16px; align-items: flex-start; }
-  .step-num {
-    width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--mono); font-size: 12px; font-weight: 700;
-    background: rgba(79,195,247,0.12); border: 1px solid rgba(79,195,247,0.3);
-    color: var(--accent);
-  }
-  .step-text { font-family: var(--sans); font-size: 15px; color: #94a3b8; line-height: 1.6; padding-top: 4px; }
-  .step-text strong { color: var(--text); }
-
-  /* ── Pill tag ── */
-  .pill {
-    display: inline-block; padding: 3px 12px; border-radius: 20px;
-    font-size: 12px; font-weight: 700; font-family: var(--mono);
-  }
-
-  /* ── Diagram ── */
-  .diagram {
-    display: flex; align-items: center; justify-content: center;
-    gap: 0; flex-wrap: wrap;
-  }
-  .diag-box {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 10px; padding: 12px 18px; text-align: center;
-    font-family: var(--sans); font-size: 13px; font-weight: 600;
-  }
-  .diag-arrow {
-    font-size: 20px; color: var(--muted); padding: 0 8px;
-  }
-
-  /* ── Cover BG decoration ── */
-  .cover-bg {
-    position: absolute; inset: 0; overflow: hidden; z-index: 0;
-  }
-  .cover-bg::before {
-    content: '';
-    position: absolute; top: -30%; right: -10%;
-    width: 60vw; height: 60vw;
-    background: radial-gradient(circle, rgba(79,195,247,0.07) 0%, transparent 65%);
-    border-radius: 50%;
-  }
-  .cover-bg::after {
-    content: '';
-    position: absolute; bottom: -20%; left: 10%;
-    width: 40vw; height: 40vw;
-    background: radial-gradient(circle, rgba(105,240,174,0.05) 0%, transparent 65%);
-    border-radius: 50%;
-  }
-  .cover-content { position: relative; z-index: 1; }
-
-  /* ── Table ── */
-  table { width: 100%; border-collapse: collapse; font-family: var(--sans); font-size: 14px; }
-  th { text-align: left; padding: 10px 16px; background: rgba(79,195,247,0.08);
-       color: var(--accent); font-size: 12px; letter-spacing: 1px; border-bottom: 1px solid var(--border); }
-  td { padding: 10px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); color: #94a3b8; }
-  tr:last-child td { border-bottom: none; }
-  td:first-child { color: var(--text); font-weight: 600; font-family: var(--mono); font-size: 13px; }
-
-  /* ── Tip box ── */
-  .tip {
-    background: rgba(255,183,77,0.08); border: 1px solid rgba(255,183,77,0.25);
-    border-radius: 10px; padding: 12px 18px;
-    font-family: var(--sans); font-size: 14px; color: #ffe0b2; line-height: 1.6;
-  }
-  .tip-label { color: var(--accent3); font-weight: 700; font-size: 12px; letter-spacing: 1px; margin-bottom: 4px; }
-
-  /* ── Timeline agenda ── */
-  .agenda { display: flex; flex-direction: column; gap: 0; }
-  .agenda-row {
-    display: flex; gap: 0; align-items: stretch;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-  }
-  .agenda-row:last-child { border-bottom: none; }
-  .agenda-time {
-    width: 130px; flex-shrink: 0; padding: 12px 0;
-    font-family: var(--mono); font-size: 12px; color: var(--accent);
-    font-weight: 600;
-  }
-  .agenda-content {
-    flex: 1; padding: 12px 0 12px 20px;
-    font-family: var(--sans); font-size: 14px; color: #94a3b8;
-    border-left: 1px solid rgba(79,195,247,0.15);
-    line-height: 1.5;
-  }
-  .agenda-content strong { color: var(--text); }
-
-  /* scrollable inner content area */
-  .slide-body { flex: 1; overflow-y: auto; padding-right: 4px; }
-  .slide-body::-webkit-scrollbar { width: 4px; }
-  .slide-body::-webkit-scrollbar-track { background: transparent; }
-  .slide-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+:root{--bg:#070c1a;--card:#0d1528;--accent:#4fc3f7;--accent2:#81c784;--accent3:#ffb74d;--warn:#ef5350;--text:#e8eaf6;--muted:#7986cb;--border:rgba(79,195,247,0.18);}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:'Noto Sans KR',sans-serif;color:var(--text);}
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s;z-index:100;}
+#badge{position:fixed;top:14px;left:18px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:2px;z-index:100;}
+#counter{position:fixed;top:14px;right:18px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);z-index:100;}
+.nbtn{position:fixed;top:50%;transform:translateY(-50%);background:rgba(79,195,247,0.07);border:1px solid var(--border);color:var(--accent);width:42px;height:42px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:100;}
+.nbtn:hover{background:rgba(79,195,247,0.18);}
+#prev{left:14px;}#next{right:14px;}
+#deck{width:100%;height:100vh;position:relative;}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:64px 84px;opacity:0;transform:translateX(36px);transition:all .48s cubic-bezier(.4,0,.2,1);pointer-events:none;}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all;}
+.slide.exit{opacity:0;transform:translateX(-36px);}
+.slide::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(79,195,247,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(79,195,247,.025) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;}
+/* Typography */
+.label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent);margin-bottom:18px;text-transform:uppercase;}
+h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,8vw,96px);line-height:.95;letter-spacing:3px;text-align:center;margin-bottom:14px;}
+h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-height:1.25;text-align:center;}
+.sub{font-size:15px;color:var(--muted);max-width:580px;text-align:center;line-height:1.85;font-weight:300;}
+/* Cards */
+.grid{display:grid;gap:14px;width:100%;max-width:920px;}
+.g2{grid-template-columns:1fr 1fr;}
+.g3{grid-template-columns:1fr 1fr 1fr;}
+.g4{grid-template-columns:1fr 1fr 1fr 1fr;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;position:relative;overflow:hidden;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);}
+.card.g{border-color:rgba(129,199,132,.2);}
+.card.g::before{background:linear-gradient(90deg,var(--accent2),transparent);}
+.card.o{border-color:rgba(255,183,77,.2);}
+.card.o::before{background:linear-gradient(90deg,var(--accent3),transparent);}
+.card.r{border-color:rgba(239,83,80,.2);}
+.card.r::before{background:linear-gradient(90deg,var(--warn),transparent);}
+.ci{font-size:26px;margin-bottom:10px;}
+.ct{font-weight:700;font-size:13px;color:var(--accent);margin-bottom:8px;}
+.card.g .ct{color:var(--accent2);}
+.card.o .ct{color:var(--accent3);}
+.card.r .ct{color:var(--warn);}
+.card p,.card ul{font-size:12.5px;color:var(--muted);line-height:1.75;}
+.card ul{list-style:none;}
+.card ul li::before{content:'▸ ';color:var(--accent);}
+.card.g ul li::before{color:var(--accent2);}
+.card.o ul li::before{color:var(--accent3);}
+/* Code */
+.code{background:#040810;border:1px solid rgba(79,195,247,.14);border-radius:10px;padding:18px 22px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.95;width:100%;max-width:880px;position:relative;overflow-x:auto;}
+.cm{color:#3d4f60;}
+.ck{color:var(--accent2);}
+.cs{color:var(--accent3);}
+.co{color:#607d8b;}
+.cp{color:var(--accent);}
+.cbtn{position:absolute;top:10px;right:10px;background:rgba(79,195,247,.09);border:1px solid var(--border);color:var(--accent);padding:3px 10px;border-radius:5px;font-size:10px;font-family:'JetBrains Mono',monospace;cursor:pointer;transition:all .2s;}
+.cbtn:hover{background:rgba(79,195,247,.2);}
+/* Steps */
+.steps{width:100%;max-width:820px;display:flex;flex-direction:column;gap:11px;}
+.step{display:flex;align-items:flex-start;gap:14px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px;}
+.snum{width:30px;height:30px;background:linear-gradient(135deg,var(--accent),#1565c0);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;flex-shrink:0;color:#fff;}
+.sc h4{font-size:13.5px;font-weight:700;margin-bottom:3px;}
+.sc p{font-size:12px;color:var(--muted);line-height:1.65;}
+/* Highlight */
+.hl{background:rgba(79,195,247,.06);border:1px solid rgba(79,195,247,.22);border-left:4px solid var(--accent);border-radius:8px;padding:14px 18px;width:100%;max-width:880px;font-size:13px;line-height:1.75;}
+.hl.g{background:rgba(129,199,132,.06);border-color:rgba(129,199,132,.22);border-left-color:var(--accent2);}
+.hl.y{background:rgba(255,183,77,.06);border-color:rgba(255,183,77,.22);border-left-color:var(--accent3);}
+.hl strong{color:var(--accent);}
+.hl.g strong{color:var(--accent2);}
+.hl.y strong{color:var(--accent3);}
+/* Flow */
+.flow{display:flex;align-items:center;flex-wrap:wrap;justify-content:center;gap:0;max-width:820px;width:100%;}
+.fbox{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;text-align:center;min-width:120px;}
+.fbox .fi{font-size:22px;margin-bottom:5px;}
+.fbox .fl{font-size:12px;font-weight:700;color:var(--accent);}
+.fbox .fs{font-size:11px;color:var(--muted);margin-top:3px;}
+.farr{font-size:18px;color:var(--muted);padding:0 6px;}
+/* Meta chips */
+.chips{display:flex;gap:14px;margin-top:26px;flex-wrap:wrap;justify-content:center;}
+.chip{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 16px;font-size:12.5px;display:flex;align-items:center;gap:7px;}
+.chip span{color:var(--muted);}
+.chip strong{color:var(--accent);}
+/* Big icon */
+.big{font-size:62px;margin-bottom:18px;filter:drop-shadow(0 0 18px rgba(79,195,247,.4));}
+/* Assignment */
+.asgn{background:linear-gradient(135deg,rgba(21,101,192,.14),rgba(0,121,107,.14));border:1px solid rgba(79,195,247,.28);border-radius:16px;padding:26px 30px;width:100%;max-width:880px;}
+.asgn h3{font-size:17px;font-weight:700;color:var(--accent3);margin-bottom:13px;}
+.asgn ol{padding-left:18px;}
+.asgn ol li{font-size:13.5px;line-height:1.85;margin-bottom:7px;}
+.asgn ol li .hint{display:block;font-size:11.5px;color:var(--muted);}
+/* Tag */
+.tag{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-family:'JetBrains Mono',monospace;margin:2px;}
+.tb{background:rgba(79,195,247,.1);color:var(--accent);border:1px solid rgba(79,195,247,.28);}
+.tg{background:rgba(129,199,132,.1);color:var(--accent2);border:1px solid rgba(129,199,132,.28);}
+.to{background:rgba(255,183,77,.1);color:var(--accent3);border:1px solid rgba(255,183,77,.28);}
+/* Two col */
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:20px;width:100%;max-width:920px;align-items:start;}
+/* Hint */
+#hint{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);font-size:10px;color:rgba(121,134,203,.45);font-family:'JetBrains Mono',monospace;letter-spacing:1px;}
+/* Table */
+.tbl{width:100%;max-width:880px;border-collapse:collapse;font-size:12.5px;}
+.tbl th{background:var(--card);border:1px solid var(--border);padding:10px 14px;text-align:left;color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;}
+.tbl td{border:1px solid rgba(79,195,247,.08);padding:10px 14px;color:var(--muted);vertical-align:top;line-height:1.6;}
+.tbl tr:hover td{background:rgba(79,195,247,.03);}
 </style>
 </head>
 <body>
-
-<div id="progress-bar"></div>
-
+<div id="progress"></div>
+<div id="badge">SESSION 01 / 05 &nbsp;·&nbsp; GIT & GITHUB 기초</div>
+<div id="counter">1 / 22</div>
+<button class="nbtn" id="prev">‹</button>
+<button class="nbtn" id="next">›</button>
 <div id="deck">
 
-<!-- ╔══════════════════════════════════════╗ -->
-<!-- ║  SLIDE 01  COVER                     ║ -->
-<!-- ╚══════════════════════════════════════╝ -->
-<div class="slide active" id="s1">
-  <div class="cover-bg"></div>
-  <div class="cover-content" style="flex:1;display:flex;flex-direction:column;justify-content:center;">
-    <div class="session-tag">📅 1회차 · 2시간 · Zoom</div>
-    <div class="h-giant" style="margin-bottom:16px;">
-      Git &amp; GitHub<br>
-      <span class="accent">기초</span>
-    </div>
-    <div class="body" style="font-size:18px; max-width:560px; margin-bottom:40px;">
-      연구자를 위한 버전 관리 입문 —<br>
-      미세먼지 논문 프로젝트를 코드로 관리하는 법
-    </div>
-    <div style="display:flex;gap:12px;flex-wrap:wrap;">
-      <span class="pill" style="background:rgba(79,195,247,0.12);color:var(--accent);border:1px solid rgba(79,195,247,0.3);">Git 설치</span>
-      <span class="pill" style="background:rgba(105,240,174,0.12);color:var(--accent2);border:1px solid rgba(105,240,174,0.3);">GitHub</span>
-      <span class="pill" style="background:rgba(255,183,77,0.12);color:var(--accent3);border:1px solid rgba(255,183,77,0.3);">기본 명령어</span>
-      <span class="pill" style="background:rgba(206,147,216,0.12);color:#ce93d8;border:1px solid rgba(206,147,216,0.3);">폴더 구조 설계</span>
-    </div>
+<!-- 1. Title -->
+<div class="slide active">
+  <div class="big">🌫️</div>
+  <div class="label">안양대학교 일반대학원 · 미세먼지관리전공</div>
+  <h1>GIT &<br>GITHUB</h1>
+  <p class="sub">석사 논문을 위한 디지털 연구 도구 특강<br>Session 1 — 버전 관리의 기초부터 실전까지</p>
+  <div class="chips">
+    <div class="chip"><span>담당</span><strong>윤희영 교수</strong></div>
+    <div class="chip"><span>대상</span><strong>미세먼지관리전공 석사생</strong></div>
+    <div class="chip"><span>시간</span><strong>2시간 (Zoom)</strong></div>
   </div>
-  <div class="slide-num">01 / 14</div>
 </div>
 
-<!-- ╔══════════════════════════════════════╗ -->
-<!-- ║  SLIDE 02  오늘 강의 일정             ║ -->
-<!-- ╚══════════════════════════════════════╝ -->
-<div class="slide" id="s2">
-  <div class="session-tag">📋 오늘의 일정</div>
-  <div class="h-large" style="margin-bottom:28px;">오늘 <span class="accent">2시간</span> 동안 배울 것</div>
-  <div class="slide-body">
-    <div class="agenda">
-      <div class="agenda-row">
-        <div class="agenda-time">0:00–0:20</div>
-        <div class="agenda-content"><strong>오리엔테이션</strong> — 강의 전체 소개, 도구 설치 확인</div>
-      </div>
-      <div class="agenda-row">
-        <div class="agenda-time">0:20–0:50</div>
-        <div class="agenda-content"><strong>Git 개념 강의</strong> — 왜 버전관리인가? 연구자에게 Git이란?</div>
-      </div>
-      <div class="agenda-row">
-        <div class="agenda-time">0:50–1:10</div>
-        <div class="agenda-content"><strong>실습 1</strong> — GitHub 계정 생성 & 저장소(Repository) 만들기</div>
-      </div>
-      <div class="agenda-row">
-        <div class="agenda-time">1:10–1:40</div>
-        <div class="agenda-content"><strong>실습 2</strong> — 기본 Git 명령어 핸즈온: init · add · commit · push · pull</div>
-      </div>
-      <div class="agenda-row">
-        <div class="agenda-time">1:40–2:00</div>
-        <div class="agenda-content"><strong>논문 프로젝트 폴더 구조 설계</strong> & Q&amp;A</div>
-      </div>
+<!-- 2. 오늘 배울 것 -->
+<div class="slide">
+  <div class="label">오늘의 목표</div>
+  <h2>이 세션이 끝나면 할 수 있는 것</h2>
+  <div class="grid g2" style="max-width:860px">
+    <div class="card g">
+      <div class="ci">✅</div>
+      <div class="ct">할 수 있게 되는 것</div>
+      <ul>
+        <li>Git 저장소를 처음부터 만들기</li>
+        <li>파일 변경을 스냅샷으로 저장</li>
+        <li>GitHub에 연구 코드 업로드</li>
+        <li>과거 버전으로 되돌리기</li>
+        <li>지도교수님과 코드 공유</li>
+      </ul>
     </div>
-    <div class="tip" style="margin-top:24px;">
-      <div class="tip-label">💡 사전 준비</div>
-      Git 설치 완료 여부 확인 → <code style="font-family:var(--mono);font-size:13px;">git --version</code> 터미널에서 실행해보세요.
+    <div class="card">
+      <div class="ci">🗂️</div>
+      <div class="ct">실습 결과물</div>
+      <ul>
+        <li>pm25-thesis 저장소 생성</li>
+        <li>data / analysis / figures / docs 구조</li>
+        <li>첫 커밋 완료</li>
+        <li>GitHub에 push 완료</li>
+        <li>README.md 작성</li>
+      </ul>
     </div>
   </div>
-  <div class="slide-num">02 / 14</div>
+  <div class="hl" style="margin-top:16px">
+    💡 <strong>이 수업의 철학:</strong> 이론보다 실습. 오늘 실제로 pm25-thesis 저장소를 만들고, 첫 커밋까지 완료합니다.
+  </div>
 </div>
 
-<!-- ╔══════════════════════════════════════╗ -->
-<!-- ║  SLIDE 03  왜 버전관리인가?           ║ -->
-<!-- ╚══════════════════════════════════════╝ -->
-<div class="slide" id="s3">
-  <div class="session-tag">🤔 Why Git?</div>
-  <div class="h-large" style="margin-bottom:24px;">연구자에게 Git이 필요한 이유</div>
-  <div class="slide-body">
-    <div class="grid-2" style="gap:16px;margin-bottom:20px;">
-      <div class="card" style="border-color:rgba(239,154,154,0.3);">
-        <div class="card-title" style="color:#ef9a9a;">😱 Git 없을 때</div>
-        <div style="font-family:var(--mono);font-size:12px;color:#64748b;line-height:2;">
-          analysis_final.py<br>
-          analysis_final2.py<br>
-          analysis_final_진짜최종.py<br>
-          analysis_20241103.py<br>
-          analysis_제출용.py
-        </div>
-      </div>
-      <div class="card" style="border-color:rgba(105,240,174,0.3);">
-        <div class="card-title" style="color:var(--accent2);">✅ Git 있을 때</div>
-        <div style="font-family:var(--mono);font-size:12px;color:#64748b;line-height:2;">
-          analysis.py<br>
-          <span style="color:#6272a4;"># 모든 변경 이력이 자동 기록</span><br>
-          <span style="color:#6272a4;"># 언제든 이전 버전으로 복원</span><br>
-          <span style="color:#6272a4;"># 지도교수와 실시간 협업</span>
-        </div>
-      </div>
+<!-- 3. 문제: 파일 혼란 -->
+<div class="slide">
+  <div class="label">문제 인식</div>
+  <h2>논문 쓰면서 이런 경험 있으신가요?</h2>
+  <div class="grid g3" style="max-width:920px">
+    <div class="card r">
+      <div class="ci">😰</div>
+      <div class="ct">파일명 지옥</div>
+      <ul>
+        <li>thesis_final.docx</li>
+        <li>thesis_final_v2.docx</li>
+        <li>thesis_진짜최종.docx</li>
+        <li>thesis_최종수정본.docx</li>
+        <li>thesis_제출용_진짜.docx</li>
+      </ul>
     </div>
-    <div class="highlight">
-      Git = 논문 작업의 <strong style="color:var(--accent);">"타임머신"</strong> + <strong style="color:var(--accent2);">"협업 도구"</strong><br>
-      코드·데이터·문서의 모든 변경 이력을 저장하고, 실수해도 언제든 되돌릴 수 있습니다.
+    <div class="card r">
+      <div class="ci">😱</div>
+      <div class="ct">코드 손실</div>
+      <ul>
+        <li>PM2.5 분석 잘 되던 코드</li>
+        <li>수정했다가 완전히 망함</li>
+        <li>이전 버전으로 못 돌아감</li>
+        <li>어느 버전이 맞는지 불명</li>
+        <li>처음부터 다시 작성...</li>
+      </ul>
+    </div>
+    <div class="card r">
+      <div class="ci">🤯</div>
+      <div class="ct">협업 혼돈</div>
+      <ul>
+        <li>교수님과 카카오톡으로 파일 공유</li>
+        <li>누가 최신 버전인지 모름</li>
+        <li>동시에 수정 → 충돌</li>
+        <li>수정 이력 추적 불가</li>
+        <li>"어디서 바뀐 거죠?" 질문 반복</li>
+      </ul>
     </div>
   </div>
-  <div class="slide-num">03 / 14</div>
+  <div class="hl" style="margin-top:16px;text-align:center">
+    🎯 <strong>Git은 이 모든 문제를 해결합니다</strong> — 연구자의 타임머신이자 협업 도구
+  </div>
 </div>
 
-<!-- ╔══════════════════════════════════════╗ -->
-<!-- ║  SLIDE 04  Git vs GitHub             ║ -->
-<!-- ╚══════════════════════════════════════╝ -->
-<div class="slide" id="s4">
-  <div class="session-tag">⚙️ 개념 정리</div>
-  <div class="h-large" style="margin-bottom:28px;"><span class="accent">Git</span> vs <span class="accent2">GitHub</span></div>
-  <div class="slide-body">
-    <div class="grid-2" style="margin-bottom:24px;">
-      <div class="card" style="border-color:rgba(79,195,247,0.3);">
-        <div style="font-size:32px;margin-bottom:10px;">🔧</div>
-        <div class="card-title" style="color:var(--accent);font-size:18px;">Git</div>
-        <div class="card-body">
-          내 컴퓨터에 설치하는 <strong style="color:var(--text);">버전 관리 소프트웨어</strong><br><br>
-          변경 이력을 로컬에 저장하고 관리하는 도구
-        </div>
-      </div>
-      <div class="card" style="border-color:rgba(105,240,174,0.3);">
-        <div style="font-size:32px;margin-bottom:10px;">☁️</div>
-        <div class="card-title" style="color:var(--accent2);font-size:18px;">GitHub</div>
-        <div class="card-body">
-          Git 저장소를 올려두는 <strong style="color:var(--text);">클라우드 플랫폼</strong><br><br>
-          협업·공유·백업을 위한 온라인 서비스 (github.com)
-        </div>
+<!-- 4. Git vs GitHub -->
+<div class="slide">
+  <div class="label">개념 이해</div>
+  <h2>Git vs GitHub — 뭐가 다른가?</h2>
+  <div class="grid g2" style="max-width:880px">
+    <div class="card">
+      <div class="ci">💻</div>
+      <div class="ct">Git (로컬 도구)</div>
+      <ul>
+        <li>내 컴퓨터에 설치하는 소프트웨어</li>
+        <li>파일 변경 이력을 스냅샷으로 저장</li>
+        <li>언제든 과거 버전으로 복원 가능</li>
+        <li>인터넷 없이도 동작</li>
+        <li>1991년 리누스 토르발스가 개발</li>
+      </ul>
+      <div style="margin-top:10px">
+        <span class="tag tb">버전관리</span><span class="tag tb">로컬</span><span class="tag tb">무료</span>
       </div>
     </div>
-    <div class="diagram" style="justify-content:flex-start;gap:12px;">
-      <div class="diag-box" style="border-color:rgba(79,195,247,0.3);">
-        💻 내 컴퓨터<br><span style="font-size:11px;color:var(--muted);">Git (로컬)</span>
-      </div>
-      <div class="diag-arrow">⇄</div>
-      <div class="diag-box" style="border-color:rgba(105,240,174,0.3);">
-        ☁️ github.com<br><span style="font-size:11px;color:var(--muted);">GitHub (원격)</span>
-      </div>
-      <div class="diag-arrow">⇄</div>
-      <div class="diag-box">
-        👥 팀원 컴퓨터<br><span style="font-size:11px;color:var(--muted);">Git (로컬)</span>
+    <div class="card g">
+      <div class="ci">☁️</div>
+      <div class="ct">GitHub (클라우드 플랫폼)</div>
+      <ul>
+        <li>Git 저장소를 인터넷에 백업</li>
+        <li>어디서든 접근 가능</li>
+        <li>교수님과 코드 공유 & 리뷰</li>
+        <li>논문 코드 공개 저장소로 활용</li>
+        <li>Microsoft가 운영 (2018년 인수)</li>
+      </ul>
+      <div style="margin-top:10px">
+        <span class="tag tg">클라우드</span><span class="tag tg">협업</span><span class="tag tg">공개/비공개</span>
       </div>
     </div>
   </div>
-  <div class="slide-num">04 / 14</div>
+  <div class="hl" style="margin-top:16px">
+    🔬 <strong>비유:</strong> Git = 내 컴퓨터의 타임머신 기능 / GitHub = 그 타임머신 데이터를 저장하는 클라우드
+  </div>
 </div>
 
-<!-- ╔══════════════════════════════════════╗ -->
-<!-- ║  SLIDE 05  Git 설치                  ║ -->
-<!-- ╚══════════════════════════════════════╝ -->
-<div class="slide" id="s5">
-  <div class="session-tag">🛠 설치</div>
-  <div class="h-large" style="margin-bottom:24px;">Git 설치 &amp; 초기 설정</div>
-  <div class="slide-body">
-    <div class="steps" style="margin-bottom:20px;">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-text"><strong>git-scm.com</strong> 에서 운영체제에 맞는 Git 다운로드 & 설치</div>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-text">터미널(Mac) 또는 Git Bash(Windows) 열기</div>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-text"><strong>이름 & 이메일 설정</strong> (커밋에 기록되는 정보)</div>
-      </div>
+<!-- 5. 버전 관리 개념 -->
+<div class="slide">
+  <div class="label">핵심 개념</div>
+  <h2>버전 관리란? — 스냅샷의 연속</h2>
+  <div class="grid g2" style="max-width:880px">
+    <div class="card">
+      <div class="ci">📸</div>
+      <div class="ct">커밋 = 스냅샷</div>
+      <p>파일 전체를 복사하는 것이 아니라, 변경된 내용만 기록합니다. 각 스냅샷에는 <strong style="color:var(--accent)">누가</strong>, <strong style="color:var(--accent)">언제</strong>, <strong style="color:var(--accent)">무엇을</strong> 바꿨는지 기록됩니다.</p>
     </div>
-    <div class="code-block">
-      <div class="code-header">
-        <span class="code-lang">bash</span>
-        <button class="copy-btn" onclick="copyCode(this)">copy</button>
-      </div>
-      <pre><span class="cm"># 설치 확인</span>
-<span class="fn">git</span> --version
-
-<span class="cm"># 사용자 정보 설정 (최초 1회)</span>
-<span class="fn">git</span> config --global user.name <span class="st">"홍길동"</span>
-<span class="fn">git</span> config --global user.email <span class="st">"gildong@university.ac.kr"</span>
-
-<span class="cm"># 설정 확인</span>
-<span class="fn">git</span> config --list</pre>
-    </div>
-    <div class="tip">
-      <div class="tip-label">💡 팁</div>
-      이메일은 <strong>GitHub 계정과 동일한 이메일</strong>로 설정해야 커밋 기여도가 제대로 표시됩니다.
+    <div class="card g">
+      <div class="ci">🕐</div>
+      <div class="ct">이력 = 타임라인</div>
+      <p>모든 커밋이 시간 순서로 연결됩니다. 1년 전 분석 코드로도 돌아갈 수 있고, 특정 시점의 상태를 그대로 재현할 수 있습니다.</p>
     </div>
   </div>
-  <div class="slide-num">05 / 14</div>
+  <div class="code" style="margin-top:16px">
+    <span class="cm"># git log --oneline 으로 보는 커밋 이력</span><br>
+    <span class="cp">a7f3c21</span> <span class="co">AI 예측 모델: Random Forest RMSE 12.3 달성</span><br>
+    <span class="cp">b92e1d4</span> <span class="co">PM2.5 계절별 분석: 봄철 고농도 원인 규명</span><br>
+    <span class="cp">c541f8a</span> <span class="co">데이터 정제: AirKorea 결측값(-999) 제거</span><br>
+    <span class="cp">d103a77</span> <span class="co">초기 설정: 수도권 PM2.5 연구 저장소 구축</span><br>
+    <span class="cm"># ↑ 아무 커밋이든 git checkout [해시] 로 그 시점으로 이동 가능</span>
+  </div>
 </div>
 
-<!-- ╔══════════════════════════════════════╗ -->
-<!-- ║  SLIDE 06  GitHub 계정 & 저장소       ║ -->
-<!-- ╚══════════════════════════════════════╝ -->
-<div class="slide" id="s6">
-  <div class="session-tag">🌐 실습 1</div>
-  <div class="h-large" style="margin-bottom:24px;">GitHub 계정 &amp; 저장소 만들기</div>
-  <div class="slide-body">
-    <div class="steps" style="margin-bottom:24px;">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-text"><strong>github.com</strong> 접속 → Sign Up → 학교 이메일로 가입</div>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-text">로그인 후 우측 상단 <strong>＋ → New repository</strong> 클릭</div>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-text">저장소 이름 입력: <code style="font-family:var(--mono);color:var(--accent);">finedust-research</code></div>
-      </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <div class="step-text"><strong>Public</strong> 선택 · <strong>Add a README file</strong> 체크 → Create repository</div>
+<!-- 6. 설치 & 설정 -->
+<div class="slide">
+  <div class="label">실습 준비</div>
+  <h2>Git 설치 & 초기 설정</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="snum">1</div>
+      <div class="sc">
+        <h4>Git 설치</h4>
+        <p>git-scm.com → Download → 본인 OS 선택 (Windows/macOS/Linux) → 기본값으로 설치 진행</p>
       </div>
     </div>
-    <div class="grid-2" style="gap:14px;">
-      <div class="card" style="border-color:rgba(79,195,247,0.2);">
-        <div class="card-title" style="color:var(--accent);">📁 Public vs Private</div>
-        <div class="card-body">
-          <strong style="color:var(--text);">Public</strong> — 누구나 볼 수 있음 (오픈 연구)<br>
-          <strong style="color:var(--text);">Private</strong> — 초대된 사람만 (미공개 연구)
-        </div>
+    <div class="step">
+      <div class="snum">2</div>
+      <div class="sc">
+        <h4>GitHub 계정 생성</h4>
+        <p>github.com → Sign up → 학교 이메일 권장 (교육 혜택 신청 가능) → 사용자명은 영문+숫자로 설정</p>
       </div>
-      <div class="card" style="border-color:rgba(105,240,174,0.2);">
-        <div class="card-title" style="color:var(--accent2);">📄 README.md</div>
-        <div class="card-body">
-          저장소 첫 화면에 표시되는 설명 파일.<br>
-          연구 주제·사용법·연락처를 적어둡니다.
-        </div>
+    </div>
+    <div class="step">
+      <div class="snum">3</div>
+      <div class="sc">
+        <h4>터미널에서 신원 등록 (아래 명령어 실행)</h4>
+        <p>커밋에 내 이름이 표시되도록 설정. GitHub 계정과 동일한 이름/이메일 사용 권장</p>
       </div>
     </div>
   </div>
-  <div class="slide-num">06 / 14</div>
+  <div class="code" style="margin-top:14px">
+    <button class="cbtn" onclick="cp(this)">copy</button>
+    <span class="cm"># 이름 설정</span><br>
+    <span class="ck">git config</span> --global user.name <span class="cs">"홍길동"</span><br>
+    <span class="cm"># 이메일 설정</span><br>
+    <span class="ck">git config</span> --global user.email <span class="cs">"gildong@anyang.ac.kr"</span><br>
+    <span class="cm"># 기본 브랜치 이름 설정 (최신 표준)</span><br>
+    <span class="ck">git config</span> --global init.defaultBranch main<br>
+    <span class="cm"># 설정 확인</span><br>
+    <span class="ck">git config</span> --list
+  </div>
 </div>
 
-<!-- ╔══════════════════════════════════════╗ -->
-<!-- ║  SLIDE 07  저장소 클론               ║ -->
-<!-- ╚══════════════════════════════════════╝ -->
-<div class="slide" id="s7">
-  <div class="session-tag">🛠 실습 1 계속</div>
-  <div class="h-large" style="margin-bottom:24px;">저장소를 내 컴퓨터로 가져오기 <span class="accent">clone</span></div>
-  <div class="slide-body">
-    <div class="highlight" style="margin-bottom:20px;">
-      GitHub에 만든 저장소를 내 컴퓨터에 복사하는 과정을 <strong style="color:var(--accent);">Clone(클론)</strong> 이라고 합니다.
+<!-- 7. 3단계 공간 -->
+<div class="slide">
+  <div class="label">핵심 개념</div>
+  <h2>Git의 3단계 공간 — 반드시 이해해야 할 것</h2>
+  <div class="flow" style="margin-bottom:20px">
+    <div class="fbox"><div class="fi">📁</div><div class="fl">Working Directory</div><div class="fs">실제 작업 공간<br>파일을 직접 편집</div></div>
+    <div class="farr">→<br><span style="font-family:'JetBrains Mono';font-size:10px;color:var(--accent2)">git add</span></div>
+    <div class="fbox"><div class="fi">📋</div><div class="fl">Staging Area</div><div class="fs">커밋 준비 공간<br>선택한 파일 대기</div></div>
+    <div class="farr">→<br><span style="font-family:'JetBrains Mono';font-size:10px;color:var(--accent)">git commit</span></div>
+    <div class="fbox"><div class="fi">🗃️</div><div class="fl">Local Repository</div><div class="fs">스냅샷 저장소<br>커밋 이력 보관</div></div>
+    <div class="farr">→<br><span style="font-family:'JetBrains Mono';font-size:10px;color:var(--accent3)">git push</span></div>
+    <div class="fbox"><div class="fi">☁️</div><div class="fl">GitHub</div><div class="fs">원격 저장소<br>백업 & 공유</div></div>
+  </div>
+  <div class="twocol">
+    <div class="hl">
+      <strong>왜 Staging Area가 있나?</strong><br>
+      여러 파일을 수정했지만 일부만 커밋하고 싶을 때 사용합니다. 예: 분석 코드 완성 + 실험적 코드 → 분석 코드만 커밋
     </div>
-    <div class="code-block" style="margin-bottom:16px;">
-      <div class="code-header">
-        <span class="code-lang">bash</span>
-        <button class="copy-btn" onclick="copyCode(this)">copy</button>
-      </div>
-      <pre><span class="cm"># 원하는 폴더로 이동 (예: 바탕화면)</span>
-<span class="fn">cd</span> ~/Desktop
-
-<span class="cm"># 저장소 클론 (URL은 GitHub 페이지의 초록색 Code 버튼에서 복사)</span>
-<span class="fn">git</span> clone https://github.com/<span class="st">사용자명</span>/finedust-research.git
-
-<span class="cm"># 클론된 폴더로 진입</span>
-<span class="fn">cd</span> finedust-research
-
-<span class="cm"># 내용 확인</span>
-<span class="fn">ls</span></pre>
-    </div>
-    <div class="tip">
-      <div class="tip-label">💡 팁</div>
-      GitHub 저장소 페이지 → 초록색 <strong>&lt;&gt; Code</strong> 버튼 → HTTPS 탭에서 URL을 복사하세요.
+    <div class="hl g">
+      <strong>실수로 git add 했다면?</strong><br>
+      <code style="font-family:'JetBrains Mono';color:var(--accent2)">git reset HEAD 파일명</code><br>
+      스테이징 취소. 파일 내용은 그대로.
     </div>
   </div>
-  <div class="slide-num">07 / 14</div>
 </div>
 
-<!-- ╔══════════════════════════════════════╗ -->
-<!-- ║  SLIDE 08  핵심 워크플로우            ║ -->
-<!-- ╚══════════════════════════════════════╝ -->
-<div class="slide" id="s8">
-  <div class="session-tag">🔄 핵심 개념</div>
-  <div class="h-large" style="margin-bottom:24px;">Git의 3가지 영역</div>
-  <div class="slide-body">
-    <div class="grid-3" style="margin-bottom:20px;">
-      <div class="card" style="border-color:rgba(239,154,154,0.3);text-align:center;">
-        <div style="font-size:28px;margin-bottom:8px;">📝</div>
-        <div class="card-title" style="color:#ef9a9a;">Working Directory</div>
-        <div class="card-body">실제 작업하는 폴더.<br>파일을 수정하는 공간.</div>
-      </div>
-      <div class="card" style="border-color:rgba(255,183,77,0.3);text-align:center;">
-        <div style="font-size:28px;margin-bottom:8px;">📦</div>
-        <div class="card-title" style="color:var(--accent3);">Staging Area</div>
-        <div class="card-body">커밋할 파일을 선별해 올려두는 임시 공간.</div>
-      </div>
-      <div class="card" style="border-color:rgba(79,195,247,0.3);text-align:center;">
-        <div style="font-size:28px;margin-bottom:8px;">🏦</div>
-        <div class="card-title" style="color:var(--accent);">Repository</div>
-        <div class="card-body">커밋된 이력이 저장되는 데이터베이스.</div>
+<!-- 8. 첫 저장소 만들기 -->
+<div class="slide">
+  <div class="label">실습 1</div>
+  <h2>pm25-thesis 저장소 만들기</h2>
+  <div class="code">
+    <button class="cbtn" onclick="cp(this)">copy</button>
+    <span class="cm"># ① 바탕화면 또는 원하는 위치에 연구 폴더 생성</span><br>
+    <span class="ck">mkdir</span> pm25-thesis <span class="ck">&amp;&amp; cd</span> pm25-thesis<br><br>
+    <span class="cm"># ② Git 저장소 초기화 (.git 숨김 폴더가 생성됨)</span><br>
+    <span class="ck">git init</span><br>
+    <span class="co">Initialized empty Git repository in ~/pm25-thesis/.git/</span><br><br>
+    <span class="cm"># ③ 권장 폴더 구조 생성</span><br>
+    <span class="ck">mkdir</span> data analysis figures docs<br>
+    <span class="ck">mkdir</span> data/raw data/processed<br><br>
+    <span class="cm"># ④ 기본 파일 생성</span><br>
+    <span class="ck">touch</span> README.md .gitignore<br>
+    <span class="ck">touch</span> analysis/pm25_analysis.py<br>
+    <span class="ck">touch</span> docs/thesis_outline.md<br><br>
+    <span class="cm"># ⑤ 현재 상태 확인</span><br>
+    <span class="ck">git status</span><br>
+    <span class="co">Untracked files: README.md, .gitignore, analysis/, ...</span>
+  </div>
+</div>
+
+<!-- 9. .gitignore -->
+<div class="slide">
+  <div class="label">중요 설정</div>
+  <h2>.gitignore — 추적하지 않을 파일 설정</h2>
+  <div class="hl" style="margin-bottom:14px">
+    ⚠️ <strong>반드시 설정해야 합니다!</strong> 측정 원시 데이터(.csv, .nc), 대용량 파일, 개인정보가 담긴 파일이 GitHub에 올라가면 심각한 문제가 됩니다.
+  </div>
+  <div class="code">
+    <button class="cbtn" onclick="cp(this)">copy</button>
+    <span class="cm"># .gitignore 파일에 작성할 내용 (미세먼지 연구 전용)</span><br><br>
+    <span class="cm">## 대용량 원시 데이터</span><br>
+    <span class="cs">data/raw/</span><br>
+    <span class="cs">*.csv</span><br>
+    <span class="cs">*.nc</span>         <span class="cm"># NetCDF (기상/대기 모델 출력)</span><br>
+    <span class="cs">*.h5</span>         <span class="cm"># HDF5 (에어로졸 측정 데이터)</span><br>
+    <span class="cs">*.mat</span>        <span class="cm"># MATLAB 데이터</span><br><br>
+    <span class="cm">## Python 임시 파일</span><br>
+    <span class="cs">__pycache__/</span><br>
+    <span class="cs">*.pyc</span><br>
+    <span class="cs">.ipynb_checkpoints/</span><br>
+    <span class="cs">*.egg-info/</span><br>
+    <span class="cs">.env</span>         <span class="cm"># API 키 등 환경변수 (절대 올리지 말 것!)</span><br><br>
+    <span class="cm">## OS / 에디터 파일</span><br>
+    <span class="cs">.DS_Store</span>   <span class="cm"># macOS</span><br>
+    <span class="cs">Thumbs.db</span>   <span class="cm"># Windows</span><br>
+    <span class="cs">.vscode/</span><br>
+    <span class="cs">*.swp</span>
+  </div>
+</div>
+
+<!-- 10. README.md 작성 -->
+<div class="slide">
+  <div class="label">실습 2</div>
+  <h2>README.md 작성 — 연구 저장소 소개</h2>
+  <div class="code">
+    <button class="cbtn" onclick="cp(this)">copy</button>
+    <span class="cm"># README.md 템플릿 (이 내용을 복사해서 수정하세요)</span><br><br>
+    <span class="cp"># 수도권 PM2.5 농도 분포 특성 연구</span><br><br>
+    <span class="co">안양대학교 일반대학원 환경공학과 미세먼지관리전공</span><br>
+    <span class="co">석사 학위 논문 연구 코드 저장소</span><br><br>
+    <span class="cp">## 연구 개요</span><br>
+    <span class="co">- 연구 주제: [본인 연구 주제 입력]</span><br>
+    <span class="co">- 지도교수: 윤희영 교수님</span><br>
+    <span class="co">- 연구 기간: 2024.03 ~ 2025.02</span><br>
+    <span class="co">- 사용 데이터: AirKorea 측정망, 기상청 관측 자료</span><br><br>
+    <span class="cp">## 폴더 구조</span><br>
+    <span class="co">pm25-thesis/</span><br>
+    <span class="co">├── data/raw/        # 원시 데이터 (gitignore됨)</span><br>
+    <span class="co">├── data/processed/  # 정제된 데이터</span><br>
+    <span class="co">├── analysis/        # Python 분석 스크립트</span><br>
+    <span class="co">├── figures/         # 논문용 그래프</span><br>
+    <span class="co">└── docs/            # 논문 초고</span><br><br>
+    <span class="cp">## 실행 방법</span><br>
+    <span class="ck">pip install</span> -r requirements.txt<br>
+    <span class="ck">python</span> analysis/pm25_analysis.py
+  </div>
+</div>
+
+<!-- 11. 첫 커밋 -->
+<div class="slide">
+  <div class="label">실습 3</div>
+  <h2>첫 번째 커밋 만들기</h2>
+  <div class="code">
+    <button class="cbtn" onclick="cp(this)">copy</button>
+    <span class="cm"># ① 스테이징 (커밋할 파일 선택)</span><br>
+    <span class="ck">git add</span> README.md .gitignore<br><br>
+    <span class="cm"># ② 커밋 — 스냅샷 저장 (메시지는 '무엇을 했는가'로)</span><br>
+    <span class="ck">git commit</span> -m <span class="cs">"초기 설정: 수도권 PM2.5 연구 저장소 구축"</span><br>
+    <span class="co">[main (root-commit) a3f9c21] 초기 설정: 수도권 PM2.5 연구 저장소 구축</span><br>
+    <span class="co"> 2 files changed, 28 insertions(+)</span><br><br>
+    <span class="cm"># ③ analysis 폴더도 추가</span><br>
+    <span class="ck">git add</span> analysis/<br>
+    <span class="ck">git commit</span> -m <span class="cs">"분석 구조: pm25_analysis.py 초안 추가"</span><br><br>
+    <span class="cm"># ④ 커밋 이력 확인</span><br>
+    <span class="ck">git log</span> --oneline<br>
+    <span class="cp">b92e1d4</span> <span class="co">분석 구조: pm25_analysis.py 초안 추가</span><br>
+    <span class="cp">a3f9c21</span> <span class="co">초기 설정: 수도권 PM2.5 연구 저장소 구축</span>
+  </div>
+  <div class="hl g" style="margin-top:14px">
+    ✍️ <strong>좋은 커밋 메시지 원칙:</strong> 50자 이내, 현재형 동사, 무엇을 왜 했는지<br>
+    <code style="color:var(--accent2)">"PM2.5 데이터 정제: AirKorea -999 결측값 제거 및 NaN 처리"</code>
+  </div>
+</div>
+
+<!-- 12. GitHub 연동 -->
+<div class="slide">
+  <div class="label">실습 4</div>
+  <h2>GitHub에 저장소 만들고 연동하기</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="snum">1</div>
+      <div class="sc">
+        <h4>GitHub에서 새 Repository 생성</h4>
+        <p>github.com → 우측 상단 + → New repository → 이름: pm25-thesis → Private 선택 → Create repository</p>
       </div>
     </div>
-    <div class="diagram" style="gap:10px;">
-      <div class="diag-box" style="border-color:rgba(239,154,154,0.3);font-size:12px;">📝 수정</div>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
-        <div style="font-family:var(--mono);font-size:11px;color:var(--accent3);">git add</div>
-        <div style="color:var(--muted);font-size:18px;">→</div>
+    <div class="step">
+      <div class="snum">2</div>
+      <div class="sc">
+        <h4>로컬 저장소와 GitHub 연결</h4>
+        <p>GitHub 페이지에서 안내하는 명령어 복사 후 터미널에 붙여넣기</p>
       </div>
-      <div class="diag-box" style="border-color:rgba(255,183,77,0.3);font-size:12px;">📦 대기</div>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
-        <div style="font-family:var(--mono);font-size:11px;color:var(--accent);">git commit</div>
-        <div style="color:var(--muted);font-size:18px;">→</div>
-      </div>
-      <div class="diag-box" style="border-color:rgba(79,195,247,0.3);font-size:12px;">🏦 저장</div>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
-        <div style="font-family:var(--mono);font-size:11px;color:var(--accent2);">git push</div>
-        <div style="color:var(--muted);font-size:18px;">→</div>
-      </div>
-      <div class="diag-box" style="border-color:rgba(105,240,174,0.3);font-size:12px;">☁️ GitHub</div>
     </div>
   </div>
-  <div class="slide-num">08 / 14</div>
+  <div class="code" style="margin-top:14px">
+    <button class="cbtn" onclick="cp(this)">copy</button>
+    <span class="cm"># 원격 저장소 주소 등록</span><br>
+    <span class="ck">git remote add</span> origin https://github.com/<span class="cs">내아이디</span>/pm25-thesis.git<br><br>
+    <span class="cm"># 업로드 (처음 push 시 -u 옵션으로 추적 브랜치 설정)</span><br>
+    <span class="ck">git push</span> -u origin main<br>
+    <span class="co">Enumerating objects: 6, done.</span><br>
+    <span class="co">Branch 'main' set up to track remote branch 'main' from 'origin'.</span><br><br>
+    <span class="cm"># 이후부터는 간단하게</span><br>
+    <span class="ck">git push</span>
+  </div>
 </div>
 
-<!-- ╔══════════════════════════════════════╗ -->
-<!-- ║  SLIDE 09  기본 명령어 실습           ║ -->
-<!-- ╚══════════════════════════════════════╝ -->
-<div class="slide" id="s9">
-  <div class="session-tag">⌨️ 실습 2</div>
-  <div class="h-large" style="margin-bottom:20px;">핵심 명령어 <span class="accent">add · commit · push</span></div>
-  <div class="slide-body">
-    <div class="code-block">
-      <div class="code-header">
-        <span class="code-lang">bash — 파일 수정 후 GitHub에 올리는 전체 흐름</span>
-        <button class="copy-btn" onclick="copyCode(this)">copy</button>
-      </div>
-      <pre><span class="cm"># 1. 현재 상태 확인 (항상 먼저!)</span>
-<span class="fn">git</span> status
+<!-- 13. 기본 명령어 7가지 -->
+<div class="slide">
+  <div class="label">치트시트</div>
+  <h2>매일 쓰는 Git 명령어 7가지</h2>
+  <div class="grid g2" style="max-width:880px">
+    <div class="card"><div class="ct">📊 git status</div><p>변경된 파일 목록 확인. 가장 자주 쓰는 명령어. 무엇이든 하기 전에 먼저 실행</p></div>
+    <div class="card g"><div class="ct">➕ git add .</div><p>변경된 모든 파일 스테이징. 특정 파일만: <code style="color:var(--accent2)">git add analysis/pm25.py</code></p></div>
+    <div class="card"><div class="ct">💾 git commit -m "..."</div><p>스냅샷 저장. 분석 단계마다, 기능 완성 때마다 의미있는 메시지 작성</p></div>
+    <div class="card g"><div class="ct">☁️ git push</div><p>로컬 커밋을 GitHub에 업로드. 하루 작업 끝날 때 반드시 실행</p></div>
+    <div class="card o"><div class="ct">⬇️ git pull</div><p>GitHub의 최신 변경사항을 로컬로 다운로드. 작업 시작 전 실행 습관</p></div>
+    <div class="card o"><div class="ct">📜 git log --oneline</div><p>커밋 이력 간략히 보기. <code style="color:var(--accent3)">--graph</code> 추가하면 브랜치 시각화</p></div>
+    <div class="card" style="grid-column:span 2"><div class="ct">⏪ git checkout [커밋ID] -- [파일명]</div><p>특정 파일을 과거 버전으로 복원. 실수로 코드 망쳤을 때 구원자!</p></div>
+  </div>
+</div>
 
-<span class="cm"># 2. 변경된 파일을 Staging에 추가</span>
-<span class="fn">git</span> add analysis.py           <span class="cm"># 특정 파일만</span>
-<span class="fn">git</span> add .                     <span class="cm"># 변경된 모든 파일</span>
+<!-- 14. diff & 상태 확인 -->
+<div class="slide">
+  <div class="label">실용 명령어</div>
+  <h2>변경 내용 확인 — diff와 show</h2>
+  <div class="code">
+    <button class="cbtn" onclick="cp(this)">copy</button>
+    <span class="cm"># 아직 스테이징 전인 변경사항 보기</span><br>
+    <span class="ck">git diff</span><br>
+    <span class="co">-    pm25_threshold = 25  # 국내 기준</span><br>
+    <span class="co">+    pm25_threshold = 35  # WHO 기준으로 변경</span><br><br>
+    <span class="cm"># 스테이징된 변경사항 보기</span><br>
+    <span class="ck">git diff</span> --staged<br><br>
+    <span class="cm"># 특정 커밋의 내용 보기</span><br>
+    <span class="ck">git show</span> a3f9c21<br><br>
+    <span class="cm"># 두 커밋 사이의 차이 비교</span><br>
+    <span class="ck">git diff</span> a3f9c21..b92e1d4<br><br>
+    <span class="cm"># 특정 파일의 변경 이력만 보기</span><br>
+    <span class="ck">git log</span> --oneline -- analysis/pm25_analysis.py<br><br>
+    <span class="cm"># 누가 어떤 줄을 수정했는지 (blame)</span><br>
+    <span class="ck">git blame</span> analysis/pm25_analysis.py
+  </div>
+</div>
 
-<span class="cm"># 3. 메시지와 함께 커밋 (스냅샷 저장)</span>
-<span class="fn">git</span> commit -m <span class="st">"PM2.5 데이터 전처리 코드 추가"</span>
-
-<span class="cm"># 4. GitHub에 업로드</span>
-<span class="fn">git</span> push origin main
-
-<span class="cm"># 5. GitHub에서 최신 내용 가져오기</span>
-<span class="fn">git</span> pull origin main</pre>
+<!-- 15. 되돌리기 -->
+<div class="slide">
+  <div class="label">복구 전략</div>
+  <h2>실수했을 때 — 되돌리기 3가지</h2>
+  <div class="grid g3" style="max-width:920px">
+    <div class="card">
+      <div class="ci">1️⃣</div>
+      <div class="ct">Working Directory 되돌리기</div>
+      <p style="font-family:'JetBrains Mono';font-size:11px;color:var(--accent);margin-bottom:8px">git checkout -- 파일명</p>
+      <p>수정한 파일을 마지막 커밋 상태로 복원. 커밋 전에만 가능. 복원 후 되돌릴 수 없음!</p>
     </div>
-    <div class="tip" style="margin-top:14px;">
-      <div class="tip-label">💡 좋은 커밋 메시지 규칙</div>
-      <code style="font-family:var(--mono);font-size:12px;color:#ffe0b2;">"무엇을 왜 했는지"</code> 를 한 줄로 — 예: <code style="font-family:var(--mono);font-size:12px;">"서울 2023년 PM2.5 이상치 제거 로직 수정"</code>
+    <div class="card g">
+      <div class="ci">2️⃣</div>
+      <div class="ct">Staging 취소</div>
+      <p style="font-family:'JetBrains Mono';font-size:11px;color:var(--accent2);margin-bottom:8px">git reset HEAD 파일명</p>
+      <p>git add 한 것을 취소. 파일 내용은 그대로. 다시 수정 후 add 가능</p>
+    </div>
+    <div class="card o">
+      <div class="ci">3️⃣</div>
+      <div class="ct">커밋 메시지 수정</div>
+      <p style="font-family:'JetBrains Mono';font-size:11px;color:var(--accent3);margin-bottom:8px">git commit --amend</p>
+      <p>직전 커밋 메시지 수정. push 전에만 사용! push 후에는 절대 사용 금지</p>
     </div>
   </div>
-  <div class="slide-num">09 / 14</div>
-</div>
-
-<!-- ╔══════════════════════════════════════╗ -->
-<!-- ║  SLIDE 10  자주 쓰는 명령어 요약     ║ -->
-<!-- ╚══════════════════════════════════════╝ -->
-<div class="slide" id="s10">
-  <div class="session-tag">📋 치트시트</div>
-  <div class="h-large" style="margin-bottom:24px;">자주 쓰는 Git 명령어</div>
-  <div class="slide-body">
-    <table>
-      <thead>
-        <tr>
-          <th>명령어</th>
-          <th>설명</th>
-          <th>언제 사용?</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>git status</td>
-          <td>현재 변경 사항 확인</td>
-          <td>작업 시작할 때마다</td>
-        </tr>
-        <tr>
-          <td>git log --oneline</td>
-          <td>커밋 이력 간단히 보기</td>
-          <td>이전에 뭘 했는지 확인할 때</td>
-        </tr>
-        <tr>
-          <td>git diff</td>
-          <td>수정 내용 비교</td>
-          <td>커밋 전 변경사항 검토</td>
-        </tr>
-        <tr>
-          <td>git restore 파일명</td>
-          <td>수정 취소 (되돌리기)</td>
-          <td>실수로 파일 망쳤을 때</td>
-        </tr>
-        <tr>
-          <td>git clone URL</td>
-          <td>원격 저장소 복사</td>
-          <td>처음 프로젝트 받아올 때</td>
-        </tr>
-        <tr>
-          <td>git pull</td>
-          <td>원격 변경사항 가져오기</td>
-          <td>작업 시작 전 동기화</td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="hl" style="margin-top:16px">
+    😌 <strong>무서워하지 마세요!</strong> Git에서 커밋된 내용은 거의 지워지지 않습니다. 실수를 되돌릴 수 있기 때문에 Git을 사용하는 겁니다.
   </div>
-  <div class="slide-num">10 / 14</div>
 </div>
 
-<!-- ╔══════════════════════════════════════╗ -->
-<!-- ║  SLIDE 11  .gitignore               ║ -->
-<!-- ╚══════════════════════════════════════╝ -->
-<div class="slide" id="s11">
-  <div class="session-tag">🚫 중요 설정</div>
-  <div class="h-large" style="margin-bottom:20px;"><span class="accent">.gitignore</span> — 추적 제외 파일 설정</div>
-  <div class="slide-body">
-    <div class="highlight" style="margin-bottom:18px;">
-      GitHub에 올리면 <strong style="color:#ef9a9a;">절대 안 되는</strong> 파일들: 대용량 원시 데이터, API 키, 개인정보 포함 파일
-    </div>
-    <div class="code-block">
-      <div class="code-header">
-        <span class="code-lang">.gitignore (프로젝트 루트에 생성)</span>
-        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<!-- 16. 일일 워크플로우 -->
+<div class="slide">
+  <div class="label">워크플로우</div>
+  <h2>미세먼지 연구자의 일일 Git 루틴</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="snum">🌅</div>
+      <div class="sc">
+        <h4>연구 시작 전 — git pull</h4>
+        <p>어제 집에서 수정한 내용, 또는 교수님이 검토한 내용을 받아오기. 항상 최신 상태에서 시작</p>
       </div>
-      <pre><span class="cm"># 대용량 데이터 파일</span>
-data/raw/
-*.csv
-*.nc
-*.h5
-
-<span class="cm"># Python 캐시</span>
-__pycache__/
-*.pyc
-.ipynb_checkpoints/
-
-<span class="cm"># 환경설정 & API 키 (절대 업로드 금지!)</span>
-.env
-config_secret.py
-api_keys.txt
-
-<span class="cm"># OS 자동생성 파일</span>
-.DS_Store          <span class="cm"># Mac</span>
-Thumbs.db          <span class="cm"># Windows</span></pre>
+    </div>
+    <div class="step">
+      <div class="snum">🔬</div>
+      <div class="sc">
+        <h4>연구 작업 중 — 파일 수정 & git status 반복</h4>
+        <p>Python 분석, AERMOD 파라미터 조정, 그래프 생성 등 실제 연구. 수시로 git status로 변경사항 확인</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="snum">📍</div>
+      <div class="sc">
+        <h4>작업 단위 완료 시 — git add + git commit</h4>
+        <p>의미있는 단위(기능 완성, 분석 완료)마다 커밋. "하루에 1번"이 아니라 "의미있는 단위마다"</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="snum">🌇</div>
+      <div class="sc">
+        <h4>작업 종료 — git push</h4>
+        <p>하루 연구 GitHub에 업로드. 컴퓨터가 망가져도 코드는 안전. 교수님이 GitHub에서 확인 가능</p>
+      </div>
     </div>
   </div>
-  <div class="slide-num">11 / 14</div>
 </div>
 
-<!-- ╔══════════════════════════════════════╗ -->
-<!-- ║  SLIDE 12  논문 폴더 구조            ║ -->
-<!-- ╚══════════════════════════════════════╝ -->
-<div class="slide" id="s12">
-  <div class="session-tag">📁 프로젝트 설계</div>
-  <div class="h-large" style="margin-bottom:20px;">미세먼지 논문 프로젝트 <span class="accent">폴더 구조</span></div>
-  <div class="slide-body">
-    <div class="code-block" style="margin-bottom:16px;">
-      <div class="code-header">
-        <span class="code-lang">프로젝트 디렉토리 구조 (권장)</span>
-        <button class="copy-btn" onclick="copyCode(this)">copy</button>
-      </div>
-      <pre>finedust-research/
-├── <span class="fn">README.md</span>          <span class="cm"># 프로젝트 설명</span>
-├── <span class="fn">.gitignore</span>
-│
-├── <span class="fn">data/</span>
-│   ├── raw/           <span class="cm"># 원본 데이터 (Git 제외)</span>
-│   └── processed/     <span class="cm"># 전처리된 데이터</span>
-│
-├── <span class="fn">notebooks/</span>         <span class="cm"># Jupyter 분석 노트북</span>
-│   └── 01_eda.ipynb
-│
-├── <span class="fn">src/</span>               <span class="cm"># 재사용 가능한 코드</span>
-│   ├── preprocess.py
-│   └── visualize.py
-│
-├── <span class="fn">figures/</span>           <span class="cm"># 논문용 그림 출력</span>
-│
-└── <span class="fn">paper/</span>             <span class="cm"># Overleaf 연동 또는 원고</span></pre>
+<!-- 17. 수업 과목 연계 -->
+<div class="slide">
+  <div class="label">전공 연계</div>
+  <h2>미세먼지관리전공 수업에서 Git 활용</h2>
+  <div class="grid g2" style="max-width:880px">
+    <div class="card">
+      <div class="ci">🌀</div>
+      <div class="ct">대기확산모델링 이론</div>
+      <p>AERMOD, CALPUFF 입력 파라미터 파일(.inp)과 실행 스크립트를 Git으로 관리. 어떤 파라미터 조합이 최적인지 커밋 이력으로 추적. 실험 실패도 기록으로 남김</p>
+    </div>
+    <div class="card g">
+      <div class="ci">🐍</div>
+      <div class="ct">파이썬 기반 환경 통계분석</div>
+      <p>수업 실습 코드 → Git으로 저장 → 논문 분석으로 발전. pandas, matplotlib, scipy 스크립트를 체계적으로 관리하며 재현 가능한 연구 구현</p>
+    </div>
+    <div class="card o">
+      <div class="ci">🤖</div>
+      <div class="ct">AI기반 미세먼지 예측 및 관리</div>
+      <p>ML 모델 코드, 하이퍼파라미터 실험 이력, 예측 결과 비교. Git 없이는 어떤 모델이 어떤 설정에서 RMSE가 낮았는지 추적 불가</p>
+    </div>
+    <div class="card">
+      <div class="ci">📡</div>
+      <div class="ct">SMART 측정 및 분석 실습</div>
+      <p>센서 데이터 처리 파이프라인 코드를 Git으로 관리. 측정 방법 변경 이력을 커밋으로 기록 → 논문 재현성 확보</p>
     </div>
   </div>
-  <div class="slide-num">12 / 14</div>
 </div>
 
-<!-- ╔══════════════════════════════════════╗ -->
-<!-- ║  SLIDE 13  실습 과제                 ║ -->
-<!-- ╚══════════════════════════════════════╝ -->
-<div class="slide" id="s13">
-  <div class="session-tag">📝 과제</div>
-  <div class="h-large" style="margin-bottom:28px;">오늘의 <span class="accent">과제</span></div>
-  <div class="slide-body">
-    <div class="steps" style="margin-bottom:24px;">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-text">GitHub에 <strong>finedust-research</strong> 저장소 생성</div>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-text">위 폴더 구조로 로컬에 디렉토리 생성</div>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-text"><strong>README.md</strong> 에 연구 주제 한 문단 작성</div>
-      </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <div class="step-text"><strong>.gitignore</strong> 파일 생성 후 <code style="font-family:var(--mono);color:var(--accent);">git add → commit → push</code> 완료</div>
-      </div>
-      <div class="step">
-        <div class="step-num">5</div>
-        <div class="step-text">GitHub 저장소 URL을 채팅창에 제출 🎉</div>
-      </div>
+<!-- 18. requirements.txt -->
+<div class="slide">
+  <div class="label">실습 5</div>
+  <h2>requirements.txt — 패키지 목록 관리</h2>
+  <div class="hl" style="margin-bottom:14px">
+    💡 <strong>왜 필요한가?</strong> 교수님이나 동료가 내 코드를 실행하려면 같은 라이브러리가 필요합니다. requirements.txt가 없으면 "ModuleNotFoundError"의 연속입니다.
+  </div>
+  <div class="code">
+    <button class="cbtn" onclick="cp(this)">copy</button>
+    <span class="cm"># 현재 설치된 패키지를 자동으로 기록</span><br>
+    <span class="ck">pip freeze</span> &gt; requirements.txt<br><br>
+    <span class="cm"># requirements.txt 내용 예시 (미세먼지 연구)</span><br>
+    <span class="cs">pandas==2.1.0</span>           <span class="cm"># 데이터 처리</span><br>
+    <span class="cs">numpy==1.26.0</span>            <span class="cm"># 수치 계산</span><br>
+    <span class="cs">matplotlib==3.8.0</span>        <span class="cm"># 그래프</span><br>
+    <span class="cs">seaborn==0.13.0</span>          <span class="cm"># 통계 시각화</span><br>
+    <span class="cs">scipy==1.11.3</span>            <span class="cm"># 통계 분석</span><span class="cm"></span><br>
+    <span class="cs">scikit-learn==1.3.1</span>      <span class="cm"># 머신러닝</span><br>
+    <span class="cs">folium==0.15.0</span>           <span class="cm"># 지도 시각화</span><br>
+    <span class="cs">netCDF4==1.6.4</span>           <span class="cm"># 기상 데이터 (.nc)</span><br><br>
+    <span class="cm"># 다른 컴퓨터에서 한 번에 설치</span><br>
+    <span class="ck">pip install</span> -r requirements.txt
+  </div>
+</div>
+
+<!-- 19. GitHub 활용 팁 -->
+<div class="slide">
+  <div class="label">GitHub 활용</div>
+  <h2>GitHub 웹에서 할 수 있는 것들</h2>
+  <div class="grid g2" style="max-width:880px">
+    <div class="card">
+      <div class="ci">👁️</div>
+      <div class="ct">코드 온라인 뷰어</div>
+      <p>별도 소프트웨어 없이 Python, CSV 파일을 브라우저에서 바로 확인. 교수님이 어디서든 코드 열람 가능</p>
     </div>
-    <div class="code-block">
-      <div class="code-header">
-        <span class="code-lang">bash — 빠른 시작 요약</span>
-        <button class="copy-btn" onclick="copyCode(this)">copy</button>
-      </div>
-      <pre><span class="fn">git</span> add .
-<span class="fn">git</span> commit -m <span class="st">"초기 프로젝트 구조 생성"</span>
-<span class="fn">git</span> push origin main</pre>
+    <div class="card g">
+      <div class="ci">📊</div>
+      <div class="ct">Insights — 기여도 시각화</div>
+      <p>언제 얼마나 코드를 작성했는지 그래프로 확인. 연구 활동량을 객관적으로 보여줄 수 있음</p>
+    </div>
+    <div class="card o">
+      <div class="ci">🔍</div>
+      <div class="ct">코드 검색</div>
+      <p>저장소 내에서 특정 함수명, 변수명 검색. 대규모 분석 코드에서 특정 부분 빠르게 찾기</p>
+    </div>
+    <div class="card">
+      <div class="ci">📱</div>
+      <div class="ct">모바일 앱</div>
+      <p>이동 중에도 저장소 확인, Issue 등록, 코드 리뷰 가능. 교수님과 빠른 소통</p>
     </div>
   </div>
-  <div class="slide-num">13 / 14</div>
-</div>
-
-<!-- ╔══════════════════════════════════════╗ -->
-<!-- ║  SLIDE 14  마무리                    ║ -->
-<!-- ╚══════════════════════════════════════╝ -->
-<div class="slide" id="s14">
-  <div class="cover-bg"></div>
-  <div class="cover-content" style="flex:1;display:flex;flex-direction:column;justify-content:center;">
-    <div class="session-tag">✅ 1회차 완료</div>
-    <div class="h-giant" style="margin-bottom:20px;">
-      오늘 배운 것 <span class="accent2">정리</span>
-    </div>
-    <div class="grid-2" style="margin-bottom:32px;gap:14px;">
-      <div class="card" style="border-color:rgba(79,195,247,0.2);">
-        <div class="card-title" style="color:var(--accent);">개념</div>
-        <div class="card-body">Git vs GitHub 차이 · 3가지 영역(Working/Staging/Repo)</div>
-      </div>
-      <div class="card" style="border-color:rgba(105,240,174,0.2);">
-        <div class="card-title" style="color:var(--accent2);">실습</div>
-        <div class="card-body">계정 생성 · clone · add · commit · push · pull</div>
-      </div>
-      <div class="card" style="border-color:rgba(255,183,77,0.2);">
-        <div class="card-title" style="color:var(--accent3);">설정</div>
-        <div class="card-body">.gitignore 작성 · 논문 폴더 구조 설계</div>
-      </div>
-      <div class="card" style="border-color:rgba(206,147,216,0.2);">
-        <div class="card-title" style="color:#ce93d8;">다음 시간</div>
-        <div class="card-body">Branch · Pull Request · Issues로 공동 연구 협업</div>
-      </div>
-    </div>
-    <div class="body">질문이 있으신가요? 💬</div>
+  <div class="hl g" style="margin-top:14px">
+    🎓 <strong>GitHub Education:</strong> 학교 이메일로 GitHub Student Developer Pack 신청 → GitHub Pro 무료 + 다양한 개발 도구 무료 사용
   </div>
-  <div class="slide-num">14 / 14</div>
 </div>
 
-</div><!-- #deck -->
-
-<!-- Nav Controls -->
-<div id="nav">
-  <button class="nav-btn" id="btn-prev" onclick="changeSlide(-1)">←</button>
-  <span id="slide-counter">1 / 14</span>
-  <button class="nav-btn" id="btn-next" onclick="changeSlide(1)">→</button>
+<!-- 20. 흔한 오류 -->
+<div class="slide">
+  <div class="label">문제 해결</div>
+  <h2>자주 만나는 오류와 해결법</h2>
+  <div class="code">
+    <button class="cbtn" onclick="cp(this)">copy</button>
+    <span class="cm"># ① push 거부됨 — 원격에 더 새로운 커밋 있음</span><br>
+    <span class="co">error: failed to push some refs</span><br>
+    <span class="ck">git pull</span> --rebase origin main  <span class="cm"># 먼저 pull 후 다시 push</span><br><br>
+    <span class="cm"># ② 인증 오류 — GitHub 로그인 문제</span><br>
+    <span class="co">remote: Support for password authentication was removed</span><br>
+    <span class="cm"># GitHub → Settings → Developer settings → Personal access tokens → 토큰 생성</span><br>
+    <span class="cm"># 비밀번호 대신 토큰 사용</span><br><br>
+    <span class="cm"># ③ 실수로 민감한 파일 커밋함</span><br>
+    <span class="ck">git rm</span> --cached data/raw/secret.csv  <span class="cm"># 추적 해제</span><br>
+    <span class="ck">git commit</span> -m <span class="cs">"데이터 파일 추적 해제"</span><br>
+    <span class="cm"># .gitignore에 추가 후 push (GitHub에 이미 올라간 건 직접 삭제 필요)</span><br><br>
+    <span class="cm"># ④ 저장소 주소 확인/변경</span><br>
+    <span class="ck">git remote</span> -v<br>
+    <span class="ck">git remote</span> set-url origin https://github.com/새주소.git
+  </div>
 </div>
+
+<!-- 21. 요약 -->
+<div class="slide">
+  <div class="label">세션 요약</div>
+  <h2>Session 1 핵심 정리</h2>
+  <div class="grid g3" style="max-width:920px">
+    <div class="card">
+      <div class="ci">🎯</div>
+      <div class="ct">오늘 배운 개념</div>
+      <ul>
+        <li>Git vs GitHub 차이</li>
+        <li>3단계 공간 (Working/Staging/Repo)</li>
+        <li>커밋 = 스냅샷</li>
+        <li>.gitignore 설정</li>
+        <li>일일 Git 루틴</li>
+      </ul>
+    </div>
+    <div class="card g">
+      <div class="ci">⌨️</div>
+      <div class="ct">핵심 명령어</div>
+      <ul>
+        <li>git init / status</li>
+        <li>git add / commit</li>
+        <li>git push / pull</li>
+        <li>git log / diff</li>
+        <li>git checkout (복원)</li>
+      </ul>
+    </div>
+    <div class="card o">
+      <div class="ci">🔮</div>
+      <div class="ct">다음 세션 예고</div>
+      <ul>
+        <li>브랜치(Branch) 전략</li>
+        <li>교수님과 PR 리뷰</li>
+        <li>충돌(Conflict) 해결</li>
+        <li>GitHub Issues 활용</li>
+        <li>Fork & Clone</li>
+      </ul>
+    </div>
+  </div>
+  <div class="hl" style="margin-top:16px;text-align:center">
+    ✅ <strong>오늘 목표:</strong> pm25-thesis 저장소 GitHub에 생성 + 첫 커밋 3개 이상 완료!
+  </div>
+</div>
+
+<!-- 22. 과제 -->
+<div class="slide">
+  <div class="label">과제</div>
+  <h2>Session 1 과제</h2>
+  <div class="asgn">
+    <h3>📝 다음 세션 전까지 완료</h3>
+    <ol>
+      <li>
+        GitHub 계정 생성 후 <strong>[이름]_pm25thesis</strong> 저장소 생성 (Private)
+        <span class="hint">예: honggildong_pm25thesis | 학교 이메일로 가입 권장</span>
+      </li>
+      <li>
+        로컬에 폴더 구조 생성: <strong>data/raw / data/processed / analysis / figures / docs</strong>
+        <span class="hint">.gitignore에 *.csv, *.nc, data/raw/ 추가 필수</span>
+      </li>
+      <li>
+        README.md 작성: 본인 연구 주제, 지도교수, 사용 데이터, 폴더 설명 포함
+        <span class="hint">아직 연구 주제 없으면 임시 주제로 작성 OK</span>
+      </li>
+      <li>
+        <strong>의미있는 커밋 5개 이상</strong> 완료 후 GitHub push
+        <span class="hint">각 커밋마다 다른 내용을 담은 메시지 작성</span>
+      </li>
+      <li>
+        requirements.txt 파일 생성 (현재 설치된 패키지 목록)
+        <span class="hint">pip freeze &gt; requirements.txt 실행</span>
+      </li>
+      <li>
+        <strong>🎁 보너스:</strong> analysis/pm25_analysis.py에 샘플 데이터 로드 코드 작성 + 커밋
+        <span class="hint">파이썬 기반 환경 통계분석 수업 내용 연계 권장</span>
+      </li>
+    </ol>
+  </div>
+</div>
+
+</div><!-- end #deck -->
+<div id="hint">← → 키보드 또는 버튼으로 이동 · 스와이프 지원</div>
 
 <script>
-  const TOTAL = 14;
-  let cur = 1;
-
-  function goTo(n) {
-    const prev = document.getElementById('s' + cur);
-    if (prev) { prev.classList.remove('active'); prev.classList.add('exit'); }
-    setTimeout(() => { if (prev) prev.classList.remove('exit'); }, 350);
-    cur = Math.max(1, Math.min(TOTAL, n));
-    const next = document.getElementById('s' + cur);
-    if (next) next.classList.add('active');
-    document.getElementById('slide-counter').textContent = cur + ' / ' + TOTAL;
-    document.getElementById('progress-bar').style.width = (cur / TOTAL * 100) + '%';
-  }
-
-  function changeSlide(dir) { goTo(cur + dir); }
-
-  document.addEventListener('keydown', e => {
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
-    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
-  });
-
-  // Touch swipe
-  let tx = 0;
-  document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; });
-  document.addEventListener('touchend',   e => {
-    const dx = tx - e.changedTouches[0].clientX;
-    if (Math.abs(dx) > 40) changeSlide(dx > 0 ? 1 : -1);
-  });
-
-  // Copy button
-  function copyCode(btn) {
-    const pre = btn.closest('.code-block').querySelector('pre');
-    navigator.clipboard.writeText(pre.innerText).then(() => {
-      btn.textContent = 'copied!'; btn.classList.add('copied');
-      setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 1800);
-    });
-  }
-
-  // Init
-  goTo(1);
-  document.getElementById('progress-bar').style.width = (1 / TOTAL * 100) + '%';
+const slides=document.querySelectorAll('.slide'),total=slides.length;
+let cur=0;
+function go(n){
+  slides[cur].classList.remove('active');
+  slides[cur].classList.add('exit');
+  const prev=cur;
+  cur=(n+total)%total;
+  setTimeout(()=>slides[prev].classList.remove('exit'),480);
+  slides[cur].classList.add('active');
+  document.getElementById('counter').textContent=(cur+1)+' / '+total;
+  document.getElementById('progress').style.width=((cur+1)/total*100)+'%';
+}
+document.getElementById('next').onclick=()=>go(cur+1);
+document.getElementById('prev').onclick=()=>go(cur-1);
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown')go(cur+1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp')go(cur-1);
+});
+let tx=0;
+document.addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
+document.addEventListener('touchend',e=>{const dx=tx-e.changedTouches[0].clientX;if(Math.abs(dx)>48)go(cur+(dx>0?1:-1));});
+function cp(btn){
+  const txt=btn.parentElement.innerText.replace(/^copy\n/,'').trim();
+  navigator.clipboard.writeText(txt);
+  btn.textContent='✓ 복사됨';
+  setTimeout(()=>btn.textContent='copy',2000);
+}
+document.getElementById('progress').style.width=(1/total*100)+'%';
 </script>
 </body>
 </html>

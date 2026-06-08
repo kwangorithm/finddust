@@ -3,596 +3,619 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>5회차 — Overleaf & 서지관리 | 미세먼지 연구자 특강</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<title>Session 5 | Overleaf & 참고문헌 | 미세먼지관리전공</title>
 <style>
-  :root {
-    --bg: #0e0a1a;
-    --border: rgba(255,255,255,0.08);
-    --accent: #ef9a9a;
-    --accent2: #4fc3f7;
-    --accent3: #69f0ae;
-    --accent4: #ffb74d;
-    --text: #fce4ec;
-    --muted: #5a3a3a;
-    --mono: 'IBM Plex Mono', monospace;
-    --sans: 'Noto Sans KR', sans-serif;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); }
-  #deck { width: 100%; height: 100vh; position: relative; }
-  .slide { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 52px 72px; opacity: 0; pointer-events: none; transition: opacity 0.35s ease, transform 0.35s ease; transform: translateX(40px); overflow: hidden; }
-  .slide.active { opacity: 1; pointer-events: all; transform: translateX(0); }
-  .slide.exit   { opacity: 0; transform: translateX(-40px); }
-  #progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 0.4s ease; z-index: 100; }
-  #nav { position: fixed; bottom: 32px; right: 40px; display: flex; align-items: center; gap: 12px; z-index: 100; }
-  .nav-btn { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border); background: rgba(255,255,255,0.04); color: var(--text); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-  .nav-btn:hover { background: rgba(239,154,154,0.15); border-color: var(--accent); color: var(--accent); }
-  #slide-counter { font-family: var(--mono); font-size: 12px; color: var(--muted); min-width: 52px; text-align: center; }
-  .slide-num { position: absolute; top: 28px; right: 40px; font-family: var(--mono); font-size: 11px; color: var(--muted); }
-  .session-tag { display: inline-flex; align-items: center; gap: 8px; background: rgba(239,154,154,0.08); border: 1px solid rgba(239,154,154,0.22); color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: 2px; padding: 5px 14px; border-radius: 20px; text-transform: uppercase; margin-bottom: 22px; width: fit-content; }
-  .h-giant { font-family: var(--sans); font-size: clamp(34px,5vw,62px); font-weight: 900; line-height: 1.1; color: var(--text); }
-  .h-large { font-family: var(--sans); font-size: clamp(24px,3.2vw,42px); font-weight: 800; line-height: 1.2; color: var(--text); }
-  .body { font-family: var(--sans); font-size: 15px; line-height: 1.75; color: #8a5a5a; }
-  .accent{color:var(--accent);} .accent2{color:var(--accent2);} .accent3{color:var(--accent3);} .accent4{color:var(--accent4);}
-  .highlight { background: rgba(239,154,154,0.07); border-left: 3px solid var(--accent); padding: 14px 20px; border-radius: 0 10px 10px 0; font-family: var(--sans); font-size: 15px; color: #d4a0a0; line-height: 1.7; }
-  .code-block { background: #080410; border: 1px solid rgba(239,154,154,0.12); border-radius: 12px; overflow: hidden; margin: 8px 0; }
-  .code-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 16px; background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.05); }
-  .code-lang { font-family: var(--mono); font-size: 11px; color: var(--muted); }
-  .copy-btn { font-family: var(--mono); font-size: 11px; color: var(--muted); background: none; border: 1px solid var(--border); padding: 3px 10px; border-radius: 6px; cursor: pointer; transition: all 0.15s; }
-  .copy-btn:hover, .copy-btn.copied { color: var(--accent); border-color: var(--accent); }
-  pre { padding: 16px 20px; overflow-x: auto; font-family: var(--mono); font-size: 13.5px; line-height: 1.7; color: #f8bbd9; }
-  .kw{color:#ff79c6;} .cm{color:#5a3a4a;font-style:italic;} .st{color:#f1fa8c;} .fn{color:#ef9a9a;} .num{color:#bd93f9;} .cmd{color:#69f0ae;}
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
-  .card { background: rgba(255,255,255,0.025); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; }
-  .card-title { font-family: var(--sans); font-size: 14px; font-weight: 700; margin-bottom: 8px; }
-  .card-body { font-family: var(--sans); font-size: 13px; color: #5a3a3a; line-height: 1.65; }
-  .steps { display: flex; flex-direction: column; gap: 13px; }
-  .step { display: flex; gap: 14px; align-items: flex-start; }
-  .step-num { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 12px; font-weight: 700; background: rgba(239,154,154,0.1); border: 1px solid rgba(239,154,154,0.28); color: var(--accent); }
-  .step-text { font-family: var(--sans); font-size: 15px; color: #8a5a5a; line-height: 1.6; padding-top: 4px; }
-  .step-text strong { color: var(--text); }
-  .pill { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; font-family: var(--mono); }
-  .tip { background: rgba(105,240,174,0.07); border: 1px solid rgba(105,240,174,0.2); border-radius: 10px; padding: 12px 18px; font-family: var(--sans); font-size: 14px; color: #b2dfdb; line-height: 1.6; }
-  .tip-label { color: var(--accent3); font-weight: 700; font-size: 11px; letter-spacing: 1px; margin-bottom: 4px; }
-  .agenda { display: flex; flex-direction: column; }
-  .agenda-row { display: flex; border-bottom: 1px solid rgba(255,255,255,0.04); }
-  .agenda-row:last-child { border-bottom: none; }
-  .agenda-time { width: 130px; flex-shrink: 0; padding: 11px 0; font-family: var(--mono); font-size: 12px; color: var(--accent); font-weight: 600; }
-  .agenda-content { flex: 1; padding: 11px 0 11px 20px; font-family: var(--sans); font-size: 14px; color: #8a5a5a; border-left: 1px solid rgba(239,154,154,0.12); line-height: 1.5; }
-  .agenda-content strong { color: var(--text); }
-  .cover-bg { position: absolute; inset: 0; overflow: hidden; z-index: 0; }
-  .cover-bg::before { content:''; position:absolute; top:-20%; right:-5%; width:55vw; height:55vw; background: radial-gradient(circle, rgba(239,154,154,0.09) 0%, transparent 65%); border-radius:50%; }
-  .cover-bg::after  { content:''; position:absolute; bottom:-15%; left:5%;  width:40vw; height:40vw; background: radial-gradient(circle, rgba(79,195,247,0.05) 0%, transparent 65%); border-radius:50%; }
-  .cover-content { position: relative; z-index: 1; }
-  .slide-body { flex: 1; overflow-y: auto; padding-right: 4px; }
-  .slide-body::-webkit-scrollbar { width: 4px; }
-  .slide-body::-webkit-scrollbar-thumb { background: rgba(239,154,154,0.15); border-radius: 2px; }
-  .bib-box { background: #04020a; border: 1px solid rgba(239,154,154,0.15); border-radius: 10px; padding: 14px 18px; font-family: var(--mono); font-size: 13px; line-height: 1.8; color: #f8bbd9; }
-  .flow-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-  .flow-box { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 10px; padding: 10px 16px; font-family: var(--sans); font-size: 13px; font-weight: 600; text-align: center; }
-  .flow-arrow { color: var(--muted); font-size: 18px; }
-  .checklist { display: flex; flex-direction: column; gap: 10px; }
-  .check-item { display: flex; gap: 12px; align-items: flex-start; }
-  .check-box { width: 20px; height: 20px; border-radius: 4px; border: 1px solid rgba(239,154,154,0.3); background: rgba(239,154,154,0.08); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--accent); margin-top: 2px; }
-  .check-text { font-family: var(--sans); font-size: 14px; color: #8a5a5a; line-height: 1.6; }
-  .check-text strong { color: var(--text); }
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&family=Bebas+Neue&display=swap');
+  :root{--bg:#0e0a18;--surface:#140e22;--card:#1a1230;--accent:#f48fb1;--accent2:#80cbc4;--accent3:#ffe082;--text:#fce4ec;--muted:#ce93d8;--border:rgba(244,143,177,0.2);}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;user-select:none;}
+  #progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width 0.4s;z-index:100;}
+  #session-badge{position:fixed;top:16px;left:20px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:2px;z-index:100;}
+  #slide-counter{position:fixed;top:16px;right:20px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);z-index:100;}
+  .nav-btn{position:fixed;top:50%;transform:translateY(-50%);background:rgba(244,143,177,0.08);border:1px solid var(--border);color:var(--accent);width:44px;height:44px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;z-index:100;}
+  .nav-btn:hover{background:rgba(244,143,177,0.2);}
+  #btn-prev{left:16px;}#btn-next{right:16px;}
+  #slides{width:100%;height:100vh;position:relative;}
+  .slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px 80px;opacity:0;transform:translateX(40px);transition:all 0.5s cubic-bezier(0.4,0,0.2,1);pointer-events:none;}
+  .slide.active{opacity:1;transform:translateX(0);pointer-events:all;}
+  .slide.exit{opacity:0;transform:translateX(-40px);}
+  .slide::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(244,143,177,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(244,143,177,0.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
+  .slide-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent);margin-bottom:20px;text-transform:uppercase;}
+  h1.title{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,6.5vw,82px);line-height:1;letter-spacing:2px;color:var(--text);margin-bottom:16px;text-align:center;}
+  h2.slide-title{font-size:clamp(22px,3vw,38px);font-weight:700;color:var(--text);margin-bottom:24px;line-height:1.3;text-align:center;}
+  p.subtitle{font-size:16px;color:var(--muted);font-weight:300;max-width:600px;text-align:center;line-height:1.8;}
+  .card-grid{display:grid;gap:14px;width:100%;max-width:900px;}
+  .card-grid.cols-2{grid-template-columns:1fr 1fr;}
+  .card-grid.cols-3{grid-template-columns:1fr 1fr 1fr;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;position:relative;overflow:hidden;}
+  .card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);}
+  .card.teal::after{background:linear-gradient(90deg,var(--accent2),transparent);}
+  .card.yellow::after{background:linear-gradient(90deg,var(--accent3),transparent);}
+  .card.bad::after{background:linear-gradient(90deg,#ef5350,transparent);}
+  .card-icon{font-size:26px;margin-bottom:10px;}
+  .card-title{font-weight:700;font-size:14px;color:var(--accent);margin-bottom:8px;}
+  .card.teal .card-title{color:var(--accent2);}
+  .card.yellow .card-title{color:var(--accent3);}
+  .card.bad .card-title{color:#ef5350;}
+  .card p,.card ul{font-size:13px;color:var(--muted);line-height:1.7;}
+  .card ul{list-style:none;}
+  .card ul li::before{content:'▸ ';color:var(--accent);}
+  .card.teal ul li::before{color:var(--accent2);}
+  .card.yellow ul li::before{color:var(--accent3);}
+  .code-block{background:#08040f;border:1px solid rgba(244,143,177,0.15);border-radius:10px;padding:18px 22px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.9;width:100%;max-width:860px;position:relative;overflow-x:auto;}
+  .code-block .comment{color:#5c3a4a;}
+  .code-block .cmd{color:var(--accent);}
+  .code-block .kw{color:var(--accent2);}
+  .code-block .str{color:var(--accent3);}
+  .code-block .output{color:#78909c;}
+  .copy-btn{position:absolute;top:10px;right:10px;background:rgba(244,143,177,0.1);border:1px solid var(--border);color:var(--accent);padding:3px 10px;border-radius:6px;font-size:11px;font-family:'JetBrains Mono',monospace;cursor:pointer;transition:all 0.2s;}
+  .copy-btn:hover{background:rgba(244,143,177,0.2);}
+  .step-list{width:100%;max-width:800px;display:flex;flex-direction:column;gap:11px;}
+  .step-item{display:flex;align-items:flex-start;gap:14px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px;}
+  .step-num{width:30px;height:30px;background:linear-gradient(135deg,var(--accent),#880e4f);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;flex-shrink:0;color:#fff;}
+  .step-content h4{font-size:14px;font-weight:700;margin-bottom:4px;}
+  .step-content p{font-size:12px;color:var(--muted);line-height:1.6;}
+  .highlight-box{background:rgba(244,143,177,0.06);border:1px solid rgba(244,143,177,0.25);border-left:4px solid var(--accent);border-radius:8px;padding:14px 18px;width:100%;max-width:860px;font-size:13.5px;line-height:1.7;}
+  .highlight-box.teal{background:rgba(128,203,196,0.06);border-color:rgba(128,203,196,0.25);border-left-color:var(--accent2);}
+  .highlight-box.yellow{background:rgba(255,224,130,0.06);border-color:rgba(255,224,130,0.25);border-left-color:var(--accent3);}
+  .highlight-box strong{color:var(--accent);}
+  .highlight-box.teal strong{color:var(--accent2);}
+  .highlight-box.yellow strong{color:var(--accent3);}
+  .big-icon{font-size:64px;margin-bottom:20px;filter:drop-shadow(0 0 20px rgba(244,143,177,0.5));}
+  .title-meta{display:flex;gap:16px;margin-top:28px;flex-wrap:wrap;justify-content:center;}
+  .meta-chip{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:9px 16px;font-size:13px;display:flex;align-items:center;gap:8px;}
+  .meta-chip span{color:var(--muted);}
+  .meta-chip strong{color:var(--accent);}
+  .bibtex-box{background:#08040f;border:1px solid rgba(255,224,130,0.2);border-radius:10px;padding:18px 22px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;width:100%;max-width:860px;position:relative;}
+  .bibtex-box .bk{color:var(--accent);}
+  .bibtex-box .bf{color:var(--accent2);}
+  .bibtex-box .bv{color:var(--accent3);}
+  .bibtex-box .bc{color:#5c3a4a;}
+  .copy-btn-y{position:absolute;top:10px;right:10px;background:rgba(255,224,130,0.1);border:1px solid rgba(255,224,130,0.3);color:var(--accent3);padding:3px 10px;border-radius:6px;font-size:11px;font-family:'JetBrains Mono',monospace;cursor:pointer;transition:all 0.2s;}
+  .copy-btn-y:hover{background:rgba(255,224,130,0.2);}
+  .assignment{background:linear-gradient(135deg,rgba(136,14,79,0.12),rgba(0,96,100,0.12));border:1px solid rgba(244,143,177,0.3);border-radius:16px;padding:26px 30px;width:100%;max-width:860px;}
+  .assignment h3{font-size:18px;font-weight:700;color:var(--accent3);margin-bottom:14px;}
+  .assignment ol{padding-left:20px;}
+  .assignment ol li{font-size:13.5px;color:var(--text);line-height:1.9;margin-bottom:8px;}
+  .assignment ol li span{color:var(--muted);font-size:12px;display:block;}
+  /* Final summary */
+  .final-card{background:linear-gradient(135deg,rgba(136,14,79,0.12),rgba(0,96,100,0.12),rgba(74,20,140,0.12));border:1px solid rgba(244,143,177,0.3);border-radius:16px;padding:28px 34px;width:100%;max-width:880px;}
+  .final-card h3{font-size:20px;font-weight:900;color:var(--accent);margin-bottom:18px;text-align:center;}
+  .final-row{display:flex;gap:14px;margin-bottom:10px;align-items:flex-start;}
+  .final-num{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--accent);min-width:36px;line-height:1;}
+  .final-content h4{font-size:14px;font-weight:700;margin-bottom:2px;}
+  .final-content p{font-size:12px;color:var(--muted);}
+  #keyboard-hint{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);font-size:11px;color:rgba(206,147,216,0.4);font-family:'JetBrains Mono',monospace;letter-spacing:1px;}
 </style>
 </head>
 <body>
 <div id="progress-bar"></div>
-<div id="deck">
+<div id="session-badge">SESSION 05 / 05 &nbsp;|&nbsp; OVERLEAF & 참고문헌</div>
+<div id="slide-counter">1 / 16</div>
+<button class="nav-btn" id="btn-prev">‹</button>
+<button class="nav-btn" id="btn-next">›</button>
+<div id="slides">
 
-<!-- 01 COVER -->
-<div class="slide active" id="s1">
-  <div class="cover-bg"></div>
-  <div class="cover-content" style="flex:1;display:flex;flex-direction:column;justify-content:center;">
-    <div class="session-tag">📅 5회차 · 2시간 · Zoom · 최종</div>
-    <div class="h-giant" style="margin-bottom:14px;">Overleaf &amp;<br><span class="accent">서지관리</span></div>
-    <div class="body" style="font-size:17px;max-width:560px;margin-bottom:36px;">
-      Google Scholar BibTeX · references.bib 관리 ·<br>
-      GitHub + AI 코딩 + 논문 작성 통합 워크플로우
-    </div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;">
-      <span class="pill" style="background:rgba(239,154,154,0.1);color:var(--accent);border:1px solid rgba(239,154,154,0.28);">Overleaf</span>
-      <span class="pill" style="background:rgba(79,195,247,0.1);color:var(--accent2);border:1px solid rgba(79,195,247,0.28);">BibTeX</span>
-      <span class="pill" style="background:rgba(105,240,174,0.1);color:var(--accent3);border:1px solid rgba(105,240,174,0.28);">Google Scholar</span>
-      <span class="pill" style="background:rgba(255,183,77,0.1);color:var(--accent4);border:1px solid rgba(255,183,77,0.28);">통합 워크플로우</span>
-    </div>
-  </div>
-  <div class="slide-num">01 / 16</div>
-</div>
-
-<!-- 02 일정 -->
-<div class="slide" id="s2">
-  <div class="session-tag">📋 오늘의 일정</div>
-  <div class="h-large" style="margin-bottom:24px;">마지막 회차 <span class="accent">2시간</span> 일정</div>
-  <div class="slide-body">
-    <div class="agenda">
-      <div class="agenda-row"><div class="agenda-time">0:00–0:20</div><div class="agenda-content"><strong>Overleaf 소개</strong> — 계정 생성, 논문 템플릿 열기, 인터페이스 탐색</div></div>
-      <div class="agenda-row"><div class="agenda-time">0:20–0:50</div><div class="agenda-content"><strong>BibTeX 실습</strong> — Google Scholar → Cite → BibTeX 복사 → references.bib 붙여넣기</div></div>
-      <div class="agenda-row"><div class="agenda-time">0:50–1:10</div><div class="agenda-content"><strong>인용 삽입 실습</strong> — \cite{} 본문 삽입, 참고문헌 스타일 변경</div></div>
-      <div class="agenda-row"><div class="agenda-time">1:10–1:40</div><div class="agenda-content"><strong>통합 워크플로우 데모</strong> — GitHub 코드 → Figure → Overleaf 논문 완성</div></div>
-      <div class="agenda-row"><div class="agenda-time">1:40–2:00</div><div class="agenda-content"><strong>총정리</strong> — 자기주도 학습 로드맵 · 수료 Q&A</div></div>
-    </div>
-    <div class="tip" style="margin-top:20px;">
-      <div class="tip-label">💡 오늘 필요한 것</div>
-      Overleaf 계정 (overleaf.com) · 지금까지 만든 GitHub 저장소 · 논문에 인용할 레퍼런스 목록
+  <!-- S1: Title -->
+  <div class="slide active">
+    <div class="big-icon">📄</div>
+    <div class="slide-label">안양대학교 일반대학원 · 미세먼지관리전공</div>
+    <h1 class="title">OVERLEAF &<br>참고문헌 관리</h1>
+    <p class="subtitle">논문을 완성하는 마지막 퍼즐<br>Session 5 — LaTeX 논문 작성 + BibTeX 인용 시스템</p>
+    <div class="title-meta">
+      <div class="meta-chip"><span>도구</span><strong>Overleaf + Google Scholar</strong></div>
+      <div class="meta-chip"><span>목표</span><strong>논문 제출 준비 완성</strong></div>
+      <div class="meta-chip"><span>연계</span><strong>Session 1-4 성과물 통합</strong></div>
     </div>
   </div>
-  <div class="slide-num">02 / 16</div>
-</div>
 
-<!-- 03 Overleaf란? -->
-<div class="slide" id="s3">
-  <div class="session-tag">📄 개요</div>
-  <div class="h-large" style="margin-bottom:22px;"><span class="accent">Overleaf</span>란?</div>
-  <div class="slide-body">
-    <div class="highlight" style="margin-bottom:20px;">
-      Overleaf = 브라우저에서 바로 쓰는 <strong style="color:var(--accent);">LaTeX 논문 편집기</strong><br>
-      설치 없이 · 공동 편집 · 수천 개 저널 템플릿 · 자동 컴파일
+  <!-- S2: 왜 Overleaf인가? -->
+  <div class="slide">
+    <div class="slide-label">문제 인식</div>
+    <h2 class="slide-title">Word 논문 작성의 한계</h2>
+    <div class="card-grid cols-2" style="max-width:860px">
+      <div class="card bad">
+        <div class="card-icon">😩</div>
+        <div class="card-title">Word로 쓸 때 겪는 문제들</div>
+        <ul>
+          <li>그림 삽입하면 레이아웃 전체 깨짐</li>
+          <li>참고문헌 번호 수동 관리 → 1개 추가 시 전부 수정</li>
+          <li>PM₂.₅ 아래첨자 입력이 번거로움</li>
+          <li>μg/m³ 수식 표현 어색</li>
+          <li>교수님 피드백 → 이메일 첨부 파일</li>
+        </ul>
+      </div>
+      <div class="card teal">
+        <div class="card-icon">✨</div>
+        <div class="card-title">Overleaf + LaTeX 가 해결</div>
+        <ul>
+          <li>그림 위치 자동 조정 (float)</li>
+          <li>참고문헌 번호 100% 자동</li>
+          <li>PM$_{2.5}$ → 아름다운 아래첨자</li>
+          <li>$\mu$g/m$^3$ → 수식 완벽 표현</li>
+          <li>교수님 실시간 공동 편집</li>
+        </ul>
+      </div>
     </div>
-    <div class="grid-3" style="margin-bottom:16px;">
-      <div class="card" style="border-color:rgba(239,154,154,0.25);">
-        <div style="font-size:28px;margin-bottom:8px;">🌐</div>
-        <div class="card-title" style="color:var(--accent);">설치 불필요</div>
-        <div class="card-body">브라우저만 있으면 OK. Mac·Windows·어디서나 동일한 환경</div>
-      </div>
-      <div class="card" style="border-color:rgba(79,195,247,0.25);">
-        <div style="font-size:28px;margin-bottom:8px;">👥</div>
-        <div class="card-title" style="color:var(--accent2);">실시간 공동편집</div>
-        <div class="card-body">지도교수·공동저자와 동시에 편집. 변경 이력 자동 저장</div>
-      </div>
-      <div class="card" style="border-color:rgba(105,240,174,0.25);">
-        <div style="font-size:28px;margin-bottom:8px;">📑</div>
-        <div class="card-title" style="color:var(--accent3);">저널 템플릿</div>
-        <div class="card-body">Elsevier, AGU, AMS 등 수천 개 공식 템플릿 무료 제공</div>
-      </div>
-    </div>
-    <div class="grid-2" style="gap:14px;">
-      <div class="card" style="border-color:rgba(239,154,154,0.15);">
-        <div class="card-title" style="color:var(--accent);">Word vs LaTeX/Overleaf</div>
-        <div class="card-body">Word는 수식·참고문헌 관리가 힘듦. LaTeX는 <strong style="color:var(--text);">수식·인용이 자동화</strong>되고 저널 포맷이 완벽하게 맞음</div>
-      </div>
-      <div class="card" style="border-color:rgba(79,195,247,0.15);">
-        <div class="card-title" style="color:var(--accent2);">무료 계획으로도 충분</div>
-        <div class="card-body">무료 계정으로 저장소 생성·공동편집(1명)·컴파일 모두 가능</div>
-      </div>
+    <div class="highlight-box" style="margin-top:16px">
+      🌍 <strong>국제 학술지 투고 표준:</strong> Atmospheric Environment, STOTEN 등 환경공학 주요 저널이 모두 LaTeX/Overleaf 템플릿을 공식 제공합니다.
     </div>
   </div>
-  <div class="slide-num">03 / 16</div>
-</div>
 
-<!-- 04 Overleaf 시작 -->
-<div class="slide" id="s4">
-  <div class="session-tag">🛠 실습 1</div>
-  <div class="h-large" style="margin-bottom:22px;">Overleaf <span class="accent">프로젝트 시작</span></div>
-  <div class="slide-body">
-    <div class="steps" style="margin-bottom:20px;">
-      <div class="step"><div class="step-num">1</div><div class="step-text"><strong>overleaf.com</strong> 접속 → Register (학교 이메일 권장)</div></div>
-      <div class="step"><div class="step-num">2</div><div class="step-text"><strong>New Project</strong> → <strong>Blank Project</strong> 또는 <strong>From Template</strong> 선택</div></div>
-      <div class="step"><div class="step-num">3</div><div class="step-text">템플릿 검색: 투고 목표 저널명 입력 (예: <code style="font-family:var(--mono);color:var(--accent);font-size:13px;">Atmospheric Environment</code>)</div></div>
-      <div class="step"><div class="step-num">4</div><div class="step-text">좌측 파일 목록에서 <strong>main.tex</strong> 클릭 → 편집 시작</div></div>
-    </div>
-    <div class="code-block">
-      <div class="code-header"><span class="code-lang">latex — 기본 문서 구조</span></div>
-      <pre>\documentclass{article}
-\usepackage[utf8]{inputenc}
-\usepackage{natbib}  <span class="cm">% 참고문헌 패키지</span>
-
-\title{서울시 PM2.5 장기 트렌드 분석}
-\author{홍길동}
-
-\begin{document}
-\maketitle
-
-\section{Introduction}
-본 연구는 ... \cite{WHO2021} ...
-
-\bibliographystyle{apalike}
-\bibliography{references}  <span class="cm">% references.bib 파일 연결</span>
-\end{document}</pre>
-    </div>
-  </div>
-  <div class="slide-num">04 / 16</div>
-</div>
-
-<!-- 05 Google Scholar BibTeX -->
-<div class="slide" id="s5">
-  <div class="session-tag">🔍 핵심 실습</div>
-  <div class="h-large" style="margin-bottom:22px;">Google Scholar에서 <span class="accent">BibTeX 가져오기</span></div>
-  <div class="slide-body">
-    <div class="steps" style="margin-bottom:20px;">
-      <div class="step">
+  <!-- S3: Overleaf 시작하기 -->
+  <div class="slide">
+    <div class="slide-label">실습 준비</div>
+    <h2 class="slide-title">Overleaf 계정 & 프로젝트 설정</h2>
+    <div class="step-list">
+      <div class="step-item">
         <div class="step-num">1</div>
-        <div class="step-text"><strong>scholar.google.com</strong> 에서 논문 검색 (예: "PM2.5 Seoul trend")</div>
+        <div class="step-content">
+          <h4>계정 생성</h4>
+          <p>overleaf.com → Register → 학교 이메일(@anyang.ac.kr) 사용 → 무료 계정으로 시작 가능</p>
+        </div>
       </div>
-      <div class="step">
+      <div class="step-item">
         <div class="step-num">2</div>
-        <div class="step-text">논문 제목 아래 <strong>" (따옴표 인용 아이콘)</strong> 클릭</div>
+        <div class="step-content">
+          <h4>새 프로젝트 생성</h4>
+          <p>New Project → Blank Project → 이름: "PM25_Thesis_홍길동" → Create</p>
+        </div>
       </div>
-      <div class="step">
+      <div class="step-item">
         <div class="step-num">3</div>
-        <div class="step-text">팝업 하단 <strong style="color:var(--accent);">BibTeX</strong> 클릭 → 텍스트 전체 복사</div>
+        <div class="step-content">
+          <h4>교수님과 공유</h4>
+          <p>상단 Share 버튼 → 교수님 이메일(huiyoung@anyang.ac.kr) → Can Edit → 실시간 공동 편집 시작</p>
+        </div>
       </div>
-      <div class="step">
+      <div class="step-item">
         <div class="step-num">4</div>
-        <div class="step-text">Overleaf → <strong>references.bib</strong> 파일 열기 → 붙여넣기</div>
-      </div>
-    </div>
-    <div class="bib-box">
-<span class="cm">% Google Scholar에서 복사한 BibTeX 예시</span>
-@article{<span class="fn">Kim2022</span>,
-  title={Long-term trend of PM2.5 concentrations in Seoul},
-  author={<span class="st">Kim, Jae-Hwan and Park, Soo-Young</span>},
-  journal={<span class="st">Atmospheric Environment</span>},
-  volume={<span class="num">280</span>},
-  pages={<span class="num">119--131</span>},
-  year={<span class="num">2022</span>},
-  publisher={<span class="st">Elsevier</span>}
-}
-    </div>
-  </div>
-  <div class="slide-num">05 / 16</div>
-</div>
-
-<!-- 06 references.bib 관리 -->
-<div class="slide" id="s6">
-  <div class="session-tag">📚 파일 관리</div>
-  <div class="h-large" style="margin-bottom:20px;"><span class="accent">references.bib</span> 관리 요령</div>
-  <div class="slide-body">
-    <div class="code-block" style="margin-bottom:14px;">
-      <div class="code-header"><span class="code-lang">bibtex — references.bib 구조 예시</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-      <pre><span class="cm">%% ── 대기질 관련 ──────────────────────</span>
-@article{<span class="fn">WHO2021guidelines</span>,
-  title   = {WHO global air quality guidelines},
-  author  = {<span class="st">{World Health Organization}</span>},
-  year    = {<span class="num">2021</span>},
-  url     = {<span class="st">https://www.who.int/...</span>}
-}
-
-@article{<span class="fn">Park2023seoul</span>,
-  title   = {Seasonal variation of PM2.5 in Seoul},
-  author  = {<span class="st">Park, S. and Lee, K.</span>},
-  journal = {<span class="st">Environ. Sci. Technol.</span>},
-  volume  = {<span class="num">57</span>}, pages = {<span class="num">1234--1245</span>},
-  year    = {<span class="num">2023</span>}
-}
-
-<span class="cm">%% ── 방법론 ───────────────────────────</span>
-@book{<span class="fn">Shumway2017</span>,
-  title  = {Time Series Analysis and Its Applications},
-  author = {<span class="st">Shumway, R.H. and Stoffer, D.S.</span>},
-  year   = {<span class="num">2017</span>}
-}</pre>
-    </div>
-    <div class="tip">
-      <div class="tip-label">💡 관리 팁</div>
-      Key 이름 규칙 통일: <code style="font-family:var(--mono);font-size:12px;">저자성+연도+키워드</code> (예: <code style="font-family:var(--mono);font-size:12px;">Kim2022seoul</code>) · 주제별 주석으로 섹션 구분
-    </div>
-  </div>
-  <div class="slide-num">06 / 16</div>
-</div>
-
-<!-- 07 cite 삽입 -->
-<div class="slide" id="s7">
-  <div class="session-tag">✍️ 실습</div>
-  <div class="h-large" style="margin-bottom:20px;">본문에 <span class="accent">\cite{} 삽입</span>하기</div>
-  <div class="slide-body">
-    <div class="code-block" style="margin-bottom:16px;">
-      <div class="code-header"><span class="code-lang">latex — 다양한 인용 방식</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-      <pre><span class="cm">% 기본 인용 — (Kim, 2022)</span>
-PM2.5는 WHO 기준을 초과하였다 \cite{Kim2022seoul}.
-
-<span class="cm">% 저자 이름 포함 — Kim (2022)에 따르면</span>
-\citet{Kim2022seoul}에 따르면 서울의 PM2.5는...
-
-<span class="cm">% 여러 문헌 동시 인용</span>
-여러 연구에서 감소 추세가 확인되었다 \cite{Kim2022seoul, Park2023seoul}.
-
-<span class="cm">% 페이지 지정</span>
-\cite[p.~15]{WHO2021guidelines}</pre>
-    </div>
-    <div class="grid-2" style="gap:14px;">
-      <div class="card" style="border-color:rgba(239,154,154,0.2);">
-        <div class="card-title" style="color:var(--accent);">참고문헌 스타일 변경</div>
-        <div class="card-body" style="font-family:var(--mono);font-size:12px;line-height:2;color:#5a3a3a;">
-          \bibliographystyle{apalike}  APA<br>
-          \bibliographystyle{ieeetr}   IEEE<br>
-          \bibliographystyle{nature}   Nature<br>
-          \bibliographystyle{agu}      AGU
+        <div class="step-content">
+          <h4>GitHub 연동 (선택)</h4>
+          <p>Menu → GitHub → pm25-thesis 저장소 연결 → Overleaf ↔ GitHub 양방향 동기화</p>
         </div>
       </div>
-      <div class="card" style="border-color:rgba(79,195,247,0.2);">
-        <div class="card-title" style="color:var(--accent2);">자동 정렬·번호</div>
-        <div class="card-body">인용 추가/삭제 시 참고문헌 목록과 번호가 <strong style="color:var(--text);">자동으로 업데이트</strong>됩니다.</div>
-      </div>
     </div>
   </div>
-  <div class="slide-num">07 / 16</div>
-</div>
 
-<!-- 08 다른 출처 BibTeX -->
-<div class="slide" id="s8">
-  <div class="session-tag">🔎 레퍼런스 수집</div>
-  <div class="h-large" style="margin-bottom:22px;">Google Scholar 외 <span class="accent">BibTeX 수집 방법</span></div>
-  <div class="slide-body">
-    <table style="margin-bottom:16px;">
-      <thead><tr><th>출처</th><th>BibTeX 찾는 방법</th></tr></thead>
-      <tbody>
-        <tr><td>Google Scholar</td><td>논문 하단 " → BibTeX 클릭</td></tr>
-        <tr><td>DOI 직접 입력</td><td>doi2bib.org 에서 DOI 입력 → BibTeX 생성</td></tr>
-        <tr><td>PubMed</td><td>논문 페이지 → Cite → Download .nbib → 변환</td></tr>
-        <tr><td>Elsevier / ScienceDirect</td><td>논문 페이지 → Export → BibTeX</td></tr>
-        <tr><td>AMS / AGU 저널</td><td>논문 페이지 → Tools → Citation → BibTeX</td></tr>
-        <tr><td>arXiv</td><td>논문 페이지 → Export BibTeX 링크</td></tr>
-      </tbody>
-    </table>
-    <div class="tip">
-      <div class="tip-label">💡 가장 빠른 방법</div>
-      DOI만 있으면 <strong>doi2bib.org</strong> 에서 바로 완성된 BibTeX 생성. DOI는 보통 논문 첫 페이지에 있습니다.
-    </div>
-  </div>
-  <div class="slide-num">08 / 16</div>
-</div>
-
-<!-- 09 Figure 삽입 -->
-<div class="slide" id="s9">
-  <div class="session-tag">🖼 Figure 삽입</div>
-  <div class="h-large" style="margin-bottom:20px;">GitHub Figure를 <span class="accent">Overleaf에 삽입</span></div>
-  <div class="slide-body">
-    <div class="code-block" style="margin-bottom:14px;">
-      <div class="code-header"><span class="code-lang">latex — Figure 삽입 표준 코드</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-      <pre>\usepackage{graphicx}  <span class="cm">% 헤더에 추가</span>
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=\columnwidth]{figures/fig1_pm25_trend}
-  \caption{서울시 연평균 PM2.5 농도 트렌드 (2015--2023).
-           빨간 점선: WHO 기준 (15\,\si{\micro\gram\per\cubic\metre}).}
-  \label{fig:trend}
-\end{figure}
-
-<span class="cm">% 본문에서 참조</span>
-Figure \ref{fig:trend}에서 볼 수 있듯이...</pre>
-    </div>
-    <div class="steps">
-      <div class="step"><div class="step-num">1</div><div class="step-text">GitHub에서 figures/ 폴더의 Figure 파일 다운로드</div></div>
-      <div class="step"><div class="step-num">2</div><div class="step-text">Overleaf 좌측 파일 목록 → <strong>Upload</strong> → figures/ 폴더 생성 후 업로드</div></div>
-      <div class="step"><div class="step-num">3</div><div class="step-text">위 코드로 본문에 삽입 → Recompile 클릭</div></div>
-    </div>
-  </div>
-  <div class="slide-num">09 / 16</div>
-</div>
-
-<!-- 10 유용한 LaTeX 패턴 -->
-<div class="slide" id="s10">
-  <div class="session-tag">📋 치트시트</div>
-  <div class="h-large" style="margin-bottom:20px;">논문 작성 <span class="accent">LaTeX 필수 패턴</span></div>
-  <div class="slide-body">
+  <!-- S4: LaTeX 기초 문법 -->
+  <div class="slide">
+    <div class="slide-label">LaTeX 기초</div>
+    <h2 class="slide-title">LaTeX 핵심 문법 — 5분 완성</h2>
     <div class="code-block">
-      <div class="code-header"><span class="code-lang">latex — 대기과학 논문 자주 쓰는 코드</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-      <pre><span class="cm">% 단위 (siunitx 패키지)</span>
-\usepackage{siunitx}
-PM2.5 농도는 \SI{25.3}{\micro\gram\per\cubic\metre}였다.
-
-<span class="cm">% 수식</span>
-\begin{equation}
-  \bar{C} = \frac{1}{n}\sum_{i=1}^{n} C_i
-  \label{eq:mean}
-\end{equation}
-
-<span class="cm">% 표</span>
-\begin{table}[h]
-  \caption{연도별 PM2.5 통계}
-  \begin{tabular}{lrrr}
-    \hline
-    연도 & 평균 & 최대 & 초과일수 \\
-    \hline
-    2020 & 22.1 & 98.3 & 47 \\
-    \hline
-  \end{tabular}
-\end{table}
-
-<span class="cm">% 줄바꿈 없는 공백 (숫자+단위 분리 방지)</span>
-25.3~\si{\micro\gram\per\cubic\metre}</pre>
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      <span class="comment">% ===== 미세먼지 논문 기본 구조 =====</span><br>
+      <span class="cmd">\documentclass</span>[12pt,a4paper]{article}<br>
+      <span class="cmd">\usepackage</span>[utf8]{inputenc}<br>
+      <span class="cmd">\usepackage</span>{kotex} <span class="comment">% 한국어 지원</span><br>
+      <span class="cmd">\usepackage</span>{graphicx, amsmath, booktabs, natbib}<br>
+      <span class="cmd">\usepackage</span>[left=3cm,right=2.5cm,top=3cm,bottom=2.5cm]{geometry}<br><br>
+      <span class="cmd">\title</span>{<span class="str">수도권 PM$_{2.5}$ 농도 특성 분석</span>}<br>
+      <span class="cmd">\author</span>{<span class="str">홍길동$^1$ \and 윤희영$^1$</span>}<br><br>
+      <span class="cmd">\begin</span>{document}<br>
+      <span class="cmd">\maketitle</span><br>
+      <span class="cmd">\tableofcontents</span> <span class="comment">% 목차 자동 생성</span><br><br>
+      <span class="kw">\section</span>{서론}<br>
+      PM$_{2.5}$는 직경 2.5\,$\mu$m 이하의 미세먼지로서...<br><br>
+      <span class="kw">\bibliographystyle</span>{apalike}<br>
+      <span class="kw">\bibliography</span>{references}<br>
+      <span class="cmd">\end</span>{document}
     </div>
   </div>
-  <div class="slide-num">10 / 16</div>
-</div>
 
-<!-- 11 통합 워크플로우 -->
-<div class="slide" id="s11">
-  <div class="session-tag">🔗 통합</div>
-  <div class="h-large" style="margin-bottom:22px;">전체 <span class="accent">통합 워크플로우</span></div>
-  <div class="slide-body">
-    <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:20px;">
-      <div style="display:flex;gap:14px;align-items:center;">
-        <div style="width:36px;height:36px;border-radius:50%;background:rgba(79,195,247,0.12);border:1px solid rgba(79,195,247,0.3);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--accent2);flex-shrink:0;">1</div>
-        <div><strong style="color:var(--text);">데이터 수집</strong> <span style="color:#5a3a3a;font-family:var(--sans);font-size:14px;">— AirKorea · data/raw/ 저장 · GitHub 커밋</span></div>
+  <!-- S5: BibTeX 개념 -->
+  <div class="slide">
+    <div class="slide-label">참고문헌 시스템</div>
+    <h2 class="slide-title">BibTeX — 참고문헌 자동 관리</h2>
+    <div class="card-grid cols-2" style="max-width:860px">
+      <div class="card bad">
+        <div class="card-icon">😤</div>
+        <div class="card-title">수동 방식</div>
+        <ul>
+          <li>본문: "...연구되었다 (Kim et al., 2023)"</li>
+          <li>끝에 직접 타이핑: 1. Kim J, Park S...</li>
+          <li>새 논문 추가 → 번호 전부 수정</li>
+          <li>형식 변경 → 300개 일일이 편집</li>
+        </ul>
       </div>
-      <div style="display:flex;gap:14px;align-items:center;">
-        <div style="width:36px;height:36px;border-radius:50%;background:rgba(206,147,216,0.12);border:1px solid rgba(206,147,216,0.3);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--accent4);flex-shrink:0;">2</div>
-        <div><strong style="color:var(--text);">AI 코드 생성</strong> <span style="color:#5a3a3a;font-family:var(--sans);font-size:14px;">— Claude Code로 전처리·분석·시각화 코드 작성</span></div>
-      </div>
-      <div style="display:flex;gap:14px;align-items:center;">
-        <div style="width:36px;height:36px;border-radius:50%;background:rgba(105,240,174,0.12);border:1px solid rgba(105,240,174,0.3);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--accent3);flex-shrink:0;">3</div>
-        <div><strong style="color:var(--text);">버전 관리</strong> <span style="color:#5a3a3a;font-family:var(--sans);font-size:14px;">— GitHub Branch → PR → Merge로 코드 관리</span></div>
-      </div>
-      <div style="display:flex;gap:14px;align-items:center;">
-        <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,183,77,0.12);border:1px solid rgba(255,183,77,0.3);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--accent4);flex-shrink:0;">4</div>
-        <div><strong style="color:var(--text);">결과 생성</strong> <span style="color:#5a3a3a;font-family:var(--sans);font-size:14px;">— figures/ 폴더에 300dpi Figure 저장</span></div>
-      </div>
-      <div style="display:flex;gap:14px;align-items:center;">
-        <div style="width:36px;height:36px;border-radius:50%;background:rgba(239,154,154,0.2);border:1px solid rgba(239,154,154,0.5);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--accent);flex-shrink:0;">5</div>
-        <div><strong style="color:var(--text);">논문 작성</strong> <span style="color:#5a3a3a;font-family:var(--sans);font-size:14px;">— Overleaf에서 Figure 삽입 + Google Scholar BibTeX 추가</span></div>
+      <div class="card teal">
+        <div class="card-icon">🎯</div>
+        <div class="card-title">BibTeX 방식</div>
+        <ul>
+          <li>references.bib 파일에 논문 정보 저장</li>
+          <li>본문: <code style="color:var(--accent2)">\cite{kim2023}</code> 한 줄로 끝</li>
+          <li>새 논문 추가해도 번호 자동 재정렬</li>
+          <li>스타일 한 줄만 바꾸면 APA↔번호식 전환</li>
+        </ul>
       </div>
     </div>
-    <div class="tip">
-      <div class="tip-label">🎯 핵심 원칙</div>
-      코드·데이터는 <strong>GitHub</strong> · 논문 원고는 <strong>Overleaf</strong> · 서로 독립적으로 관리 → 언제든 재현 가능!
+    <div class="highlight-box" style="margin-top:16px">
+      💡 <strong>핵심 원리:</strong> references.bib 파일에 논문 정보를 저장해두면, <code style="color:var(--accent)">\cite{키}</code>를 쓸 때마다 LaTeX이 자동으로 올바른 형식의 참고문헌을 생성합니다.
     </div>
   </div>
-  <div class="slide-num">11 / 16</div>
-</div>
 
-<!-- 12 실전 데모 -->
-<div class="slide" id="s12">
-  <div class="session-tag">🎬 라이브 데모</div>
-  <div class="h-large" style="margin-bottom:22px;">처음부터 끝까지 <span class="accent">라이브 데모</span></div>
-  <div class="slide-body">
-    <div class="checklist">
-      <div class="check-item"><div class="check-box">①</div><div class="check-text"><strong>GitHub</strong>에서 figures/fig1_pm25_trend.tiff 확인</div></div>
-      <div class="check-item"><div class="check-box">②</div><div class="check-text"><strong>Google Scholar</strong>에서 "Seoul PM2.5 2023" 검색 → BibTeX 복사</div></div>
-      <div class="check-item"><div class="check-box">③</div><div class="check-text"><strong>Overleaf</strong> → references.bib에 붙여넣기</div></div>
-      <div class="check-item"><div class="check-box">④</div><div class="check-text">main.tex Introduction에 <code style="font-family:var(--mono);color:var(--accent);font-size:13px;">\cite{}</code> 삽입</div></div>
-      <div class="check-item"><div class="check-box">⑤</div><div class="check-text">Figure 파일 업로드 → <code style="font-family:var(--mono);color:var(--accent);font-size:13px;">\includegraphics</code> 삽입</div></div>
-      <div class="check-item"><div class="check-box">⑥</div><div class="check-text"><strong>Recompile</strong> → PDF 결과 확인</div></div>
-      <div class="check-item"><div class="check-box">⑦</div><div class="check-text">Overleaf <strong>Share</strong> → 지도교수 초대</div></div>
-    </div>
-  </div>
-  <div class="slide-num">12 / 16</div>
-</div>
-
-<!-- 13 자기주도 학습 로드맵 -->
-<div class="slide" id="s13">
-  <div class="session-tag">🗺 다음 단계</div>
-  <div class="h-large" style="margin-bottom:22px;">수료 후 <span class="accent">자기주도 학습 로드맵</span></div>
-  <div class="slide-body">
-    <div class="grid-2" style="gap:14px;margin-bottom:16px;">
-      <div class="card" style="border-color:rgba(79,195,247,0.2);">
-        <div class="card-title" style="color:var(--accent2);">🔵 단기 (1개월)</div>
-        <div class="card-body" style="line-height:2;">
-          GitHub Actions로 코드 자동 테스트<br>
-          Jupyter Book으로 연구 문서화<br>
-          첫 논문 Overleaf 초안 완성
+  <!-- S6: Google Scholar → BibTeX -->
+  <div class="slide">
+    <div class="slide-label">핵심 워크플로우</div>
+    <h2 class="slide-title">Google Scholar → BibTeX → Overleaf (3단계)</h2>
+    <div class="step-list">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Google Scholar에서 논문 검색</h4>
+          <p>scholar.google.com → 검색: "PM2.5 Seoul seasonal variation 2020" → 원하는 논문 찾기</p>
         </div>
       </div>
-      <div class="card" style="border-color:rgba(105,240,174,0.2);">
-        <div class="card-title" style="color:var(--accent3);">🟢 중기 (3개월)</div>
-        <div class="card-body" style="line-height:2;">
-          Python 패키지로 분석 코드 모듈화<br>
-          Zenodo로 데이터·코드 DOI 발급<br>
-          오픈사이언스 논문 재현 환경 구축
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>인용 버튼(큰따옴표 아이콘) → BibTeX 클릭</h4>
+          <p>논문 제목 아래 " 아이콘 클릭 → 팝업에서 BibTeX 선택 → 열린 텍스트 전체 복사 (Ctrl+A, Ctrl+C)</p>
         </div>
       </div>
-      <div class="card" style="border-color:rgba(239,154,154,0.2);">
-        <div class="card-title" style="color:var(--accent);">🔴 장기 (6개월+)</div>
-        <div class="card-body" style="line-height:2;">
-          ML 모델로 PM2.5 예측 (scikit-learn)<br>
-          공동 연구자와 오픈소스 프로젝트<br>
-          연구 GitHub 포트폴리오 구축
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Overleaf references.bib에 붙여넣기</h4>
+          <p>Overleaf → 새 파일 references.bib 생성 → 복사한 내용 붙여넣기 → 저장 → 완료!</p>
         </div>
       </div>
-      <div class="card" style="border-color:rgba(255,183,77,0.2);">
-        <div class="card-title" style="color:var(--accent4);">📚 추천 학습 자료</div>
-        <div class="card-body" style="line-height:1.8;font-size:12px;">
-          The Turing Way (오픈사이언스 가이드)<br>
-          Pro Git Book (git-scm.com/book/ko)<br>
-          Overleaf Documentation<br>
-          Python for Data Analysis (Wes McKinney)
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h4>본문에서 인용: \cite{키}</h4>
+          <p>BibTeX 첫 줄의 키 확인: @article{<strong>kim2023pm25</strong>, → 본문에서 \citep{kim2023pm25} 사용</p>
         </div>
       </div>
     </div>
   </div>
-  <div class="slide-num">13 / 16</div>
-</div>
 
-<!-- 14 전체 강의 요약 -->
-<div class="slide" id="s14">
-  <div class="session-tag">📖 전체 요약</div>
-  <div class="h-large" style="margin-bottom:22px;">5회차 전체 <span class="accent">총정리</span></div>
-  <div class="slide-body">
-    <table>
-      <thead><tr><th>회차</th><th>핵심 내용</th><th>실무 활용</th></tr></thead>
-      <tbody>
-        <tr><td>1회차</td><td>Git 기초 · add·commit·push · 폴더 구조</td><td>연구 코드 버전 관리 시작</td></tr>
-        <tr><td>2회차</td><td>Branch · PR · Issues · Fork · 협업</td><td>지도교수와 코드 리뷰</td></tr>
-        <tr><td>3회차</td><td>Claude Code · CLAUDE.md · 코드 생성</td><td>AI로 분석 코드 10배 빠르게</td></tr>
-        <tr><td>4회차</td><td>Codex API · 시계열 분석 · 논문 Figure</td><td>배치 자동화 · 저널 품질 Figure</td></tr>
-        <tr><td>5회차</td><td>Overleaf · BibTeX · 통합 워크플로우</td><td>처음부터 끝까지 재현 가능한 논문</td></tr>
-      </tbody>
-    </table>
-    <div class="highlight" style="margin-top:16px;">
-      데이터 → 코드(<strong style="color:var(--accent2);">GitHub</strong>) → 분석(<strong style="color:var(--accent4);">Claude Code</strong>) → 논문(<strong style="color:var(--accent);">Overleaf</strong>)<br>
-      이 파이프라인 하나로 <strong style="color:var(--accent);">재현 가능한 연구</strong>가 완성됩니다.
+  <!-- S7: BibTeX 형식 -->
+  <div class="slide">
+    <div class="slide-label">BibTeX 형식 이해</div>
+    <h2 class="slide-title">references.bib 파일 구조</h2>
+    <div class="bibtex-box">
+      <button class="copy-btn-y" onclick="copyCode(this)">copy</button>
+      <span class="bc">% Google Scholar에서 복사한 BibTeX 예시 2개</span><br><br>
+      <span class="bk">@article</span>{<span class="bv">kim2023pm25</span>,<br>
+      &nbsp;&nbsp;<span class="bf">title</span> = {<span class="str">Seasonal variation of PM2.5 and its chemical composition in Seoul</span>},<br>
+      &nbsp;&nbsp;<span class="bf">author</span> = {<span class="str">Kim, Jeonghyeon and Park, Seongmin and Lee, Dongwon</span>},<br>
+      &nbsp;&nbsp;<span class="bf">journal</span> = {<span class="str">Atmospheric Environment</span>},<br>
+      &nbsp;&nbsp;<span class="bf">volume</span> = {<span class="str">285</span>},<br>
+      &nbsp;&nbsp;<span class="bf">pages</span> = {<span class="str">119--132</span>},<br>
+      &nbsp;&nbsp;<span class="bf">year</span> = {<span class="str">2023</span>},<br>
+      &nbsp;&nbsp;<span class="bf">publisher</span> = {<span class="str">Elsevier</span>}<br>
+      }<br><br>
+      <span class="bk">@techreport</span>{<span class="bv">who2021</span>,<br>
+      &nbsp;&nbsp;<span class="bf">title</span> = {<span class="str">WHO global air quality guidelines: particulate matter, ozone, NO2, SO2 and CO</span>},<br>
+      &nbsp;&nbsp;<span class="bf">author</span> = {<span class="str">{World Health Organization}</span>},<br>
+      &nbsp;&nbsp;<span class="bf">year</span> = {<span class="str">2021</span>},<br>
+      &nbsp;&nbsp;<span class="bf">institution</span> = {<span class="str">World Health Organization</span>}<br>
+      }
+    </div>
+    <div class="highlight-box yellow" style="margin-top:12px">
+      🔑 <span style="font-family:'JetBrains Mono',monospace;color:var(--accent3)">kim2023pm25</span>와 <span style="font-family:'JetBrains Mono',monospace;color:var(--accent3)">who2021</span>이 <strong>인용 키</strong> — 본문에서 <code style="color:var(--accent)">\cite{kim2023pm25}</code>로 사용
     </div>
   </div>
-  <div class="slide-num">14 / 16</div>
-</div>
 
-<!-- 15 Q&A -->
-<div class="slide" id="s15">
-  <div class="session-tag">❓ Q&A</div>
-  <div class="h-large" style="margin-bottom:28px;"><span class="accent">질문 & 답변</span></div>
-  <div class="slide-body">
-    <div class="grid-2" style="gap:14px;margin-bottom:20px;">
-      <div class="card" style="border-color:rgba(239,154,154,0.2);">
-        <div class="card-title" style="color:var(--accent);">자주 묻는 질문</div>
-        <div class="card-body" style="line-height:2.2;">
-          Q: Git과 Google Drive 중 뭐가 나아요?<br>
-          Q: AI 코드를 그대로 써도 되나요?<br>
-          Q: Overleaf 무료로 충분한가요?<br>
-          Q: BibTeX 오류가 나면 어떻게 해요?
+  <!-- S8: 본문 인용 실습 -->
+  <div class="slide">
+    <div class="slide-label">실습 1</div>
+    <h2 class="slide-title">논문 본문에 인용 삽입하기</h2>
+    <div class="code-block">
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      <span class="comment">% ===== 서론 섹션 예시 (미세먼지 연구 논문) =====</span><br>
+      <span class="kw">\section</span>{서론}<br><br>
+      PM$_{2.5}$(직경 2.5\,$\mu$m 이하 미세먼지)는 호흡기 및<br>
+      심혈관계 질환을 유발하는 대기오염물질로, WHO는 연평균<br>
+      5\,$\mu$g/m$^3$을 기준치로 권고하고 있다 <span class="str">\citep{who2021}</span>.<br><br>
+      수도권 지역의 PM$_{2.5}$ 농도는 계절에 따라 뚜렷한 변동을<br>
+      보이며, 특히 봄철과 겨울철에 고농도 현상이 관측된다<br>
+      <span class="str">\citep{kim2023pm25}</span>. <span class="comment">% 괄호 인용</span><br><br>
+      <span class="comment">% \citet{} : 문장 안에 저자 이름 포함</span><br>
+      <span class="str">\citet{kim2023pm25}</span>는 서울 PM$_{2.5}$의 주요 성분으로<br>
+      황산염과 질산염을 지목하였다.<br><br>
+      <span class="comment">% 마지막: 자동 참고문헌 목록 생성</span><br>
+      <span class="kw">\bibliographystyle</span>{apalike}<br>
+      <span class="kw">\bibliography</span>{references}
+    </div>
+  </div>
+
+  <!-- S9: 그림 & 표 삽입 -->
+  <div class="slide">
+    <div class="slide-label">실습 2</div>
+    <h2 class="slide-title">Claude Code 분석 결과 → Overleaf 통합</h2>
+    <div class="code-block">
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      <span class="comment">% ===== 그림 삽입 (Session 3-4에서 만든 figures/) =====</span><br>
+      <span class="cmd">\begin</span>{figure}[htbp]<br>
+      &nbsp;&nbsp;<span class="cmd">\centering</span><br>
+      &nbsp;&nbsp;<span class="cmd">\includegraphics</span>[width=0.85<span class="kw">\textwidth</span>]{figures/seasonal_boxplot.png}<br>
+      &nbsp;&nbsp;<span class="cmd">\caption</span>{수도권 PM$_{2.5}$ 계절별 농도 분포 (2020--2023).<br>
+      &nbsp;&nbsp;점선: WHO 기준치 (5\,$\mu$g/m$^3$),<br>
+      &nbsp;&nbsp;실선: 국내 환경기준 (15\,$\mu$g/m$^3$).}<br>
+      &nbsp;&nbsp;<span class="cmd">\label</span>{fig:seasonal}<br>
+      <span class="cmd">\end</span>{figure}<br><br>
+      <span class="comment">% 본문에서 그림 참조 (번호 자동)</span><br>
+      Fig.~<span class="cmd">\ref</span>{fig:seasonal}에서 볼 수 있듯이...<br><br>
+      <span class="comment">% ===== pandas → LaTeX 표 자동 변환 =====</span><br>
+      <span class="comment">% Python에서: seasonal_stats.to_latex(caption="...", label="tab:stats")</span><br>
+      <span class="comment">% 출력된 코드를 Overleaf에 그대로 붙여넣기!</span>
+    </div>
+    <div class="highlight-box teal" style="margin-top:12px">
+      🤖 <strong>Claude Code 프롬프트:</strong> "seasonal_stats 데이터프레임을 Overleaf에서 쓸 booktabs 스타일 LaTeX 표로 변환해줘"
+    </div>
+  </div>
+
+  <!-- S10: 수식 작성 -->
+  <div class="slide">
+    <div class="slide-label">LaTeX 수식</div>
+    <h2 class="slide-title">미세먼지 연구 수식 LaTeX으로 표현</h2>
+    <div class="code-block">
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      <span class="comment">% ===== 환경공학 논문에서 자주 쓰는 수식들 =====</span><br><br>
+      <span class="comment">% 인라인 수식 (문장 안)</span><br>
+      대기확산 방정식에서 PM$_{2.5}$ 농도 $C$ (단위: $\mu$g/m$^3$)는...<br><br>
+      <span class="comment">% 독립 수식 (번호 있음)</span><br>
+      <span class="cmd">\begin</span>{equation}<br>
+      &nbsp;&nbsp;C(x,y,z) = \frac{Q}{2\pi\sigma_y\sigma_z u}<br>
+      &nbsp;&nbsp;\exp\left(-\frac{y^2}{2\sigma_y^2}\right)<br>
+      &nbsp;&nbsp;\exp\left(-\frac{z^2}{2\sigma_z^2}\right)<br>
+      &nbsp;&nbsp;<span class="cmd">\label</span>{eq:gaussian}<br>
+      <span class="cmd">\end</span>{equation}<br><br>
+      여기서 $Q$는 배출량 (g/s), $\sigma_y$, $\sigma_z$는<br>
+      수평 및 수직 확산계수를 나타낸다 (Eq.~<span class="cmd">\ref</span>{eq:gaussian}).<br><br>
+      <span class="comment">% 상관계수 표현</span><br>
+      PM$_{2.5}$와 기온의 피어슨 상관계수 ($r = -0.43$, $p < 0.01$)는...
+    </div>
+  </div>
+
+  <!-- S11: 참고문헌 수집 전략 -->
+  <div class="slide">
+    <div class="slide-label">연구 전략</div>
+    <h2 class="slide-title">미세먼지 논문 참고문헌 수집 전략</h2>
+    <div class="card-grid cols-2" style="max-width:860px">
+      <div class="card">
+        <div class="card-icon">🔍</div>
+        <div class="card-title">Google Scholar 검색 키워드</div>
+        <ul>
+          <li>PM2.5 Seoul Korea seasonal variation</li>
+          <li>fine particulate matter health effects Korea</li>
+          <li>atmospheric dispersion AERMOD Korea</li>
+          <li>aerosol chemical composition Seoul</li>
+          <li>WHO air quality guidelines 2021</li>
+          <li>AI machine learning PM2.5 prediction</li>
+        </ul>
+      </div>
+      <div class="card teal">
+        <div class="card-icon">📚</div>
+        <div class="card-title">주요 저널 (환경공학)</div>
+        <ul>
+          <li>Atmospheric Environment (Elsevier)</li>
+          <li>Science of the Total Environment</li>
+          <li>Environmental Research</li>
+          <li>Environmental Science &amp; Technology</li>
+          <li>한국대기환경학회지 (국내)</li>
+          <li>대기 (한국기상학회)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="highlight-box yellow" style="margin-top:14px">
+      🎯 <strong>목표:</strong> 논문 제출 전 references.bib에 <strong>30개 이상</strong> 수집. 수업 교재·교수님 추천 논문 우선 포함.<br>
+      <strong>팁:</strong> 논문 1편 찾으면 → 그 논문의 참고문헌도 확인 → 연쇄적으로 확장
+    </div>
+  </div>
+
+  <!-- S12: 안양대 논문 서식 -->
+  <div class="slide">
+    <div class="slide-label">학교 서식</div>
+    <h2 class="slide-title">안양대학교 대학원 논문 서식 적용</h2>
+    <div class="card-grid cols-2" style="max-width:860px">
+      <div class="card">
+        <div class="card-icon">📐</div>
+        <div class="card-title">공식 규정 (대학원 논문서식 참조)</div>
+        <ul>
+          <li>용지: A4 (210×297mm)</li>
+          <li>여백: 상30 하25 좌30 우25mm</li>
+          <li>본문: 신명조 11pt, 줄간격 200%</li>
+          <li>페이지: 아라비아 숫자, 하단 중앙</li>
+          <li>장 제목: 굵은 글씨, 가운데 정렬</li>
+        </ul>
+      </div>
+      <div class="card yellow">
+        <div class="card-icon">⚙️</div>
+        <div class="card-title">Overleaf 설정 코드</div>
+        <div style="margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent3);line-height:1.9;">
+          \usepackage[<br>
+          &nbsp;&nbsp;left=30mm, right=25mm,<br>
+          &nbsp;&nbsp;top=30mm, bottom=25mm<br>
+          ]{geometry}<br>
+          \linespread{2.0}<br>
+          \setmainfont{NanumMyeongjo}
         </div>
       </div>
-      <div class="card" style="border-color:rgba(79,195,247,0.2);">
-        <div class="card-title" style="color:var(--accent2);">도움 받을 수 있는 곳</div>
-        <div class="card-body" style="line-height:2.2;">
-          Stack Overflow (코딩 오류)<br>
-          GitHub Discussions (협업)<br>
-          Overleaf Documentation<br>
-          Claude.ai (즉각적인 도움)
+    </div>
+    <div class="highlight-box" style="margin-top:14px">
+      📋 <strong>확인 경로:</strong> 안양대 일반대학원 홈페이지 → 자료실 → 논문서식 → 최신 양식 다운로드 후 Overleaf에 반영
+    </div>
+  </div>
+
+  <!-- S13: 전체 5세션 통합 워크플로우 -->
+  <div class="slide">
+    <div class="slide-label">최종 통합</div>
+    <h2 class="slide-title">5세션 전체 통합 — 논문 완성 흐름</h2>
+    <div class="step-list">
+      <div class="step-item">
+        <div class="step-num">S1</div>
+        <div class="step-content">
+          <h4>Git으로 pm25-thesis 저장소 구축</h4>
+          <p>data / analysis / figures / docs 폴더 구조 → 매일 커밋 → GitHub 백업</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">S2</div>
+        <div class="step-content">
+          <h4>브랜치로 실험 & 교수님 PR 리뷰</h4>
+          <p>분석 시도마다 브랜치 → PR 생성 → 윤희영 교수님 코드 리뷰 → main 병합</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">S3-4</div>
+        <div class="step-content">
+          <h4>AI로 분석 파이프라인 완성</h4>
+          <p>Claude Code → PM2.5 분석 코드 생성 → figures/ 그래프 자동 생성 → Git 커밋</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">S5</div>
+        <div class="step-content">
+          <h4>Overleaf에서 논문 작성 & 완성</h4>
+          <p>figures/ 업로드 → LaTeX 논문 작성 → Google Scholar BibTeX → 교수님 공동 편집 → 제출!</p>
         </div>
       </div>
     </div>
-    <div class="tip">
-      <div class="tip-label">💬 강의 이후</div>
-      강의 자료와 예제 코드는 모두 GitHub 저장소에 있습니다. 막히는 것이 있으면 이슈로 등록해주세요!
+  </div>
+
+  <!-- S14: 치트시트 -->
+  <div class="slide">
+    <div class="slide-label">치트시트</div>
+    <h2 class="slide-title">Overleaf + BibTeX 치트시트</h2>
+    <div class="code-block">
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      <span class="comment">% ===== 자주 쓰는 LaTeX 명령어 =====</span><br><br>
+      <span class="comment">% 섹션 구조</span><br>
+      <span class="cmd">\section</span>{제목} &nbsp;<span class="cmd">\subsection</span>{소제목} &nbsp;<span class="cmd">\subsubsection</span>{소소제목}<br><br>
+      <span class="comment">% 수식 (미세먼지 연구)</span><br>
+      PM$_{2.5}$ &nbsp;&nbsp;<span class="comment">% 아래첨자</span><br>
+      $\mu$g/m$^3$ &nbsp;<span class="comment">% 단위</span><br>
+      $\pm$ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">% 오차 ±</span><br>
+      $p < 0.05$ &nbsp;&nbsp;<span class="comment">% 통계 유의성</span><br><br>
+      <span class="comment">% 인용</span><br>
+      <span class="kw">\citep</span>{key} &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">% (Kim et al., 2023)</span><br>
+      <span class="kw">\citet</span>{key} &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">% Kim et al. (2023)</span><br><br>
+      <span class="comment">% 상호 참조</span><br>
+      Fig.~<span class="cmd">\ref</span>{fig:seasonal} &nbsp;<span class="comment">% Fig. 1</span><br>
+      Table~<span class="cmd">\ref</span>{tab:stats} &nbsp;&nbsp;&nbsp;<span class="comment">% Table 2</span><br>
+      Eq.~<span class="cmd">\ref</span>{eq:gaussian} &nbsp;&nbsp;&nbsp;<span class="comment">% Eq. (1)</span><br><br>
+      <span class="comment">% 참고문헌 목록 (마지막 페이지)</span><br>
+      <span class="kw">\bibliographystyle</span>{apalike} <span class="comment">% 또는 ieeetr, unsrt</span><br>
+      <span class="kw">\bibliography</span>{references}
     </div>
   </div>
-  <div class="slide-num">15 / 16</div>
-</div>
 
-<!-- 16 수료 -->
-<div class="slide" id="s16">
-  <div class="cover-bg"></div>
-  <div class="cover-content" style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;">
-    <div style="font-size:56px;margin-bottom:20px;">🎓</div>
-    <div class="session-tag" style="margin:0 auto 20px;">수강 완료</div>
-    <div class="h-giant" style="margin-bottom:16px;">
-      수고하셨습니다!<br><span class="accent">잘 하셨어요.</span>
-    </div>
-    <div class="body" style="font-size:17px;max-width:500px;margin-bottom:32px;color:#8a5a5a;">
-      GitHub · Claude Code · Overleaf를 연결한<br>
-      재현 가능한 미세먼지 연구 워크플로우가<br>
-      여러분의 논문을 한 단계 발전시켜줄 거예요.
-    </div>
-    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-      <span class="pill" style="background:rgba(79,195,247,0.1);color:var(--accent2);border:1px solid rgba(79,195,247,0.28);">GitHub ✓</span>
-      <span class="pill" style="background:rgba(206,147,216,0.1);color:#ce93d8;border:1px solid rgba(206,147,216,0.28);">Claude Code ✓</span>
-      <span class="pill" style="background:rgba(255,183,77,0.1);color:var(--accent4);border:1px solid rgba(255,183,77,0.28);">Codex ✓</span>
-      <span class="pill" style="background:rgba(239,154,154,0.1);color:var(--accent);border:1px solid rgba(239,154,154,0.28);">Overleaf ✓</span>
+  <!-- S15: 전체 5세션 총정리 -->
+  <div class="slide">
+    <div class="slide-label">수료 총정리</div>
+    <h2 class="slide-title">5세션 완주 — 석사 논문 디지털 연구 도구 마스터</h2>
+    <div class="final-card">
+      <h3>🏆 미세먼지관리전공 석사생이 익힌 5가지 무기</h3>
+      <div class="final-row">
+        <div class="final-num">1</div>
+        <div class="final-content">
+          <h4>Git & GitHub — 연구의 타임머신</h4>
+          <p>버전 관리 · 일일 커밋 루틴 · GitHub 안전 백업 · .gitignore 설정</p>
+        </div>
+      </div>
+      <div class="final-row">
+        <div class="final-num">2</div>
+        <div class="final-content">
+          <h4>브랜치 & PR — 교수님과 스마트 협업</h4>
+          <p>실험 브랜치 분리 · Pull Request 코드 리뷰 · Issue 연구 관리</p>
+        </div>
+      </div>
+      <div class="final-row">
+        <div class="final-num">3</div>
+        <div class="final-content">
+          <h4>Claude Code — AI 공동 연구자</h4>
+          <p>PM2.5 분석 파이프라인 · 오류 자동 해결 · Git 연계 자동화</p>
+        </div>
+      </div>
+      <div class="final-row">
+        <div class="final-num">4</div>
+        <div class="final-content">
+          <h4>AI 도구 생태계 — 전략적 선택과 조합</h4>
+          <p>ChatGPT 탐색 · Claude Code 개발 · Copilot 보조 · 상황별 최적 조합</p>
+        </div>
+      </div>
+      <div class="final-row">
+        <div class="final-num">5</div>
+        <div class="final-content">
+          <h4>Overleaf + BibTeX — 논문 완성 시스템</h4>
+          <p>LaTeX 논문 · Google Scholar 1클릭 인용 · 교수님 공동 편집 · 국제 저널 투고 준비</p>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="slide-num">16 / 16</div>
-</div>
+
+  <!-- S16: 최종 과제 -->
+  <div class="slide">
+    <div class="slide-label">최종 과제</div>
+    <h2 class="slide-title">Session 5 최종 과제 — 논문 초안 패키지</h2>
+    <div class="assignment">
+      <h3>📝 최종 과제 (수료 조건)</h3>
+      <ol>
+        <li>
+          <strong>Overleaf 프로젝트 생성 & 교수님 공유</strong>
+          <span>제목: PM25_Thesis_[이름] | huiyoung@anyang.ac.kr 편집 권한 공유</span>
+        </li>
+        <li>
+          <strong>LaTeX 논문 기본 구조 완성</strong>
+          <span>서론 1~2단락 (PM2.5 소개, 연구 필요성) + 목차 + 방법론 섹션 제목</span>
+        </li>
+        <li>
+          <strong>references.bib에 10개 이상 논문 수집</strong>
+          <span>Google Scholar에서 BibTeX 복사 | 전공 관련 논문 우선 (대기확산, PM 측정, AI 예측 등)</span>
+        </li>
+        <li>
+          <strong>Session 3-4 분석 그래프 1개 이상 Overleaf에 삽입</strong>
+          <span>figures/ 폴더 업로드 → \includegraphics → 그림 번호·캡션 포함</span>
+        </li>
+        <li>
+          <strong>GitHub pm25-thesis 저장소 최종 정리</strong>
+          <span>README.md 업데이트 | 전체 커밋 10개 이상 | Overleaf 연동 확인</span>
+        </li>
+        <li>
+          <strong>🎁 보너스: 논문 서론 전체 완성</strong>
+          <span>Claude.ai로 한국어 초안 작성 → Overleaf에 입력 → 교수님 피드백 PR 요청</span>
+        </li>
+      </ol>
+    </div>
+  </div>
 
 </div>
-<div id="nav">
-  <button class="nav-btn" onclick="changeSlide(-1)">←</button>
-  <span id="slide-counter">1 / 16</span>
-  <button class="nav-btn" onclick="changeSlide(1)">→</button>
-</div>
+<div id="keyboard-hint">← → 키 또는 버튼으로 이동 &nbsp;|&nbsp; 스와이프 지원</div>
 <script>
-  const TOTAL=16;let cur=1;
-  function goTo(n){const prev=document.getElementById('s'+cur);if(prev){prev.classList.remove('active');prev.classList.add('exit');}setTimeout(()=>{if(prev)prev.classList.remove('exit');},350);cur=Math.max(1,Math.min(TOTAL,n));const next=document.getElementById('s'+cur);if(next)next.classList.add('active');document.getElementById('slide-counter').textContent=cur+' / '+TOTAL;document.getElementById('progress-bar').style.width=(cur/TOTAL*100)+'%';}
-  function changeSlide(d){goTo(cur+d);}
-  document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown')changeSlide(1);if(e.key==='ArrowLeft'||e.key==='ArrowUp')changeSlide(-1);});
-  let tx=0;document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;});document.addEventListener('touchend',e=>{const dx=tx-e.changedTouches[0].clientX;if(Math.abs(dx)>40)changeSlide(dx>0?1:-1);});
-  function copyCode(btn){const pre=btn.closest('.code-block').querySelector('pre');navigator.clipboard.writeText(pre.innerText).then(()=>{btn.textContent='copied!';btn.classList.add('copied');setTimeout(()=>{btn.textContent='copy';btn.classList.remove('copied');},1800);});}
-  goTo(1);document.getElementById('progress-bar').style.width=(1/TOTAL*100)+'%';
+const slides=document.querySelectorAll('.slide'),total=slides.length;let current=0;
+function goTo(n){
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit');
+  const p=current;
+  current=(n+total)%total;
+  setTimeout(()=>slides[p].classList.remove('exit'),500);
+  slides[current].classList.add('active');
+  document.getElementById('slide-counter').textContent=(current+1)+' / '+total;
+  document.getElementById('progress-bar').style.width=((current+1)/total*100)+'%';
+}
+document.getElementById('btn-next').onclick=()=>goTo(current+1);
+document.getElementById('btn-prev').onclick=()=>goTo(current-1);
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown')goTo(current+1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp')goTo(current-1);
+});
+let tx=0;
+document.addEventListener('touchstart',e=>tx=e.touches[0].clientX);
+document.addEventListener('touchend',e=>{
+  const dx=tx-e.changedTouches[0].clientX;
+  if(Math.abs(dx)>50)goTo(current+(dx>0?1:-1));
+});
+function copyCode(btn){
+  const t=btn.parentElement.innerText.replace('copy\n','').replace('copy\n','').trim();
+  navigator.clipboard.writeText(t);
+  const orig=btn.textContent;
+  btn.textContent='✓ 복사됨';
+  setTimeout(()=>btn.textContent=orig,2000);
+}
+document.getElementById('progress-bar').style.width=(1/total*100)+'%';
 </script>
 </body>
 </html>
