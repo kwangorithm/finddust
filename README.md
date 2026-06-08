@@ -55,7 +55,6 @@
 ```bash
 git --version
 git config --global user.name "홍길동"
-git config --global user.email "gildong@anyang.ac.kr"
 git config --global init.defaultBranch main
 git config --global core.autocrlf true
 git config --list

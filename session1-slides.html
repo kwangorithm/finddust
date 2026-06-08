@@ -121,7 +121,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
   <h1>GIT &<br>GITHUB</h1>
   <p class="sub">석사 논문을 위한 디지털 연구 도구 특강<br>Session 1 — 버전 관리의 기초부터 실전까지</p>
   <div class="chips">
-    <div class="chip"><span>담당</span><strong>윤희영 교수</strong></div>
+    <div class="chip"><span>담당</span><strong>정광용 강사</strong></div>
     <div class="chip"><span>대상</span><strong>미세먼지관리전공 석사생</strong></div>
     <div class="chip"><span>시간</span><strong>2시간 (Zoom)</strong></div>
   </div>
@@ -140,7 +140,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
         <li>파일 변경을 스냅샷으로 저장</li>
         <li>GitHub에 연구 코드 업로드</li>
         <li>과거 버전으로 되돌리기</li>
-        <li>지도교수님과 코드 공유</li>
+        <li>담당 강사님과 코드 공유</li>
       </ul>
     </div>
     <div class="card">
@@ -191,7 +191,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
       <div class="ci">🤯</div>
       <div class="ct">협업 혼돈</div>
       <ul>
-        <li>교수님과 카카오톡으로 파일 공유</li>
+        <li>강사님과 카카오톡으로 파일 공유</li>
         <li>누가 최신 버전인지 모름</li>
         <li>동시에 수정 → 충돌</li>
         <li>수정 이력 추적 불가</li>
@@ -229,7 +229,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
       <ul>
         <li>Git 저장소를 인터넷에 백업</li>
         <li>어디서든 접근 가능</li>
-        <li>교수님과 코드 공유 & 리뷰</li>
+        <li>강사님과 코드 공유 & 리뷰</li>
         <li>논문 코드 공개 저장소로 활용</li>
         <li>Microsoft가 운영 (2018년 인수)</li>
       </ul>
@@ -285,14 +285,14 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
       <div class="snum">2</div>
       <div class="sc">
         <h4>GitHub 계정 생성</h4>
-        <p>github.com → Sign up → 학교 이메일 권장 (교육 혜택 신청 가능) → 사용자명은 영문+숫자로 설정</p>
+        <p>github.com → Sign up → 계정 생성 → 사용자명은 영문+숫자로 설정</p>
       </div>
     </div>
     <div class="step">
       <div class="snum">3</div>
       <div class="sc">
         <h4>터미널에서 신원 등록 (아래 명령어 실행)</h4>
-        <p>커밋에 내 이름이 표시되도록 설정. GitHub 계정과 동일한 이름/이메일 사용 권장</p>
+        <p>커밋에 내 이름이 표시되도록 설정. GitHub 계정과 동일한 이름 사용 권장</p>
       </div>
     </div>
   </div>
@@ -300,8 +300,6 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
     <button class="cbtn" onclick="cp(this)">copy</button>
     <span class="cm"># 이름 설정</span><br>
     <span class="ck">git config</span> --global user.name <span class="cs">"홍길동"</span><br>
-    <span class="cm"># 이메일 설정</span><br>
-    <span class="ck">git config</span> --global user.email <span class="cs">"gildong@anyang.ac.kr"</span><br>
     <span class="cm"># 기본 브랜치 이름 설정 (최신 표준)</span><br>
     <span class="ck">git config</span> --global init.defaultBranch main<br>
     <span class="cm"># Windows 권장: 줄바꿈 자동 변환</span><br>
@@ -406,7 +404,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
     <span class="co">석사 학위 논문 연구 코드 저장소</span><br><br>
     <span class="cp">## 연구 개요</span><br>
     <span class="co">- 연구 주제: [본인 연구 주제 입력]</span><br>
-    <span class="co">- 지도교수: 윤희영 교수님</span><br>
+    <span class="co">- 담당 강사: 정광용 강사님</span><br>
     <span class="co">- 연구 기간: 2024.03 ~ 2025.02</span><br>
     <span class="co">- 사용 데이터: AirKorea 측정망, 기상청 관측 자료</span><br><br>
     <span class="cp">## 폴더 구조</span><br>
@@ -557,7 +555,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
       <div class="snum">🌅</div>
       <div class="sc">
         <h4>연구 시작 전 — git pull</h4>
-        <p>어제 집에서 수정한 내용, 또는 교수님이 검토한 내용을 받아오기. 항상 최신 상태에서 시작</p>
+        <p>어제 집에서 수정한 내용, 또는 강사님이 검토한 내용을 받아오기. 항상 최신 상태에서 시작</p>
       </div>
     </div>
     <div class="step">
@@ -578,7 +576,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
       <div class="snum">🌇</div>
       <div class="sc">
         <h4>작업 종료 — git push</h4>
-        <p>하루 연구 GitHub에 업로드. 컴퓨터가 망가져도 코드는 안전. 교수님이 GitHub에서 확인 가능</p>
+        <p>하루 연구 GitHub에 업로드. 컴퓨터가 망가져도 코드는 안전. 강사님이 GitHub에서 확인 가능</p>
       </div>
     </div>
   </div>
@@ -617,7 +615,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
   <div class="label">실습 5</div>
   <h2>requirements.txt — 패키지 목록 관리</h2>
   <div class="hl" style="margin-bottom:14px">
-    💡 <strong>왜 필요한가?</strong> 교수님이나 동료가 내 코드를 실행하려면 같은 라이브러리가 필요합니다. requirements.txt가 없으면 "ModuleNotFoundError"의 연속입니다.
+    💡 <strong>왜 필요한가?</strong> 강사님이나 동료가 내 코드를 실행하려면 같은 라이브러리가 필요합니다. requirements.txt가 없으면 "ModuleNotFoundError"의 연속입니다.
   </div>
   <div class="code">
     <button class="cbtn" onclick="cp(this)">copy</button>
@@ -645,7 +643,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
     <div class="card">
       <div class="ci">👁️</div>
       <div class="ct">코드 온라인 뷰어</div>
-      <p>별도 소프트웨어 없이 Python, CSV 파일을 브라우저에서 바로 확인. 교수님이 어디서든 코드 열람 가능</p>
+      <p>별도 소프트웨어 없이 Python, CSV 파일을 브라우저에서 바로 확인. 강사님이 어디서든 코드 열람 가능</p>
     </div>
     <div class="card g">
       <div class="ci">📊</div>
@@ -660,11 +658,11 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
     <div class="card">
       <div class="ci">📱</div>
       <div class="ct">모바일 앱</div>
-      <p>이동 중에도 저장소 확인, Issue 등록, 코드 리뷰 가능. 교수님과 빠른 소통</p>
+      <p>이동 중에도 저장소 확인, Issue 등록, 코드 리뷰 가능. 강사님과 빠른 소통</p>
     </div>
   </div>
   <div class="hl g" style="margin-top:14px">
-    🎓 <strong>GitHub Education:</strong> 학교 이메일로 GitHub Student Developer Pack 신청 → GitHub Pro 무료 + 다양한 개발 도구 무료 사용
+    🎓 <strong>GitHub Education:</strong> GitHub Student Developer Pack 신청 → GitHub Pro 무료 + 다양한 개발 도구 무료 사용
   </div>
 </div>
 
@@ -723,7 +721,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
       <div class="ct">다음 세션 예고</div>
       <ul>
         <li>브랜치(Branch) 전략</li>
-        <li>교수님과 PR 리뷰</li>
+        <li>강사님과 PR 리뷰</li>
         <li>충돌(Conflict) 해결</li>
         <li>GitHub Issues 활용</li>
         <li>Fork & Clone</li>
@@ -744,14 +742,14 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
     <ol>
       <li>
         GitHub 계정 생성 후 <strong>[이름]_pm25thesis</strong> 저장소 생성 (Private)
-        <span class="hint">예: honggildong_pm25thesis | 학교 이메일로 가입 권장</span>
+        <span class="hint">예: honggildong_pm25thesis</span>
       </li>
       <li>
         로컬에 폴더 구조 생성: <strong>data/raw / data/processed / analysis / figures / docs</strong>
         <span class="hint">.gitignore에 *.csv, *.nc, data/raw/ 추가 필수</span>
       </li>
       <li>
-        README.md 작성: 본인 연구 주제, 지도교수, 사용 데이터, 폴더 설명 포함
+        README.md 작성: 본인 연구 주제, 담당 강사, 사용 데이터, 폴더 설명 포함
         <span class="hint">아직 연구 주제 없으면 임시 주제로 작성 OK</span>
       </li>
       <li>
@@ -760,7 +758,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
       </li>
       <li>
         Windows 사용자는 <strong>Git Bash 실행 화면 + git config --list 결과</strong> 확인
-        <span class="hint">core.autocrlf=true, user.name, user.email, init.defaultBranch=main 확인</span>
+        <span class="hint">core.autocrlf=true, user.name, init.defaultBranch=main 확인</span>
       </li>
       <li>
         requirements.txt 파일 생성 (현재 설치된 패키지 목록)

@@ -112,10 +112,10 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
   <div class="big">🌿</div>
   <div class="label">안양대학교 일반대학원 · 미세먼지관리전공</div>
   <h1>BRANCH &<br>PULL REQUEST</h1>
-  <p class="sub">교수님과 스마트하게 협업하는 방법<br>Session 2 — 브랜치 전략과 GitHub 협업 완전 정복</p>
+  <p class="sub">강사님과 스마트하게 협업하는 방법<br>Session 2 — 브랜치 전략과 GitHub 협업 완전 정복</p>
   <div class="chips">
     <div class="chip"><span>전제</span><strong>Session 1 완료 (저장소 생성)</strong></div>
-    <div class="chip"><span>목표</span><strong>교수님께 코드 리뷰 받기</strong></div>
+    <div class="chip"><span>목표</span><strong>강사님께 코드 리뷰 받기</strong></div>
     <div class="chip"><span>시간</span><strong>2시간 (Zoom)</strong></div>
   </div>
 </div>
@@ -141,7 +141,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
       <div class="ct">아직 해결 안 된 문제들</div>
       <ul>
         <li>실험적 분석 → main 코드가 망가질까 두려움</li>
-        <li>교수님께 코드 리뷰 어떻게 받나?</li>
+        <li>강사님께 코드 리뷰 어떻게 받나?</li>
         <li>두 분석 방향을 동시에 시도하고 싶다</li>
         <li>최종본과 실험본을 어떻게 분리?</li>
         <li>팀원이 동시에 수정하면 어떻게?</li>
@@ -270,7 +270,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
 <!-- 6. Pull Request 개념 -->
 <div class="slide">
   <div class="label">핵심 개념</div>
-  <h2>Pull Request — 교수님께 코드 리뷰 요청</h2>
+  <h2>Pull Request — 강사님께 코드 리뷰 요청</h2>
   <div class="steps">
     <div class="step">
       <div class="snum">1</div>
@@ -283,21 +283,21 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
       <div class="snum">2</div>
       <div class="sc">
         <h4>GitHub 웹에서 Pull Request 생성</h4>
-        <p>GitHub → 저장소 → "Compare & pull request" 노란 버튼 → 제목과 설명 작성 → 윤희영 교수님을 Reviewer로 지정</p>
+        <p>GitHub → 저장소 → "Compare & pull request" 노란 버튼 → 제목과 설명 작성 → 정광용 강사님을 Reviewer로 지정</p>
       </div>
     </div>
     <div class="step">
       <div class="snum">3</div>
       <div class="sc">
-        <h4>교수님이 코드 한 줄 한 줄 리뷰</h4>
+        <h4>강사님이 코드 한 줄 한 줄 리뷰</h4>
         <p>변경된 코드 라인마다 댓글 가능 — "이 부분 PM2.5 보정 계수 확인해보세요", "이 함수는 더 효율적으로 작성 가능"</p>
       </div>
     </div>
     <div class="step">
       <div class="snum">4</div>
       <div class="sc">
-        <h4>수정 반영 후 교수님 Approve → Merge</h4>
-        <p>피드백 수정 → 재 push → 교수님 승인 → main에 병합. 검증된 코드만 main으로 들어옵니다.</p>
+        <h4>수정 반영 후 강사님 Approve → Merge</h4>
+        <p>피드백 수정 → 재 push → 강사님 승인 → main에 병합. 검증된 코드만 main으로 들어옵니다.</p>
       </div>
     </div>
   </div>
@@ -306,7 +306,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
 <!-- 7. PR 잘 쓰는 법 -->
 <div class="slide">
   <div class="label">실습 2</div>
-  <h2>교수님이 좋아하는 PR 작성법</h2>
+  <h2>강사님이 좋아하는 PR 작성법</h2>
   <div class="grid g2" style="max-width:880px">
     <div class="card">
       <div class="ci">✅</div>
@@ -337,7 +337,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
     <span class="cm"># GitHub CLI 로 PR 생성 (고급)</span><br>
     <span class="ck">gh pr create</span> \<br>
     &nbsp;&nbsp;--title <span class="cs">"[분석] PM2.5 계절별 농도 분포 함수 완성"</span> \<br>
-    &nbsp;&nbsp;--reviewer <span class="cs">huiyoung</span> \<br>
+    &nbsp;&nbsp;--reviewer <span class="cs">[강사 GitHub ID]</span> \<br>
     &nbsp;&nbsp;--base main \<br>
     &nbsp;&nbsp;--body <span class="cs">"계절별 PM2.5 평균 계산 완료. 계절 구분 기준 확인 부탁드립니다."</span>
   </div>
@@ -385,7 +385,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
     <span class="cs">pm25_threshold = 25  # 국내 환경기준</span><br>
     <span class="co">&gt;&gt;&gt;&gt;&gt;&gt;&gt; main</span><br><br>
     <span class="cm"># 해결: 파일을 직접 편집해서 원하는 버전만 남기고 표시 삭제</span><br>
-    <span class="cs">pm25_threshold = 35  # WHO 기준 (윤희영 교수님 확인 2024.03)</span><br><br>
+    <span class="cs">pm25_threshold = 35  # WHO 기준 (정광용 강사님 확인 2024.03)</span><br><br>
     <span class="cm"># 충돌 해결 후 커밋</span><br>
     <span class="ck">git add</span> analysis/pm25_analysis.py<br>
     <span class="ck">git commit</span> -m <span class="cs">"충돌 해결: PM2.5 기준값 WHO 35μg/m³ 적용"</span><br><br>
@@ -407,7 +407,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
     <div class="card b">
       <div class="ci">💡</div>
       <div class="ct">연구 아이디어</div>
-      <p>새 분석 방향 제안 → Issue 댓글로 교수님과 논의 → 결정 후 브랜치 생성. 아이디어도 기록!</p>
+      <p>새 분석 방향 제안 → Issue 댓글로 강사님과 논의 → 결정 후 브랜치 생성. 아이디어도 기록!</p>
     </div>
     <div class="card y">
       <div class="ci">📋</div>
@@ -423,7 +423,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
     <span class="tag ty">논문작성</span>
     <span class="tag tb">core-paper</span>
     <span class="tag ty">screening</span>
-    <span class="tag tg">교수님검토요청</span>
+    <span class="tag tg">강사님검토요청</span>
     <span class="tag tb">완료</span>
   </div>
   <div class="hl g" style="margin-top:12px">
@@ -434,7 +434,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
 <!-- 11. 주간 협업 루틴 -->
 <div class="slide">
   <div class="label">실제 시나리오</div>
-  <h2>윤희영 교수님과의 주간 협업 루틴</h2>
+  <h2>정광용 강사님과의 주간 협업 루틴</h2>
   <div class="steps">
     <div class="step">
       <div class="snum">월</div>
@@ -453,15 +453,15 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
     <div class="step">
       <div class="snum">금</div>
       <div class="sc">
-        <h4>PR 생성 → 교수님께 리뷰 요청</h4>
-        <p>주간 작업 완료 → PR 작성 (변경 내용 + 확인 요청 사항) → 교수님 Reviewer 지정</p>
+        <h4>PR 생성 → 강사님께 리뷰 요청</h4>
+        <p>주간 작업 완료 → PR 작성 (변경 내용 + 확인 요청 사항) → 강사님 Reviewer 지정</p>
       </div>
     </div>
     <div class="step">
       <div class="snum">다음주</div>
       <div class="sc">
         <h4>피드백 반영 → Approve → Merge</h4>
-        <p>교수님 코멘트 수정 → 재 push → Approve → main 병합 → 새 주간 계획 시작</p>
+        <p>강사님 코멘트 수정 → 재 push → Approve → main 병합 → 새 주간 계획 시작</p>
       </div>
     </div>
   </div>
@@ -488,7 +488,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
       <div class="ct">Clone (클론)</div>
       <ul>
         <li>GitHub 저장소를 로컬로 다운로드</li>
-        <li>교수님 저장소 클론해서 실습</li>
+        <li>강사님 저장소 클론해서 실습</li>
         <li>연구실 공용 코드 받아오기</li>
         <li>git clone [URL] 명령 한 번</li>
         <li>자동으로 origin 원격 등록됨</li>
@@ -519,7 +519,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
   <div class="code">
     <button class="cbtn" onclick="cp(this)">copy</button>
     <span class="cm"># 시나리오: experiment 브랜치에서 분석 중인데</span><br>
-    <span class="cm"># 교수님이 긴급하게 main 코드 수정 요청</span><br><br>
+    <span class="cm"># 강사님이 긴급하게 main 코드 수정 요청</span><br><br>
     <span class="cm"># ① 현재 작업 임시 저장</span><br>
     <span class="ck">git stash</span> save <span class="cs">"PM2.5 계절분석 작업 중 — 미완성"</span><br>
     <span class="co">Saved working directory and index state: PM2.5 계절분석 작업 중 — 미완성</span><br><br>
@@ -567,7 +567,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
         <li>docs/ch1-introduction: 1장 초안</li>
         <li>docs/ch2-methods: 2장 연구방법</li>
         <li>docs/ch3-results: 3장 결과</li>
-        <li>PR = 교수님 논문 피드백 창구</li>
+        <li>PR = 강사님 논문 피드백 창구</li>
       </ul>
     </div>
     <div class="card">
@@ -599,9 +599,9 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
       <p>데이터 업데이트되면 PM2.5 시계열 그래프 자동 재생성. figures/ 폴더 자동 업데이트</p>
     </div>
     <div class="card y">
-      <div class="ci">📧</div>
+      <div class="ci">🔔</div>
       <div class="ct">자동 알림</div>
-      <p>PR 생성 시 교수님 이메일 자동 발송. 매일 정해진 시간에 코드 자동 실행</p>
+      <p>PR 생성 시 GitHub 알림으로 리뷰 요청 전달. 매일 정해진 시간에 코드 자동 실행</p>
     </div>
   </div>
   <div class="hl" style="margin-top:16px">
@@ -656,7 +656,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
       <div class="ct">PR 핵심</div>
       <ul>
         <li>GitHub 웹에서 PR 생성</li>
-        <li>교수님을 Reviewer로</li>
+        <li>강사님을 Reviewer로</li>
         <li>제목: [유형] 내용 형식</li>
         <li>본문: 변경 + 확인 요청</li>
         <li>Approve 후 Merge</li>
