@@ -61,6 +61,8 @@
   .course-item .ci-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--muted);margin-bottom:6px;}
   .course-item .ci-name{font-size:13px;font-weight:700;margin-bottom:4px;}
   .course-item .ci-connect{font-size:12px;color:var(--muted);}
+  a.course-item{display:block;text-decoration:none;color:inherit;transition:transform 0.2s,border-color 0.2s;}
+  a.course-item:hover{transform:translateY(-2px);border-color:rgba(79,195,247,0.35);}
   /* 하단 */
   .footer{max-width:1100px;margin:0 auto;text-align:center;padding-top:40px;border-top:1px solid rgba(121,134,203,0.15);}
   .footer p{font-size:13px;color:var(--muted);line-height:1.8;}
@@ -154,6 +156,32 @@
       <li>교수님 공동 편집 & GitHub 연동</li>
     </ul>
     <a class="course-link" href="session5-slides.html">슬라이드 열기 →</a>
+  </div>
+</div>
+
+<div class="course-section">
+  <h2>📚 논문 방법론 보조자료</h2>
+  <div class="course-grid">
+    <a class="course-item" href="research-method.html">
+      <div class="ci-label">RESEARCH METHOD</div>
+      <div class="ci-name">논문 리서치 6단계</div>
+      <div class="ci-connect">주제 좁히기 → 키워드 확장 → 초록 스크리닝 → Research Gap</div>
+    </a>
+    <a class="course-item" href="templates.html">
+      <div class="ci-label">MARKDOWN TEMPLATES</div>
+      <div class="ci-name">복사용 연구 템플릿</div>
+      <div class="ci-connect">paper_list, keyword_map, screening_log, reference_matrix</div>
+    </a>
+    <a class="course-item" href="prompts.html">
+      <div class="ci-label">AI PROMPTS</div>
+      <div class="ci-name">논문 읽기 보조 프롬프트</div>
+      <div class="ci-connect">키워드 확장, 초록 스크리닝, Gap 검증, Introduction 피드백</div>
+    </a>
+    <a class="course-item" href="final-project.html">
+      <div class="ci-label">FINAL PROJECT</div>
+      <div class="ci-name">최종 논문 초안 패키지</div>
+      <div class="ci-connect">GitHub 저장소, 참고문헌, Figure, Overleaf PDF 루브릭</div>
+    </a>
   </div>
 </div>
 

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompts | 미세먼지 연구자 특강</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#0b0f1a; --border:rgba(255,255,255,0.08); --text:#e2e8f0; --muted:#64748b; --accent:#ce93d8; --mono:'IBM Plex Mono',monospace; --sans:'Noto Sans KR',sans-serif; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--text); font-family:var(--sans); min-height:100vh; padding:52px 24px 80px; }
+  .container { max-width:980px; margin:0 auto; }
+  .back { display:inline-block; margin-bottom:32px; color:var(--muted); font-family:var(--mono); font-size:12px; text-decoration:none; }
+  .eyebrow { display:inline-flex; background:rgba(206,147,216,0.1); border:1px solid rgba(206,147,216,0.25); color:var(--accent); font-family:var(--mono); font-size:11px; font-weight:700; letter-spacing:2px; padding:5px 14px; border-radius:20px; text-transform:uppercase; margin-bottom:20px; }
+  h1 { font-size:clamp(32px,5vw,54px); line-height:1.12; margin-bottom:14px; font-weight:900; }
+  .lead { color:var(--muted); line-height:1.75; max-width:760px; margin-bottom:36px; }
+  section { border-top:1px solid var(--border); padding-top:28px; margin-top:30px; }
+  h2 { font-size:22px; margin-bottom:16px; }
+  pre { background:#070b14; border:1px solid rgba(206,147,216,0.14); border-radius:12px; padding:18px 20px; overflow:auto; color:#f3d8ff; font-family:var(--mono); font-size:13px; line-height:1.7; white-space:pre-wrap; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="index.html">← 강의 목록으로</a>
+  <div class="eyebrow">Prompts</div>
+  <h1>AI 프롬프트 모음</h1>
+  <p class="lead">AI가 논문을 대신 읽어주는 것이 아니라, 논문을 빠르게 구조화하도록 돕는 프롬프트입니다. 성능 수치, 데이터 기간, 지역명은 반드시 원문으로 다시 확인합니다.</p>
+
+  <section>
+    <h2>논문 요약 프롬프트</h2>
+    <pre><code>다음 논문 초록과 방법론 일부를 읽고 아래 형식으로 요약해줘.
+
+1. 연구 문제
+2. 사용 데이터
+3. 입력 변수
+4. 예측/분석 대상
+5. 사용 모델
+6. 비교 모델
+7. 성능 지표
+8. 핵심 결과
+9. 저자가 주장하는 contribution
+10. 내가 반드시 원문에서 다시 확인해야 할 항목
+
+중요:
+- 논문에 없는 내용은 추측하지 마.
+- 모르는 정보는 "원문 확인 필요"라고 표시해.
+- 성능 수치, 데이터 기간, 지역명은 반드시 따로 표시해.
+
+논문 내용:
+[여기에 초록/방법/결과 일부 붙여넣기]</code></pre>
+  </section>
+
+  <section>
+    <h2>키워드 확장 프롬프트</h2>
+    <pre><code>나는 미세먼지 관련 논문 주제를 정하려고 한다.
+아래 관심 주제를 Google Scholar에서 검색 가능한 영어 학술 키워드로 확장해줘.
+
+해야 할 일:
+1. 핵심 개념을 5개 이하로 분해
+2. 각 개념의 영어 키워드와 동의어 제안
+3. PM2.5/PM10, air quality, particulate matter처럼 놓치기 쉬운 표현 포함
+4. Google Scholar 검색식 5개 작성
+5. 너무 넓은 검색식과 너무 좁은 검색식을 구분
+
+조건:
+- 실제 논문 제목이나 수치를 지어내지 마.
+- 키워드가 왜 필요한지 짧게 설명해줘.
+
+관심 주제:
+[여기에 주제 작성]</code></pre>
+  </section>
+
+  <section>
+    <h2>초록 스크리닝 프롬프트</h2>
+    <pre><code>아래 논문 제목과 초록을 보고 내 연구에 읽을 가치가 있는지 스크리닝해줘.
+
+내 연구질문:
+[여기에 연구질문 작성]
+
+판단 기준:
+1. 연구질문과 직접 관련이 있는가?
+2. PM2.5, PM10, air quality 등 핵심 변수가 맞는가?
+3. 데이터 지역과 기간이 명확한가?
+4. 방법론이 내 연구와 비교 가능한가?
+5. 정량 결과나 평가 지표가 있는가?
+6. 내 논문에서 어디에 쓸 수 있는가?
+
+출력:
+- Grade: A / B / C / Exclude
+- 이유:
+- 내 논문에서 쓸 위치:
+- 원문에서 반드시 확인할 항목:
+
+중요:
+- 초록에 없는 내용은 추측하지 마.
+- 애매하면 "원문 확인 필요"라고 표시해.
+
+논문 제목과 초록:
+[여기에 붙여넣기]</code></pre>
+  </section>
+
+  <section>
+    <h2>레퍼런스 비교 프롬프트</h2>
+    <pre><code>아래 논문 요약 카드들을 바탕으로 Reference Matrix를 만들어줘.
+
+비교 기준:
+1. 연구 문제
+2. 데이터 종류
+3. 입력 변수
+4. 예측 또는 분석 대상
+5. 사용 모델
+6. 성능 지표
+7. 장점
+8. 한계
+9. 내 연구에서 인용할 위치
+
+출력은 Markdown 표로 작성해줘.
+
+논문 요약 카드:
+[여기에 요약 카드 붙여넣기]</code></pre>
+  </section>
+
+  <section>
+    <h2>Research Gap 도출 프롬프트</h2>
+    <pre><code>나는 미세먼지 PM2.5 관련 논문을 작성하려고 한다.
+아래 레퍼런스 요약들을 바탕으로 research gap을 찾아줘.
+
+다음 관점에서 분석해줘.
+1. 기존 연구들이 공통적으로 다룬 문제
+2. 기존 연구들이 충분히 다루지 못한 문제
+3. 데이터 측면의 한계
+4. 모델 측면의 한계
+5. 실험 평가 측면의 한계
+6. 내가 새 논문에서 주장할 수 있는 contribution 후보
+
+중요:
+- 과장하지 말고 레퍼런스 요약에 근거해서 말해줘.
+- 논문으로 주장 가능한 수준과 단순 아이디어를 구분해줘.
+
+레퍼런스 요약:
+[여기에 요약 붙여넣기]</code></pre>
+  </section>
+
+  <section>
+    <h2>Research Gap 검증 프롬프트</h2>
+    <pre><code>아래 Research Gap 후보가 실제 레퍼런스에 근거한 주장인지 검토해줘.
+
+검토 기준:
+1. 기존 논문들이 실제로 공통적으로 다룬 내용인가?
+2. "충분히 다루지 않았다"는 말이 레퍼런스 요약으로 뒷받침되는가?
+3. 너무 과장된 표현이 있는가?
+4. 단순 아이디어와 논문으로 주장 가능한 gap을 구분할 수 있는가?
+5. Introduction 4문단에 넣기 적절한 문장으로 고칠 수 있는가?
+
+출력:
+- 판정: Strong / Needs Evidence / Too Broad / Not Supported
+- 근거가 있는 부분:
+- 근거가 부족한 부분:
+- 더 조심스러운 표현:
+- 추가로 찾아야 할 논문 유형:
+
+Research Gap 후보:
+[붙여넣기]
+
+Reference Matrix 또는 논문 요약:
+[붙여넣기]</code></pre>
+  </section>
+
+  <section>
+    <h2>Introduction 작성 프롬프트</h2>
+    <pre><code>아래 research gap과 reference matrix를 바탕으로 미세먼지 논문의 Introduction 초안을 작성해줘.
+
+구조:
+1문단: 미세먼지 문제가 왜 중요한가
+2문단: PM2.5 예측/분석이 왜 필요한가
+3문단: 기존 연구들은 무엇을 해왔는가
+4문단: 기존 연구의 한계는 무엇인가
+5문단: 본 연구는 무엇을 하며 contribution은 무엇인가
+
+조건:
+- 학술 논문 문체로 작성
+- 과장된 표현 금지
+- 아직 검증되지 않은 성능 주장은 쓰지 말 것
+- 인용이 필요한 위치는 [CITATION NEEDED]로 표시
+
+Research Gap:
+[붙여넣기]
+
+Reference Matrix:
+[붙여넣기]</code></pre>
+  </section>
+
+  <section>
+    <h2>Introduction 비판적 피드백 프롬프트</h2>
+    <pre><code>아래 Introduction 초안을 심사자 관점에서 비판적으로 검토해줘.
+
+검토 기준:
+1. 1문단에서 문제의 중요성이 분명한가?
+2. 2문단에서 예측/분석 필요성이 논리적으로 이어지는가?
+3. 3문단에서 기존 연구 요약이 너무 나열식은 아닌가?
+4. 4문단의 Research Gap이 레퍼런스로 뒷받침되는가?
+5. 5문단의 contribution이 과장되지는 않았는가?
+6. [CITATION NEEDED] 위치가 적절한가?
+7. 초보 연구자가 바로 수정할 수 있는 구체적 액션은 무엇인가?
+
+출력:
+- 가장 큰 문제 3개
+- 문단별 수정 제안
+- 과장된 문장과 완화 표현
+- 인용이 더 필요한 문장
+- 다음 수정 버전의 아웃라인
+
+Introduction 초안:
+[붙여넣기]</code></pre>
+  </section>
+</div>
+</body>
+</html>

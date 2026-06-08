@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Final Project | 미세먼지 연구자 특강</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#0b0f1a; --border:rgba(255,255,255,0.08); --text:#e2e8f0; --muted:#64748b; --accent:#ef9a9a; --mono:'IBM Plex Mono',monospace; --sans:'Noto Sans KR',sans-serif; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--text); font-family:var(--sans); min-height:100vh; padding:52px 24px 80px; }
+  .container { max-width:920px; margin:0 auto; }
+  .back { display:inline-block; margin-bottom:32px; color:var(--muted); font-family:var(--mono); font-size:12px; text-decoration:none; }
+  .eyebrow { display:inline-flex; background:rgba(239,154,154,0.1); border:1px solid rgba(239,154,154,0.25); color:var(--accent); font-family:var(--mono); font-size:11px; font-weight:700; letter-spacing:2px; padding:5px 14px; border-radius:20px; text-transform:uppercase; margin-bottom:20px; }
+  h1 { font-size:clamp(32px,5vw,54px); line-height:1.12; margin-bottom:14px; font-weight:900; }
+  .lead { color:var(--muted); line-height:1.75; max-width:720px; margin-bottom:36px; }
+  section { border-top:1px solid var(--border); padding-top:28px; margin-top:30px; }
+  h2 { font-size:22px; margin-bottom:16px; }
+  ol, ul { padding-left:24px; color:#cbd5e1; line-height:1.85; }
+  li::marker { color:var(--accent); }
+  .table-scroll { overflow:auto; border-radius:12px; border:1px solid var(--border); }
+  table { width:100%; min-width:760px; border-collapse:collapse; }
+  th, td { border:1px solid var(--border); padding:12px 14px; text-align:left; color:#cbd5e1; vertical-align:top; }
+  th { color:var(--text); background:rgba(255,255,255,0.04); }
+  .score { text-align:right; font-family:var(--mono); color:var(--accent); white-space:nowrap; }
+  .rubric td { font-size:13px; line-height:1.65; }
+  .rubric td:first-child { color:var(--text); font-weight:700; }
+  pre { background:#070b14; border:1px solid rgba(239,154,154,0.14); border-radius:12px; padding:18px 20px; overflow:auto; color:#ffcdd2; font-family:var(--mono); font-size:13px; line-height:1.7; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="back" href="index.html">← 강의 목록으로</a>
+  <div class="eyebrow">Final Project</div>
+  <h1>최종 프로젝트</h1>
+  <p class="lead">한 달 동안 만든 연구 저장소와 문서들을 하나의 논문 초안 워크플로우로 연결합니다.</p>
+
+  <section>
+    <h2>최종 제출물</h2>
+    <ol>
+      <li>GitHub 저장소 URL</li>
+      <li><code>README.md</code></li>
+      <li><code>papers/paper_list.md</code></li>
+      <li><code>papers/reference_matrix.md</code></li>
+      <li><code>papers/summaries/</code> 논문 요약 카드 5개 이상</li>
+      <li><code>notes/research_gap.md</code></li>
+      <li><code>manuscript/introduction.md</code></li>
+      <li><code>figures/</code> 논문용 그림 1개 이상</li>
+      <li>Overleaf PDF 초안</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>평가 기준</h2>
+    <div class="table-scroll">
+      <table class="rubric">
+        <thead><tr><th>항목</th><th>미흡</th><th>기본</th><th>우수</th><th>배점</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>GitHub 저장소 구조</td>
+            <td>파일이 흩어져 있고 README만으로 내용을 파악하기 어렵다.</td>
+            <td>권장 폴더 구조와 README가 있으며 주요 산출물 위치가 보인다.</td>
+            <td>커밋 기록, 폴더 구조, README 실행 안내가 일관되고 재현 가능하다.</td>
+            <td class="score">15</td>
+          </tr>
+          <tr>
+            <td>레퍼런스 수집 품질</td>
+            <td>논문 수가 부족하거나 주제와 직접 연결되지 않는다.</td>
+            <td>논문 10편 목록과 A/B/C 스크리닝 이유가 정리되어 있다.</td>
+            <td>핵심 논문, 배경 논문, 제외 논문의 판단 기준이 명확하고 검색식이 남아 있다.</td>
+            <td class="score">20</td>
+          </tr>
+          <tr>
+            <td>논문 요약 카드</td>
+            <td>요약이 짧거나 데이터, 방법, 결과 확인 항목이 빠져 있다.</td>
+            <td>요약 카드 5개 이상에 연구문제, 데이터, 방법, 결과, 한계가 채워져 있다.</td>
+            <td>각 카드가 원문 확인 항목과 내 논문에서의 사용 위치까지 연결된다.</td>
+            <td class="score">20</td>
+          </tr>
+          <tr>
+            <td>Research Gap 명확성</td>
+            <td>Gap이 너무 넓거나 레퍼런스 근거 없이 주장된다.</td>
+            <td>Reference Matrix를 바탕으로 기존 연구의 공통점과 부족한 점을 설명한다.</td>
+            <td>주장-근거 연결이 선명하고 Introduction 4문단으로 바로 옮길 수 있다.</td>
+            <td class="score">20</td>
+          </tr>
+          <tr>
+            <td>Figure/분석 결과 재현성</td>
+            <td>그림만 있고 데이터 출처나 생성 코드가 불명확하다.</td>
+            <td>Figure 1개 이상과 생성 코드, 데이터 경로, requirements가 있다.</td>
+            <td>README만 보고 Figure를 다시 만들 수 있고 논문 수치와 코드 결과가 일치한다.</td>
+            <td class="score">15</td>
+          </tr>
+          <tr>
+            <td>최종 원고 초안</td>
+            <td>Introduction 구조가 흐릿하거나 인용 위치가 없다.</td>
+            <td>Introduction 5문단 초안과 Overleaf PDF가 제출된다.</td>
+            <td>각 문단의 역할이 분명하고 Citation Needed 또는 BibTeX 인용이 적절히 표시된다.</td>
+            <td class="score">10</td>
+          </tr>
+          <tr><td>합계</td><td></td><td></td><td></td><td class="score">100</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>최종 발표 구성</h2>
+    <pre><code># 최종 발표
+
+## 1. 나의 연구 주제
+
+## 2. 연구 질문
+
+## 3. 핵심 레퍼런스 3편
+
+## 4. 기존 연구의 한계
+
+## 5. 나의 연구 방향
+
+## 6. GitHub 저장소 구성
+
+## 7. 향후 계획</code></pre>
+  </section>
+
+  <section>
+    <h2>재현성 체크리스트</h2>
+    <ul>
+      <li>[ ] 데이터 출처가 명시되어 있는가?</li>
+      <li>[ ] 원본 데이터와 전처리 데이터가 구분되어 있는가?</li>
+      <li>[ ] 전처리 코드가 있는가?</li>
+      <li>[ ] 분석 코드가 순서대로 실행되는가?</li>
+      <li>[ ] <code>requirements.txt</code>가 있는가?</li>
+      <li>[ ] Figure 생성 코드가 있는가?</li>
+      <li>[ ] 논문에 사용된 수치가 코드 결과와 일치하는가?</li>
+      <li>[ ] README만 읽고 실행할 수 있는가?</li>
+    </ul>
+  </section>
+</div>
+</body>
+</html>
