@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>커리큘럼 | 미세먼지관리전공 디지털 연구 도구 특강</title>
+<title>커리큘럼 | 미세먼지 연구자를 위한 AI 기반 논문작성 도구 실전 부트캠프</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&family=Bebas+Neue&display=swap');
   :root{--bg:#07090f;--card:#0d1120;--text:#e8eaf6;--muted:#7986cb;}
@@ -68,13 +68,26 @@
   .footer{max-width:1100px;margin:0 auto;text-align:center;padding-top:40px;border-top:1px solid rgba(121,134,203,0.15);}
   .footer p{font-size:13px;color:var(--muted);line-height:1.8;}
   .footer .repo{font-family:'JetBrains Mono',monospace;font-size:12px;color:#4fc3f7;margin-top:8px;}
+  .mobile-title{display:none;}
+  @media (max-width:768px){
+    body{padding:48px 20px;overflow-x:hidden;}
+    .header{margin-bottom:44px;}
+    .header .univ{font-size:10px;letter-spacing:1px;line-height:1.8;max-width:320px;margin-left:auto;margin-right:auto;overflow-wrap:anywhere;}
+    .header h1{font-size:40px;letter-spacing:0;line-height:1.14;}
+    .desktop-title{display:none;}
+    .mobile-title{display:inline;}
+    .header p{font-size:13px;max-width:320px;overflow-wrap:anywhere;}
+    .sessions{grid-template-columns:1fr;gap:20px;}
+    .session-card{padding:24px;}
+    .course-grid{grid-template-columns:1fr;}
+  }
 </style>
 </head>
 <body>
 
 <div class="header">
   <div class="univ">안양대학교 일반대학원 &nbsp;·&nbsp; 환경공학과 &nbsp;·&nbsp; 미세먼지관리전공</div>
-  <h1>디지털 연구 도구<br>특강 시리즈</h1>
+  <h1><span class="desktop-title">미세먼지 연구자를 위한<br>AI 기반 논문작성 도구<br>실전 부트캠프</span><span class="mobile-title">미세먼지<br>연구자를 위한<br>AI 기반<br>논문작성 도구<br>실전 부트캠프</span></h1>
   <p>대학원 논문 작성을 위한 Git, AI 코딩, LaTeX 실전 활용<br>총 5세션 X 2시간 | Zoom 온라인 강의 | 강의 : 정광용</p>
 </div>
 
