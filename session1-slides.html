@@ -109,7 +109,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
 <body>
 <div id="progress"></div>
 <div id="badge">SESSION 01 / 05 &nbsp;·&nbsp; GIT & GITHUB 기초</div>
-<div id="counter">1 / 22</div>
+<div id="counter">1 / 26</div>
 <button class="nbtn" id="prev">‹</button>
 <button class="nbtn" id="next">›</button>
 <div id="deck">
@@ -769,6 +769,170 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
         <span class="hint">파이썬 기반 환경 통계분석 수업 내용 연계 권장</span>
       </li>
     </ol>
+  </div>
+</div>
+
+
+<!-- W1. 윈도우 환경 준비 -->
+<div class="slide">
+  <div class="label">🪟 윈도우 전용</div>
+  <h2>윈도우에서 시작하기 — 설치 전 필독</h2>
+  <div class="grid g3" style="max-width:920px">
+    <div class="card r">
+      <div class="ci">⚠️</div>
+      <div class="ct">흔한 실수 TOP 4</div>
+      <ul>
+        <li>CMD에서 git 명령어 안 됨 → Git Bash 써야</li>
+        <li>Python PATH 미설정 → "python 인식 안 됨"</li>
+        <li>한글 경로 폴더에 설치 → 오류 연속</li>
+        <li>OneDrive 폴더에 프로젝트 → 파일 충돌</li>
+      </ul>
+    </div>
+    <div class="card g">
+      <div class="ci">✅</div>
+      <div class="ct">올바른 설정</div>
+      <ul>
+        <li><strong style="color:var(--accent2)">Git Bash</strong> 사용 (Git 설치 시 자동 포함)</li>
+        <li>VS Code 내장 터미널 = Git Bash로 설정</li>
+        <li>경로: C:\Users\이름\pm25-thesis (영문 경로)</li>
+        <li>OneDrive 바깥에 프로젝트 폴더 생성</li>
+      </ul>
+    </div>
+    <div class="card o">
+      <div class="ci">🛠️</div>
+      <div class="ct">설치 순서 (반드시 순서대로)</div>
+      <ul>
+        <li>① VS Code 설치</li>
+        <li>② Git for Windows 설치</li>
+        <li>③ Python / Anaconda 설치</li>
+        <li>④ Node.js (Session 3에서)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="hl" style="margin-top:16px">
+    💡 이 강의의 모든 명령어는 <strong>Git Bash 기준</strong>입니다. CMD나 PowerShell에서 실행하면 다를 수 있습니다.
+  </div>
+</div>
+
+<!-- W2. VS Code + Git 설치 -->
+<div class="slide">
+  <div class="label">🪟 윈도우 전용</div>
+  <h2>① VS Code 설치 &amp; ② Git for Windows 설치</h2>
+  <div class="grid g2" style="max-width:880px">
+    <div class="card">
+      <div class="ci">🖥️</div>
+      <div class="ct">VS Code 설치</div>
+      <ul>
+        <li>code.visualstudio.com → Download for Windows</li>
+        <li>설치 중 <strong style="color:var(--accent)">"PATH에 추가"</strong> 반드시 체크!</li>
+        <li>설치 후 확장 추가 (Ctrl+Shift+X):</li>
+        <li>&nbsp;&nbsp;→ Korean Language Pack</li>
+        <li>&nbsp;&nbsp;→ Python (Microsoft)</li>
+        <li>&nbsp;&nbsp;→ GitLens (코드 이력 시각화)</li>
+      </ul>
+    </div>
+    <div class="card g">
+      <div class="ci">🐙</div>
+      <div class="ct">Git for Windows 설치</div>
+      <ul>
+        <li>git-scm.com → Download for Windows</li>
+        <li>설치 중 이것만 바꾸기:</li>
+        <li>&nbsp;&nbsp;→ <strong style="color:var(--accent2)">Default editor → VS Code 선택</strong></li>
+        <li>&nbsp;&nbsp;→ <strong style="color:var(--accent2)">Checkout as-is, commit Unix</strong></li>
+        <li>나머지는 모두 Next → Install</li>
+        <li>설치 후 Git Bash 실행 → $ 프롬프트 확인</li>
+      </ul>
+    </div>
+  </div>
+  <div class="code" style="margin-top:14px">
+    <button class="cbtn" onclick="cp(this)">copy</button>
+    <span class="cm"># Git Bash 열고 설치 확인</span><br>
+    <span class="ck">git</span> --version<br>
+    <span class="co">git version 2.43.0.windows.1</span><br><br>
+    <span class="cm"># VS Code에서 Git Bash를 기본 터미널로 설정</span><br>
+    <span class="cm"># VS Code → Ctrl+Shift+P → "Terminal: Select Default Profile" → Git Bash 선택</span><br><br>
+    <span class="cm"># VS Code 터미널 열기 단축키</span><br>
+    <span class="cm"># Ctrl + ` (백틱, 숫자 1 왼쪽 키)</span>
+  </div>
+</div>
+
+<!-- W3. Python 설치 -->
+<div class="slide">
+  <div class="label">🪟 윈도우 전용</div>
+  <h2>③ Python 설치 — Anaconda vs 순수 Python</h2>
+  <div class="grid g2" style="max-width:880px">
+    <div class="card g">
+      <div class="ci">🐍</div>
+      <div class="ct">Anaconda (초보자 강력 권장)</div>
+      <ul>
+        <li>anaconda.com/download → Windows 버튼</li>
+        <li>pandas, numpy, matplotlib 등 기본 포함</li>
+        <li>Jupyter Notebook 자동 설치</li>
+        <li>설치 중 <strong style="color:var(--accent2)">"Add to PATH"</strong> 체크!</li>
+        <li>용량 큼 (약 3GB) — 시간 여유 필요</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="ci">🐍</div>
+      <div class="ct">순수 Python + pip</div>
+      <ul>
+        <li>python.org/downloads → Windows</li>
+        <li><strong style="color:var(--accent)">"Add python.exe to PATH"</strong> 체크 필수!</li>
+        <li>설치 후 패키지 직접 설치 필요</li>
+        <li>용량 작음, 가볍고 빠름</li>
+        <li>이미 Python 있으면 그냥 사용</li>
+      </ul>
+    </div>
+  </div>
+  <div class="code" style="margin-top:14px">
+    <button class="cbtn" onclick="cp(this)">copy</button>
+    <span class="cm"># Git Bash에서 Python 확인</span><br>
+    <span class="ck">python</span> --version &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cm"># 안 되면 아래 시도</span><br>
+    <span class="ck">python3</span> --version &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cm"># Mac/Linux 스타일</span><br>
+    <span class="ck">py</span> --version &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cm"># 윈도우 전용 명령어</span><br><br>
+    <span class="cm"># 미세먼지 연구 필수 패키지 설치 (순수 Python 사용 시)</span><br>
+    <span class="ck">pip install</span> pandas numpy matplotlib seaborn scipy scikit-learn folium netCDF4<br><br>
+    <span class="cm"># Anaconda 사용 시</span><br>
+    <span class="ck">conda install</span> pandas numpy matplotlib seaborn scipy scikit-learn
+  </div>
+</div>
+
+<!-- W4. 완료 체크리스트 -->
+<div class="slide">
+  <div class="label">🪟 윈도우 전용</div>
+  <h2>설치 완료 체크리스트 — 강의 시작 전 확인</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="snum">1</div>
+      <div class="sc">
+        <h4>Git Bash 열기 → <code style="color:var(--accent2)">git --version</code> → "git version 2.x" 출력</h4>
+        <p>시작메뉴 → "Git Bash" 검색 → 실행. 버전 번호 나오면 OK!</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="snum">2</div>
+      <div class="sc">
+        <h4>Git Bash에서 <code style="color:var(--accent2)">python --version</code> → "Python 3.x" 출력</h4>
+        <p>안 나오면 → Python 설치 시 "Add to PATH" 미체크 → 제어판에서 제거 후 재설치</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="snum">3</div>
+      <div class="sc">
+        <h4>VS Code 터미널(Ctrl+`) → Git Bash 선택 → $ 프롬프트 확인</h4>
+        <p>Ctrl+Shift+P → "Terminal: Select Default Profile" → Git Bash 선택</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="snum">4</div>
+      <div class="sc">
+        <h4>git config 신원 등록 완료</h4>
+        <p><code style="color:var(--accent2)">git config --list</code> 실행 → user.name과 user.email이 보이면 OK</p>
+      </div>
+    </div>
+  </div>
+  <div class="hl g" style="margin-top:12px">
+    🆘 <strong>안 되면 혼자 해결하려 하지 마세요!</strong> Zoom 채팅창에 오류 메시지 전체를 붙여넣기 → 같이 해결합니다.
   </div>
 </div>
 
