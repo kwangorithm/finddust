@@ -102,7 +102,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
 <body>
 <div id="progress"></div>
 <div id="badge">SESSION 02 / 05 &nbsp;·&nbsp; GITHUB 협업 & 브랜치</div>
-<div id="counter">1 / 21</div>
+<div id="counter">1 / 20</div>
 <button class="nbtn" id="prev">‹</button>
 <button class="nbtn" id="next">›</button>
 <div id="deck">
@@ -155,6 +155,38 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
 
 <!-- 3. 브랜치 개념 -->
 <div class="slide">
+  <div class="label">실습 출발점</div>
+  <h2>Session 1 저장소에서 그대로 이어갑니다</h2>
+  <div class="hl" style="margin-bottom:14px">
+    오늘 실습은 새 프로젝트가 아니라, 지난 시간에 만든 <strong>pm25-thesis</strong> 저장소에서 이어집니다.
+  </div>
+  <div class="code">
+    <button class="cbtn" onclick="cp(this)">copy</button>
+    <span class="cm"># 지난 시간에 만든 연구 저장소로 이동</span><br>
+    <span class="ck">cd</span> ~/pm25-thesis<br><br>
+    <span class="cm"># main 브랜치와 GitHub 연결 상태 확인</span><br>
+    <span class="ck">git checkout</span> main<br>
+    <span class="ck">git pull</span> origin main<br>
+    <span class="ck">git remote</span> -v<br><br>
+    <span class="cm"># 오늘 사용할 파일 확인</span><br>
+    <span class="ck">ls</span> analysis<br>
+    <span class="co">pm25_analysis.py</span>
+  </div>
+  <div class="code" style="margin-top:12px">
+    <button class="cbtn" onclick="cp(this)">copy</button>
+    <span class="cm"># analysis/pm25_analysis.py에 기준 코드가 없다면 main에서 먼저 추가</span><br>
+    <span class="cp">pm25_threshold</span> = <span class="cs">25</span>  <span class="cm"># 국내 PM2.5 일평균 관리 기준 (실습용)</span><br><br>
+    <span class="ck">def</span> <span class="cp">is_high_pm25</span>(value):<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span class="ck">return</span> value &gt;= pm25_threshold<br><br>
+    <span class="cm"># 기준 코드를 새로 추가했다면 main에 먼저 저장</span><br>
+    <span class="ck">git add</span> analysis/pm25_analysis.py<br>
+    <span class="ck">git commit</span> -m <span class="cs">"PM2.5 기준값 함수 추가"</span><br>
+    <span class="ck">git push</span>
+  </div>
+</div>
+
+<!-- 4. 브랜치 개념 -->
+<div class="slide">
   <div class="label">핵심 개념</div>
   <h2>브랜치란? — 평행 연구 우주</h2>
   <div class="bdiag">
@@ -199,31 +231,34 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
   </div>
 </div>
 
-<!-- 4. 브랜치 명령어 -->
+<!-- 5. 브랜치 명령어 -->
 <div class="slide">
   <div class="label">실습 1</div>
-  <h2>브랜치 만들고 작업하기</h2>
+  <h2>브랜치 만들고 PM2.5 기준값 실험하기</h2>
   <div class="code">
     <button class="cbtn" onclick="cp(this)">copy</button>
+    <span class="cm"># 항상 main 최신 상태에서 출발</span><br>
+    <span class="ck">git checkout</span> main<br>
+    <span class="ck">git pull</span> origin main<br><br>
     <span class="cm"># 현재 브랜치 확인</span><br>
     <span class="ck">git branch</span><br>
     <span class="co">* main</span><br><br>
     <span class="cm"># 새 브랜치 생성 + 이동 (한 번에)</span><br>
-    <span class="ck">git checkout</span> -b <span class="cs">experiment/aerosol-size-dist</span><br>
-    <span class="co">Switched to a new branch 'experiment/aerosol-size-dist'</span><br><br>
-    <span class="cm"># 이 브랜치에서 코드 수정 & 커밋</span><br>
-    <span class="ck">git add</span> analysis/aerosol_analysis.py<br>
-    <span class="ck">git commit</span> -m <span class="cs">"에어로졸 입자크기 분포 분석 함수 초안"</span><br><br>
+    <span class="ck">git checkout</span> -b <span class="cs">experiment/pm25-threshold</span><br>
+    <span class="co">Switched to a new branch 'experiment/pm25-threshold'</span><br><br>
+    <span class="cm"># analysis/pm25_analysis.py에서 같은 줄을 수정</span><br>
+    <span class="co">pm25_threshold = 35  # WHO 기준 적용 실험</span><br><br>
+    <span class="cm"># 이 브랜치에서 수정 내용 커밋</span><br>
+    <span class="ck">git add</span> analysis/pm25_analysis.py<br>
+    <span class="ck">git commit</span> -m <span class="cs">"PM2.5 기준값 실험: WHO 기준 적용"</span><br><br>
     <span class="cm"># 브랜치를 GitHub에 업로드</span><br>
-    <span class="ck">git push</span> -u origin experiment/aerosol-size-dist<br><br>
+    <span class="ck">git push</span> -u origin experiment/pm25-threshold<br><br>
     <span class="cm"># 다시 main으로 돌아가기</span><br>
-    <span class="ck">git checkout</span> main<br><br>
-    <span class="cm"># 브랜치 목록 전체 보기 (원격 포함)</span><br>
-    <span class="ck">git branch</span> -a
+    <span class="ck">git checkout</span> main
   </div>
 </div>
 
-<!-- 5. 브랜치 명명 규칙 -->
+<!-- 6. 브랜치 명명 규칙 -->
 <div class="slide">
   <div class="label">브랜치 전략</div>
   <h2>미세먼지 연구에 맞는 브랜치 명명 규칙</h2>
@@ -231,7 +266,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
     <div class="card">
       <div class="ct">🔬 experiment/ — 새 분석 시도</div>
       <ul>
-        <li>experiment/aerosol-size-dist</li>
+        <li>experiment/pm25-threshold-test</li>
         <li>experiment/ml-pm25-prediction</li>
         <li>experiment/aermod-sigma-param</li>
         <li>experiment/seasonal-source-apportionment</li>
@@ -267,7 +302,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
   </div>
 </div>
 
-<!-- 6. Pull Request 개념 -->
+<!-- 7. Pull Request 개념 -->
 <div class="slide">
   <div class="label">핵심 개념</div>
   <h2>Pull Request — 교수님께 코드 리뷰 요청</h2>
@@ -276,7 +311,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
       <div class="snum">1</div>
       <div class="sc">
         <h4>브랜치에서 작업 완료 후 GitHub에 push</h4>
-        <p>experiment/aerosol 브랜치에서 에어로졸 분석 코드를 완성하고 push</p>
+        <p>experiment/pm25-threshold 브랜치에서 PM2.5 기준값 실험을 커밋하고 push</p>
       </div>
     </div>
     <div class="step">
@@ -303,9 +338,9 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
   </div>
 </div>
 
-<!-- 7. PR 잘 쓰는 법 -->
+<!-- 8. PR 잘 쓰는 법 -->
 <div class="slide">
-  <div class="label">실습 2</div>
+  <div class="label">실습 3</div>
   <h2>교수님이 좋아하는 PR 작성법</h2>
   <div class="grid g2" style="max-width:880px">
     <div class="card">
@@ -343,33 +378,60 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
   </div>
 </div>
 
-<!-- 8. Merge -->
+<!-- 9. Merge -->
 <div class="slide">
   <div class="label">병합 전략</div>
-  <h2>Merge — 브랜치를 main에 합치기</h2>
+  <h2>Clean Merge — 브랜치를 main에 합치기</h2>
   <div class="code">
     <button class="cbtn" onclick="cp(this)">copy</button>
     <span class="cm"># 방법 1: GitHub 웹에서 (권장) — Merge pull request 버튼 클릭</span><br><br>
     <span class="cm"># 방법 2: 터미널에서 직접 병합</span><br>
     <span class="cm"># ① main으로 이동</span><br>
     <span class="ck">git checkout</span> main<br><br>
-    <span class="cm"># ② 브랜치 병합</span><br>
-    <span class="ck">git merge</span> experiment/aerosol-size-dist<br>
+    <span class="cm"># ② 방금 만든 실험 브랜치 병합</span><br>
+    <span class="ck">git merge</span> experiment/pm25-threshold<br>
     <span class="co">Updating a3f9c21..d74b2f9</span><br>
     <span class="co">Fast-forward</span><br>
-    <span class="co"> analysis/aerosol_analysis.py | 52 +++++++++++++++++++++++++++++++++++++++</span><br><br>
+    <span class="co"> analysis/pm25_analysis.py | 2 +-</span><br><br>
     <span class="cm"># ③ GitHub에 push</span><br>
     <span class="ck">git push</span><br><br>
     <span class="cm"># ④ 완료된 브랜치 삭제 (선택)</span><br>
-    <span class="ck">git branch</span> -d experiment/aerosol-size-dist<br>
-    <span class="ck">git push</span> origin --delete experiment/aerosol-size-dist
+    <span class="ck">git branch</span> -d experiment/pm25-threshold<br>
+    <span class="ck">git push</span> origin --delete experiment/pm25-threshold
   </div>
   <div class="hl" style="margin-top:14px">
     💡 PR을 통해 Merge하면 <strong>리뷰 기록이 영구 보존</strong>됩니다. 논문 방법론 설명 시 "코드 리뷰 이후 수정" 근거 자료로 활용 가능
   </div>
 </div>
 
-<!-- 9. Conflict 해결 -->
+<!-- 10. Conflict 만들기 -->
+<div class="slide">
+  <div class="label">실습 2</div>
+  <h2>Conflict를 일부러 만들어보기</h2>
+  <div class="hl" style="margin-bottom:14px">
+    충돌은 “같은 파일의 같은 줄”을 서로 다르게 바꿨을 때 생깁니다. 오늘은 <strong>pm25_threshold</strong> 한 줄로 안전하게 재현합니다.
+  </div>
+  <div class="code">
+    <button class="cbtn" onclick="cp(this)">copy</button>
+    <span class="cm"># ① main 최신 상태에서 충돌 실습 브랜치 생성</span><br>
+    <span class="ck">git checkout</span> main<br>
+    <span class="ck">git pull</span> origin main<br>
+    <span class="ck">git checkout</span> -b <span class="cs">conflict/who-threshold-note</span><br><br>
+    <span class="cm"># ② 브랜치에서 pm25_threshold 줄을 이렇게 수정 후 커밋</span><br>
+    <span class="co">pm25_threshold = 35  # WHO 권고 기준</span><br>
+    <span class="ck">git add</span> analysis/pm25_analysis.py<br>
+    <span class="ck">git commit</span> -m <span class="cs">"WHO 기준값 설명 추가"</span><br><br>
+    <span class="cm"># ③ main으로 돌아와 같은 줄을 다르게 수정 후 커밋</span><br>
+    <span class="ck">git checkout</span> main<br>
+    <span class="co">pm25_threshold = 25  # 국내 환경기준 유지</span><br>
+    <span class="ck">git add</span> analysis/pm25_analysis.py<br>
+    <span class="ck">git commit</span> -m <span class="cs">"국내 기준값 설명 추가"</span><br><br>
+    <span class="cm"># ④ 이제 병합하면 충돌 발생</span><br>
+    <span class="ck">git merge</span> conflict/who-threshold-note
+  </div>
+</div>
+
+<!-- 11. Conflict 해결 -->
 <div class="slide">
   <div class="label">문제 해결</div>
   <h2>충돌(Conflict) — 발생 원리와 해결</h2>
@@ -380,21 +442,22 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
     <button class="cbtn" onclick="cp(this)">copy</button>
     <span class="cm"># 충돌 발생 시 파일 내부에 이런 표시가 생김</span><br>
     <span class="co">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD (현재 브랜치)</span><br>
-    <span class="cs">pm25_threshold = 35  # WHO 기준</span><br>
+    <span class="cs">pm25_threshold = 25  # 국내 환경기준 유지</span><br>
     <span class="co">=======</span><br>
-    <span class="cs">pm25_threshold = 25  # 국내 환경기준</span><br>
-    <span class="co">&gt;&gt;&gt;&gt;&gt;&gt;&gt; main</span><br><br>
+    <span class="cs">pm25_threshold = 35  # WHO 권고 기준</span><br>
+    <span class="co">&gt;&gt;&gt;&gt;&gt;&gt;&gt; conflict/who-threshold-note</span><br><br>
     <span class="cm"># 해결: 파일을 직접 편집해서 원하는 버전만 남기고 표시 삭제</span><br>
-    <span class="cs">pm25_threshold = 35  # WHO 기준 (정광용 교수님 확인 2024.03)</span><br><br>
+    <span class="cs">pm25_threshold = 35  # WHO 권고 기준 (수업 실습용)</span><br><br>
     <span class="cm"># 충돌 해결 후 커밋</span><br>
     <span class="ck">git add</span> analysis/pm25_analysis.py<br>
-    <span class="ck">git commit</span> -m <span class="cs">"충돌 해결: PM2.5 기준값 WHO 35μg/m³ 적용"</span><br><br>
+    <span class="ck">git commit</span> -m <span class="cs">"충돌 해결: PM2.5 기준값 WHO 기준 적용"</span><br>
+    <span class="ck">git push</span><br><br>
     <span class="cm"># 충돌이 두렵다면 → 병합 취소</span><br>
     <span class="ck">git merge</span> --abort
   </div>
 </div>
 
-<!-- 10. Issues 활용 -->
+<!-- 12. Issues 활용 -->
 <div class="slide">
   <div class="label">프로젝트 관리</div>
   <h2>GitHub Issues — 연구 할 일 관리</h2>
@@ -431,7 +494,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
   </div>
 </div>
 
-<!-- 11. 주간 협업 루틴 -->
+<!-- 13. 주간 협업 루틴 -->
 <div class="slide">
   <div class="label">실제 시나리오</div>
   <h2>교수님과의 주간 협업 루틴</h2>
@@ -467,7 +530,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
   </div>
 </div>
 
-<!-- 12. Fork & Clone -->
+<!-- 14. Fork & Clone -->
 <div class="slide">
   <div class="label">외부 코드 활용</div>
   <h2>Fork & Clone — 외부 코드 가져오기</h2>
@@ -509,7 +572,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
   </div>
 </div>
 
-<!-- 13. stash -->
+<!-- 15. stash -->
 <div class="slide">
   <div class="label">유용한 기능</div>
   <h2>git stash — 작업 임시 저장</h2>
@@ -535,7 +598,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
   </div>
 </div>
 
-<!-- 14. 수업 과목 연계 -->
+<!-- 16. 수업 과목 연계 -->
 <div class="slide">
   <div class="label">전공 연계</div>
   <h2>브랜치 전략 — 전공 수업별 적용</h2>
@@ -583,7 +646,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
   </div>
 </div>
 
-<!-- 15. GitHub Actions 맛보기 -->
+<!-- 17. GitHub Actions 맛보기 -->
 <div class="slide">
   <div class="label">자동화 맛보기</div>
   <h2>GitHub Actions — push 하면 자동으로!</h2>
@@ -609,7 +672,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
   </div>
 </div>
 
-<!-- 16. 치트시트 -->
+<!-- 18. 치트시트 -->
 <div class="slide">
   <div class="label">치트시트</div>
   <h2>Session 2 명령어 치트시트</h2>
@@ -635,7 +698,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
   </div>
 </div>
 
-<!-- 17. 세션 요약 -->
+<!-- 19. 세션 요약 -->
 <div class="slide">
   <div class="label">세션 요약</div>
   <h2>Session 2 핵심 정리</h2>
@@ -676,7 +739,7 @@ h2{font-size:clamp(22px,3.2vw,40px);font-weight:700;margin-bottom:22px;line-heig
   </div>
 </div>
 
-<!-- 18. 과제 -->
+<!-- 20. 과제 -->
 <div class="slide">
   <div class="label">과제</div>
   <h2>Session 2 과제</h2>
@@ -726,6 +789,7 @@ document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowD
 let tx=0;document.addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});document.addEventListener('touchend',e=>{const dx=tx-e.changedTouches[0].clientX;if(Math.abs(dx)>48)go(cur+(dx>0?1:-1));});
 function cp(btn){const txt=btn.parentElement.innerText.replace(/^copy\n/,'').trim();navigator.clipboard.writeText(txt);btn.textContent='✓ 복사됨';setTimeout(()=>btn.textContent='copy',2000);}
 document.getElementById('progress').style.width=(1/total*100)+'%';
+document.getElementById('counter').textContent='1 / '+total;
 </script>
 </body>
 </html>
