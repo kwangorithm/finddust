@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 4 (신규 실습) | Codex로 논문 구조 잡기 | 미세먼지관리전공</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&family=Bebas+Neue&display=swap');
+  :root{--bg:#1a1200;--surface:#211700;--card:#2a1e00;--accent:#ffb300;--accent2:#ef5350;--accent3:#80cbc4;--text:#fff8e1;--muted:#ffcc80;--border:rgba(255,179,0,0.2);}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;user-select:none;}
+  #progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent3));transition:width 0.4s;z-index:100;}
+  #session-badge{position:fixed;top:16px;left:20px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:2px;z-index:100;}
+  #slide-counter{position:fixed;top:16px;right:20px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);z-index:100;}
+  .nav-btn{position:fixed;top:50%;transform:translateY(-50%);background:rgba(255,179,0,0.08);border:1px solid var(--border);color:var(--accent);width:44px;height:44px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;z-index:100;}
+  .nav-btn:hover{background:rgba(255,179,0,0.2);}
+  #btn-prev{left:16px;}#btn-next{right:16px;}
+  #slides{width:100%;height:100vh;position:relative;}
+  .slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px 80px;opacity:0;transform:translateX(40px);transition:all 0.5s cubic-bezier(0.4,0,0.2,1);pointer-events:none;}
+  .slide.active{opacity:1;transform:translateX(0);pointer-events:all;}
+  .slide.exit{opacity:0;transform:translateX(-40px);}
+  .slide::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,179,0,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,179,0,0.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
+  .slide-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent);margin-bottom:20px;text-transform:uppercase;}
+  h1.title{font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,6.2vw,78px);line-height:1;letter-spacing:2px;color:var(--text);margin-bottom:16px;text-align:center;}
+  h2.slide-title{font-size:clamp(22px,3vw,36px);font-weight:700;color:var(--text);margin-bottom:24px;line-height:1.3;text-align:center;}
+  p.subtitle{font-size:16px;color:var(--muted);font-weight:300;max-width:680px;text-align:center;line-height:1.8;}
+  .card-grid{display:grid;gap:14px;width:100%;max-width:900px;}
+  .card-grid.cols-2{grid-template-columns:1fr 1fr;}
+  .card-grid.cols-3{grid-template-columns:1fr 1fr 1fr;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;position:relative;overflow:hidden;}
+  .card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);}
+  .card.red::after{background:linear-gradient(90deg,var(--accent2),transparent);}
+  .card.teal::after{background:linear-gradient(90deg,var(--accent3),transparent);}
+  .card-icon{font-size:26px;margin-bottom:10px;}
+  .card-title{font-weight:700;font-size:14px;color:var(--accent);margin-bottom:8px;}
+  .card.red .card-title{color:var(--accent2);}
+  .card.teal .card-title{color:var(--accent3);}
+  .card p,.card ul{font-size:13px;color:var(--muted);line-height:1.7;}
+  .card ul{list-style:none;}
+  .card ul li::before{content:'▸ ';color:var(--accent);}
+  .card.red ul li::before{color:var(--accent2);}
+  .card.teal ul li::before{color:var(--accent3);}
+  .code-block{background:#100c00;border:1px solid rgba(255,179,0,0.15);border-radius:10px;padding:18px 22px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.9;width:100%;max-width:860px;position:relative;overflow-x:auto;}
+  .code-block .comment{color:#5c4a00;}
+  .code-block .cmd{color:var(--accent);}
+  .code-block .kw{color:var(--accent3);}
+  .code-block .str{color:#ffe082;}
+  .code-block .output{color:#78909c;}
+  .copy-btn{position:absolute;top:10px;right:10px;background:rgba(255,179,0,0.1);border:1px solid var(--border);color:var(--accent);padding:3px 10px;border-radius:6px;font-size:11px;font-family:'JetBrains Mono',monospace;cursor:pointer;transition:all 0.2s;}
+  .copy-btn:hover{background:rgba(255,179,0,0.2);}
+  .step-list{width:100%;max-width:820px;display:flex;flex-direction:column;gap:11px;}
+  .step-item{display:flex;align-items:flex-start;gap:14px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px;}
+  .step-num{width:30px;height:30px;background:linear-gradient(135deg,var(--accent),#e65100);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;flex-shrink:0;color:#000;}
+  .step-content h4{font-size:14px;font-weight:700;margin-bottom:4px;}
+  .step-content p{font-size:12px;color:var(--muted);line-height:1.6;}
+  .highlight-box{background:rgba(255,179,0,0.06);border:1px solid rgba(255,179,0,0.25);border-left:4px solid var(--accent);border-radius:8px;padding:14px 18px;width:100%;max-width:860px;font-size:13.5px;line-height:1.7;}
+  .highlight-box.teal{background:rgba(128,203,196,0.06);border-color:rgba(128,203,196,0.25);border-left-color:var(--accent3);}
+  .highlight-box strong{color:var(--accent);}
+  .highlight-box.teal strong{color:var(--accent3);}
+  .big-icon{font-size:64px;margin-bottom:20px;filter:drop-shadow(0 0 20px rgba(255,179,0,0.5));}
+  .title-meta{display:flex;gap:16px;margin-top:28px;flex-wrap:wrap;justify-content:center;}
+  .meta-chip{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:9px 16px;font-size:13px;display:flex;align-items:center;gap:8px;}
+  .meta-chip span{color:var(--muted);}
+  .meta-chip strong{color:var(--accent);}
+  .compare-table{width:100%;max-width:860px;border-collapse:collapse;font-size:13px;}
+  .compare-table th{background:var(--card);border:1px solid var(--border);padding:10px 14px;text-align:left;color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;}
+  .compare-table td{border:1px solid rgba(255,179,0,0.1);padding:10px 14px;color:var(--muted);vertical-align:top;line-height:1.6;}
+  .compare-table tr:hover td{background:rgba(255,179,0,0.03);}
+  .assignment{background:linear-gradient(135deg,rgba(230,115,0,0.1),rgba(0,96,100,0.1));border:1px solid rgba(255,179,0,0.3);border-radius:16px;padding:26px 30px;width:100%;max-width:860px;}
+  .assignment h3{font-size:18px;font-weight:700;color:var(--accent3);margin-bottom:14px;}
+  .assignment ol{padding-left:20px;}
+  .assignment ol li{font-size:14px;color:var(--text);line-height:1.8;margin-bottom:8px;}
+  .assignment ol li span{color:var(--muted);font-size:12px;display:block;}
+  #keyboard-hint{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);font-size:11px;color:rgba(255,204,128,0.35);font-family:'JetBrains Mono',monospace;letter-spacing:1px;}
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<div id="session-badge">SESSION 04 (신규 실습) &nbsp;|&nbsp; PIPELINE STEP 1 · 구조 잡기</div>
+<div id="slide-counter">1 / 11</div>
+<button class="nav-btn" id="btn-prev">‹</button>
+<button class="nav-btn" id="btn-next">›</button>
+<div id="slides">
+
+  <!-- S1 -->
+  <div class="slide active">
+    <div class="big-icon">🧭</div>
+    <div class="slide-label">안양대학교 일반대학원 · 미세먼지관리전공 · 신규 실습</div>
+    <h1 class="title">CODEX로<br>논문 뼈대 세우기</h1>
+    <p class="subtitle">Session 3에서 만든 <strong>pm25-thesis</strong> 저장소를 그대로 논문 목차로 바꾸는 단계입니다. 오늘은 문장을 쓰지 않습니다 — 구조만 잡습니다.</p>
+    <div class="title-meta">
+      <div class="meta-chip"><span>전제</span><strong>pm25-thesis 저장소 & Session 3 완료</strong></div>
+      <div class="meta-chip"><span>오늘 목표</span><strong>docs/thesis_outline.md 완성</strong></div>
+      <div class="meta-chip"><span>다음 단계</span><strong>Session 4-5: 본문 채우기</strong></div>
+    </div>
+  </div>
+
+  <!-- S2 -->
+  <div class="slide">
+    <div class="slide-label">오늘의 목표</div>
+    <h2 class="slide-title">실습 산출물 → 논문 목차로</h2>
+    <div class="card-grid cols-3">
+      <div class="card">
+        <div class="card-icon">🔎</div>
+        <div class="card-title">재료 확인</div>
+        <p>analysis/, figures/, docs/results_summary.md를 다시 훑어보고 지금 무엇이 있는지 목록화합니다.</p>
+      </div>
+      <div class="card red">
+        <div class="card-icon">🗂️</div>
+        <div class="card-title">구조 설계</div>
+        <p>IMRaD(서론-방법-결과-고찰) 골격에 안양대 대학원 논문 서식의 장 제목을 얹습니다.</p>
+      </div>
+      <div class="card teal">
+        <div class="card-icon">🏷️</div>
+        <div class="card-title">TODO 표시</div>
+        <p>아직 없는 데이터·문헌은 지금 채우지 않고 <code>[TODO]</code>로 정직하게 남깁니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3 -->
+  <div class="slide">
+    <div class="slide-label">도구 위치</div>
+    <h2 class="slide-title">Claude Code와 Codex, 오늘은 이렇게 나눠 씁니다</h2>
+    <table class="compare-table">
+      <tr><th>단계</th><th>도구</th><th>역할</th></tr>
+      <tr><td>Session 3 (완료)</td><td><strong style="color:var(--accent3)">Claude Code</strong></td><td>pm25-thesis의 분석 코드·그림·표 생성</td></tr>
+      <tr><td>Session 4 (오늘)</td><td><strong style="color:var(--accent2)">Codex</strong></td><td>이미 있는 산출물을 읽고 <strong>논문 목차 구조</strong>로 연결</td></tr>
+      <tr><td>Session 4-5 (다음)</td><td>Codex</td><td>목차를 기준으로 <strong>본문 문단 초안</strong> 작성</td></tr>
+    </table>
+    <div class="highlight-box" style="margin-top:16px">
+      💡 <strong>오늘 Codex는 새 분석을 만들지 않습니다.</strong> pm25-thesis에 이미 있는 것만 읽고 목차로 정리하는 것이 오늘의 유일한 임무입니다.
+    </div>
+  </div>
+
+  <!-- S4 -->
+  <div class="slide">
+    <div class="slide-label">실습 준비</div>
+    <h2 class="slide-title">pm25-thesis 상태 점검 체크리스트</h2>
+    <div class="step-list">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-content"><h4>저장소 열기</h4><p><code>cd pm25-thesis && git status</code> — 커밋되지 않은 변경사항이 있는지 먼저 확인합니다.</p></div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-content"><h4>산출물 확인</h4><p><code>analysis/pm25_analysis.py</code> 실행 결과, <code>figures/seasonal_boxplot.png</code>, <code>docs/results_summary.md</code>의 수치가 예시값(⚠)인지 실측값인지 확인합니다.</p></div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-content"><h4>빈 파일 확인</h4><p><code>docs/thesis_outline.md</code>가 비어 있는지 확인합니다 — 오늘 이 파일을 Codex와 함께 채웁니다.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S5 -->
+  <div class="slide">
+    <div class="slide-label">논문 골격</div>
+    <h2 class="slide-title">안양대 대학원 논문 기본 챕터 구조</h2>
+    <div class="card-grid cols-3">
+      <div class="card"><div class="card-title">I. 서론</div><p>연구 배경·목적·논문 구성. 지금은 대부분 <code>[TODO]</code>.</p></div>
+      <div class="card"><div class="card-title">II. 이론적 배경</div><p>선행연구 요약과 Research Gap. 아직 자리만 비워둡니다.</p></div>
+      <div class="card red"><div class="card-title">III. 연구방법</div><p><code>analysis/pm25_analysis.py</code>의 절차를 근거로 채울 수 있는 절.</p></div>
+      <div class="card red"><div class="card-title">IV. 결과</div><p><code>docs/results_summary.md</code>, <code>figures/</code>를 근거로 채울 수 있는 절.</p></div>
+      <div class="card teal"><div class="card-title">V. 고찰</div><p>결과 해석 + 선행연구 비교. 문헌이 없으니 자리만 표시.</p></div>
+      <div class="card teal"><div class="card-title">VI. 결론</div><p>아직 실측 결과가 없으므로 전체가 <code>[TODO]</code>.</p></div>
+    </div>
+  </div>
+
+  <!-- S6 -->
+  <div class="slide">
+    <div class="slide-label">실습 1</div>
+    <h2 class="slide-title">Codex 프롬프트로 목차 초안 만들기</h2>
+    <div class="code-block">
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      <span class="str">"""</span><br>
+      <span class="str">pm25-thesis 저장소를 확인해줘.</span><br>
+      <span class="str">analysis/pm25_analysis.py, docs/results_summary.md, figures/ 안의 파일을 읽고</span><br>
+      <span class="str">docs/thesis_outline.md에 아래 형식으로 논문 목차를 작성해줘.</span><br>
+      <span class="str"></span><br>
+      <span class="str">- 챕터/절 제목 (서론-이론적배경-연구방법-결과-고찰-결론)</span><br>
+      <span class="str">- 각 절에 들어갈 내용 3줄 요약</span><br>
+      <span class="str">- 목표 분량(문장 수 또는 페이지 수)</span><br>
+      <span class="str">- 아직 실제 데이터/문헌이 없는 절은 [TODO]로 표시</span><br>
+      <span class="str"></span><br>
+      <span class="str">수치나 결론을 새로 만들지 말고, 저장소에 있는 내용만 근거로 써줘.</span><br>
+      <span class="str">"""</span>
+    </div>
+    <div class="highlight-box" style="margin-top:14px">실행 후 확인: <code>docs/thesis_outline.md</code>가 실제로 채워졌는지, <code>[TODO]</code> 표시가 정직하게 남아있는지.</div>
+  </div>
+
+  <!-- S7 -->
+  <div class="slide">
+    <div class="slide-label">실습 2</div>
+    <h2 class="slide-title">결과 산출물 ↔ 목차 매핑 검증</h2>
+    <div class="card-grid cols-2">
+      <div class="card">
+        <div class="card-title">그림/표 체크</div>
+        <ul>
+          <li><code>seasonal_boxplot.png</code>가 목차의 어떤 절에 배치됐는지</li>
+          <li><code>spatial_distribution.html</code>이 결과 절에 언급됐는지</li>
+          <li>Figure/Table 번호 자리가 표시돼 있는지</li>
+        </ul>
+      </div>
+      <div class="card teal">
+        <div class="card-title">수치 체크</div>
+        <ul>
+          <li><code>results_summary.md</code>의 ⚠ 예시값이 목차에도 "예시"로 표시됐는지</li>
+          <li>실측 전 결론을 미리 확정해서 쓰지 않았는지</li>
+          <li>국내 환경기준(15µg/m³) 같은 상수가 정확히 인용됐는지</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- S8 -->
+  <div class="slide">
+    <div class="slide-label">실습 3</div>
+    <h2 class="slide-title">선행연구 자리 만들기 (Research Gap)</h2>
+    <div class="code-block">
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      <span class="str">"이론적 배경 절에 선행연구 요약 자리 3~5개와</span><br>
+      <span class="str">&nbsp;'본 연구가 채우는 공백(Research Gap)' 문장 자리를</span><br>
+      <span class="str">&nbsp;각각 [TODO] 로 표시해서 docs/thesis_outline.md에 추가해줘."</span>
+    </div>
+    <div class="highlight-box teal" style="margin-top:14px">지금은 문헌을 채우지 않습니다. 자리를 비워두는 것 자체가 오늘 실습의 산출물입니다.</div>
+  </div>
+
+  <!-- S9 -->
+  <div class="slide">
+    <div class="slide-label">검증</div>
+    <h2 class="slide-title">목차 리뷰 체크리스트</h2>
+    <div class="card-grid cols-2">
+      <div class="card"><div class="card-title">구조</div><ul><li>챕터 제목이 안양대 서식과 맞는가</li><li>절마다 목표 분량이 있는가</li></ul></div>
+      <div class="card red"><div class="card-title">정직성</div><ul><li>실제로 없는 데이터·문헌에 [TODO]가 있는가</li><li>있지도 않은 결론을 미리 쓰지 않았는가</li></ul></div>
+    </div>
+  </div>
+
+  <!-- S10 -->
+  <div class="slide">
+    <div class="slide-label">세션 정리</div>
+    <h2 class="slide-title">Session 4 핵심 정리</h2>
+    <div class="card-grid cols-3">
+      <div class="card"><div class="card-icon">🗺️</div><div class="card-title">구조 완성</div><p>pm25-thesis의 산출물이 논문 목차 구조로 정리됐습니다.</p></div>
+      <div class="card red"><div class="card-icon">🤖</div><div class="card-title">Codex의 역할</div><p>없는 것을 만들지 않고, 있는 것을 읽어 구조로 연결.</p></div>
+      <div class="card teal"><div class="card-icon">🔮</div><div class="card-title">다음 세션 예고</div><p>Session 4-5: 이 목차를 기준으로 본문 문단을 채웁니다.</p></div>
+    </div>
+  </div>
+
+  <!-- S11 -->
+  <div class="slide">
+    <div class="slide-label">과제</div>
+    <h2 class="slide-title">Session 4 신규 과제</h2>
+    <div class="assignment">
+      <h3>📝 과제 (다음 세션 전까지)</h3>
+      <ol>
+        <li><strong>docs/thesis_outline.md 완성</strong><span>6개 챕터 전체, 절마다 3줄 요약 + 목표 분량 포함</span></li>
+        <li><strong>[TODO] 목록 정리</strong><span>아직 없는 데이터/문헌 자리를 빠짐없이 표시했는지 스스로 점검</span></li>
+        <li><strong>figures/, results_summary.md와 목차 대조표 작성</strong><span>어떤 산출물이 어떤 절에 들어가는지 1:1로 매핑</span></li>
+        <li><strong>GitHub PR 생성</strong><span>PR 제목: [구조] pm25-thesis 논문 목차 초안</span></li>
+      </ol>
+    </div>
+  </div>
+
+</div>
+<div id="keyboard-hint">← → 키 또는 버튼으로 이동 &nbsp;|&nbsp; 스와이프 지원</div>
+<script>
+const slides=document.querySelectorAll('.slide'),total=slides.length;let current=0;
+function goTo(n){slides[current].classList.remove('active');slides[current].classList.add('exit');const p=current;current=(n+total)%total;setTimeout(()=>slides[p].classList.remove('exit'),500);slides[current].classList.add('active');document.getElementById('slide-counter').textContent=(current+1)+' / '+total;document.getElementById('progress-bar').style.width=((current+1)/total*100)+'%';}
+document.getElementById('btn-next').onclick=()=>goTo(current+1);
+document.getElementById('btn-prev').onclick=()=>goTo(current-1);
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown')goTo(current+1);if(e.key==='ArrowLeft'||e.key==='ArrowUp')goTo(current-1);});
+let tx=0;document.addEventListener('touchstart',e=>tx=e.touches[0].clientX);document.addEventListener('touchend',e=>{const dx=tx-e.changedTouches[0].clientX;if(Math.abs(dx)>50)goTo(current+(dx>0?1:-1));});
+function copyCode(btn){const t=btn.parentElement.innerText.replace('copy\n','').trim();navigator.clipboard.writeText(t);btn.textContent='✓ 복사됨';setTimeout(()=>btn.textContent='copy',2000);}
+document.getElementById('progress-bar').style.width=(1/total*100)+'%';
+</script>
+</body>
+</html>

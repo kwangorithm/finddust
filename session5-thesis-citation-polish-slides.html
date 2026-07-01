@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 5 (신규 실습) | 인용과 서식으로 초안 완성하기 | 미세먼지관리전공</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&family=Bebas+Neue&display=swap');
+  :root{--bg:#0e0a18;--surface:#140e22;--card:#1a1230;--accent:#f48fb1;--accent2:#80cbc4;--accent3:#ffe082;--text:#fce4ec;--muted:#ce93d8;--border:rgba(244,143,177,0.2);}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;user-select:none;}
+  #progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width 0.4s;z-index:100;}
+  #session-badge{position:fixed;top:16px;left:20px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:2px;z-index:100;}
+  #slide-counter{position:fixed;top:16px;right:20px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);z-index:100;}
+  .nav-btn{position:fixed;top:50%;transform:translateY(-50%);background:rgba(244,143,177,0.08);border:1px solid var(--border);color:var(--accent);width:44px;height:44px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;z-index:100;}
+  .nav-btn:hover{background:rgba(244,143,177,0.2);}
+  #btn-prev{left:16px;}#btn-next{right:16px;}
+  #slides{width:100%;height:100vh;position:relative;}
+  .slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px 80px;opacity:0;transform:translateX(40px);transition:all 0.5s cubic-bezier(0.4,0,0.2,1);pointer-events:none;}
+  .slide.active{opacity:1;transform:translateX(0);pointer-events:all;}
+  .slide.exit{opacity:0;transform:translateX(-40px);}
+  .slide::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(244,143,177,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(244,143,177,0.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
+  .slide-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent);margin-bottom:20px;text-transform:uppercase;}
+  h1.title{font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,6.2vw,78px);line-height:1;letter-spacing:2px;color:var(--text);margin-bottom:16px;text-align:center;}
+  h2.slide-title{font-size:clamp(22px,3vw,36px);font-weight:700;color:var(--text);margin-bottom:24px;line-height:1.3;text-align:center;}
+  p.subtitle{font-size:16px;color:var(--muted);font-weight:300;max-width:680px;text-align:center;line-height:1.8;}
+  .card-grid{display:grid;gap:14px;width:100%;max-width:900px;}
+  .card-grid.cols-2{grid-template-columns:1fr 1fr;}
+  .card-grid.cols-3{grid-template-columns:1fr 1fr 1fr;}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;position:relative;overflow:hidden;}
+  .card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);}
+  .card.teal::after{background:linear-gradient(90deg,var(--accent2),transparent);}
+  .card.yellow::after{background:linear-gradient(90deg,var(--accent3),transparent);}
+  .card.bad::after{background:linear-gradient(90deg,#ef5350,transparent);}
+  .card-icon{font-size:26px;margin-bottom:10px;}
+  .card-title{font-weight:700;font-size:14px;color:var(--accent);margin-bottom:8px;}
+  .card.teal .card-title{color:var(--accent2);}
+  .card.yellow .card-title{color:var(--accent3);}
+  .card.bad .card-title{color:#ef5350;}
+  .card p,.card ul{font-size:13px;color:var(--muted);line-height:1.7;}
+  .card ul{list-style:none;}
+  .card ul li::before{content:'▸ ';color:var(--accent);}
+  .card.teal ul li::before{color:var(--accent2);}
+  .card.yellow ul li::before{color:var(--accent3);}
+  .code-block{background:#08040f;border:1px solid rgba(244,143,177,0.15);border-radius:10px;padding:18px 22px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.9;width:100%;max-width:860px;position:relative;overflow-x:auto;}
+  .code-block .comment{color:#5c3a4a;}
+  .code-block .cmd{color:var(--accent);}
+  .code-block .kw{color:var(--accent2);}
+  .code-block .str{color:var(--accent3);}
+  .code-block .output{color:#78909c;}
+  .copy-btn{position:absolute;top:10px;right:10px;background:rgba(244,143,177,0.1);border:1px solid var(--border);color:var(--accent);padding:3px 10px;border-radius:6px;font-size:11px;font-family:'JetBrains Mono',monospace;cursor:pointer;transition:all 0.2s;}
+  .copy-btn:hover{background:rgba(244,143,177,0.2);}
+  .step-list{width:100%;max-width:800px;display:flex;flex-direction:column;gap:11px;}
+  .step-item{display:flex;align-items:flex-start;gap:14px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 18px;}
+  .step-num{width:30px;height:30px;background:linear-gradient(135deg,var(--accent),#880e4f);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;flex-shrink:0;color:#fff;}
+  .step-content h4{font-size:14px;font-weight:700;margin-bottom:4px;}
+  .step-content p{font-size:12px;color:var(--muted);line-height:1.6;}
+  .highlight-box{background:rgba(244,143,177,0.06);border:1px solid rgba(244,143,177,0.25);border-left:4px solid var(--accent);border-radius:8px;padding:14px 18px;width:100%;max-width:860px;font-size:13.5px;line-height:1.7;}
+  .highlight-box.teal{background:rgba(128,203,196,0.06);border-color:rgba(128,203,196,0.25);border-left-color:var(--accent2);}
+  .highlight-box.yellow{background:rgba(255,224,130,0.06);border-color:rgba(255,224,130,0.25);border-left-color:var(--accent3);}
+  .highlight-box strong{color:var(--accent);}
+  .highlight-box.teal strong{color:var(--accent2);}
+  .highlight-box.yellow strong{color:var(--accent3);}
+  .big-icon{font-size:64px;margin-bottom:20px;filter:drop-shadow(0 0 20px rgba(244,143,177,0.5));}
+  .title-meta{display:flex;gap:16px;margin-top:28px;flex-wrap:wrap;justify-content:center;}
+  .meta-chip{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:9px 16px;font-size:13px;display:flex;align-items:center;gap:8px;}
+  .meta-chip span{color:var(--muted);}
+  .meta-chip strong{color:var(--accent);}
+  .assignment{background:linear-gradient(135deg,rgba(136,14,79,0.12),rgba(0,96,100,0.12));border:1px solid rgba(244,143,177,0.3);border-radius:16px;padding:26px 30px;width:100%;max-width:860px;}
+  .assignment h3{font-size:18px;font-weight:700;color:var(--accent3);margin-bottom:14px;}
+  .assignment ol{padding-left:20px;}
+  .assignment ol li{font-size:13.5px;color:var(--text);line-height:1.9;margin-bottom:8px;}
+  .assignment ol li span{color:var(--muted);font-size:12px;display:block;}
+  .final-card{background:linear-gradient(135deg,rgba(136,14,79,0.12),rgba(0,96,100,0.12),rgba(74,20,140,0.12));border:1px solid rgba(244,143,177,0.3);border-radius:16px;padding:28px 34px;width:100%;max-width:880px;}
+  .final-card h3{font-size:20px;font-weight:900;color:var(--accent);margin-bottom:18px;text-align:center;}
+  .final-row{display:flex;gap:14px;margin-bottom:10px;align-items:flex-start;}
+  .final-num{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--accent);min-width:36px;line-height:1;}
+  .final-content h4{font-size:14px;font-weight:700;margin-bottom:2px;}
+  .final-content p{font-size:12px;color:var(--muted);}
+  #keyboard-hint{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);font-size:11px;color:rgba(206,147,216,0.4);font-family:'JetBrains Mono',monospace;letter-spacing:1px;}
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<div id="session-badge">SESSION 05 (신규 실습) &nbsp;|&nbsp; PIPELINE STEP 3 · 인용/서식</div>
+<div id="slide-counter">1 / 12</div>
+<button class="nav-btn" id="btn-prev">‹</button>
+<button class="nav-btn" id="btn-next">›</button>
+<div id="slides">
+
+  <!-- S1 -->
+  <div class="slide active">
+    <div class="big-icon">🧷</div>
+    <div class="slide-label">안양대학교 일반대학원 · 미세먼지관리전공 · 신규 실습</div>
+    <h1 class="title">인용과 서식으로<br>초안 완성하기</h1>
+    <p class="subtitle">Session 4-5에서 만든 <strong>docs/draft/*.md</strong>의 <code>[TODO]</code>·<code>[CITATION NEEDED]</code> 자리를 실제 인용과 안양대 서식으로 채워 Overleaf PDF로 완성하는 마지막 단계입니다.</p>
+    <div class="title-meta">
+      <div class="meta-chip"><span>입력</span><strong>docs/draft/*.md</strong></div>
+      <div class="meta-chip"><span>출력</span><strong>Overleaf PDF 초안</strong></div>
+      <div class="meta-chip"><span>이전 단계</span><strong>Session 4 구조 · Session 4-5 본문</strong></div>
+    </div>
+  </div>
+
+  <!-- S2 -->
+  <div class="slide">
+    <div class="slide-label">오늘의 목표</div>
+    <h2 class="slide-title">TODO를 0개로 만드는 세션</h2>
+    <div class="card-grid cols-3">
+      <div class="card"><div class="card-icon">📚</div><div class="card-title">인용 채우기</div><p>[CITATION NEEDED] 자리를 실제 BibTeX 인용으로 교체합니다.</p></div>
+      <div class="card teal"><div class="card-icon">🔢</div><div class="card-title">수치 재검증</div><p>[TODO]로 남았던 예시값을 실측값으로 바꾸거나, 여전히 예시임을 명시합니다.</p></div>
+      <div class="card yellow"><div class="card-icon">📐</div><div class="card-title">서식 적용</div><p>안양대 대학원 논문 서식에 맞춰 Overleaf에서 최종 조판합니다.</p></div>
+    </div>
+  </div>
+
+  <!-- S3 -->
+  <div class="slide">
+    <div class="slide-label">실습 준비</div>
+    <h2 class="slide-title">Overleaf 프로젝트 세팅</h2>
+    <div class="step-list">
+      <div class="step-item"><div class="step-num">1</div><div class="step-content"><h4>계정 생성</h4><p>overleaf.com → Register → 무료 계정으로 시작</p></div></div>
+      <div class="step-item"><div class="step-num">2</div><div class="step-content"><h4>새 프로젝트 생성</h4><p>New Project → Blank Project → 이름: "PM25_Thesis_이름"</p></div></div>
+      <div class="step-item"><div class="step-num">3</div><div class="step-content"><h4>docs/draft 내용 붙여넣기</h4><p>methods.md, results.md, discussion.md 내용을 main.tex의 각 \section에 옮겨 넣습니다.</p></div></div>
+    </div>
+  </div>
+
+  <!-- S4 -->
+  <div class="slide">
+    <div class="slide-label">LaTeX 최소 문법</div>
+    <h2 class="slide-title">오늘 필요한 문법만 5줄</h2>
+    <div class="code-block">
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      <span class="kw">\section</span>{연구방법} <span class="comment">% docs/draft/methods.md 내용</span><br>
+      <span class="kw">\section</span>{결과} <span class="comment">% docs/draft/results.md 내용</span><br>
+      <span class="kw">\section</span>{고찰} <span class="comment">% docs/draft/discussion.md 내용</span><br>
+      PM$_{2.5}$ &nbsp;&nbsp;<span class="comment">% 아래첨자</span><br>
+      $\mu$g/m$^3$ &nbsp;<span class="comment">% 단위 표현</span>
+    </div>
+  </div>
+
+  <!-- S5 -->
+  <div class="slide">
+    <div class="slide-label">참고문헌 시스템</div>
+    <h2 class="slide-title">Google Scholar → BibTeX → Overleaf (3단계)</h2>
+    <div class="step-list">
+      <div class="step-item"><div class="step-num">1</div><div class="step-content"><h4>Google Scholar에서 검색</h4><p>[CITATION NEEDED] 문장이 주장하는 내용을 그대로 검색어로 사용</p></div></div>
+      <div class="step-item"><div class="step-num">2</div><div class="step-content"><h4>인용 아이콘 → BibTeX 복사</h4><p>" 아이콘 클릭 → BibTeX 선택 → 전체 복사</p></div></div>
+      <div class="step-item"><div class="step-num">3</div><div class="step-content"><h4>references.bib에 붙여넣기</h4><p>Overleaf에 references.bib 생성 → 붙여넣기 → 저장</p></div></div>
+    </div>
+  </div>
+
+  <!-- S6 -->
+  <div class="slide">
+    <div class="slide-label">실습 1</div>
+    <h2 class="slide-title">[CITATION NEEDED] 채우기</h2>
+    <div class="code-block">
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      <span class="comment">% docs/draft/discussion.md에서 찾은 예시</span><br>
+      겨울~봄철 농도가 높은 경향은 난방 연료 사용 증가,<br>
+      대기 정체와 관련된다 [CITATION NEEDED].<br><br>
+      <span class="comment">% Google Scholar에서 근거 논문을 찾아 references.bib에 추가한 뒤:</span><br>
+      겨울~봄철 농도가 높은 경향은 난방 연료 사용 증가,<br>
+      대기 정체와 관련된다 <span class="cmd">\citep</span>{kim2023pm25}.
+    </div>
+    <div class="highlight-box teal" style="margin-top:12px">문장의 주장과 논문의 실제 결론이 일치하는지 반드시 직접 확인합니다 — AI가 근거를 지어내지 않았는지 검증하는 단계입니다.</div>
+  </div>
+
+  <!-- S7 -->
+  <div class="slide">
+    <div class="slide-label">실습 2</div>
+    <h2 class="slide-title">[TODO] 수치 재검증</h2>
+    <div class="card-grid cols-2">
+      <div class="card bad"><div class="card-title">여전히 예시값이라면</div><ul><li>⚠ 예시값 표시를 문장에 그대로 남긴다</li><li>실측 계획을 각주나 TODO로 명시한다</li></ul></div>
+      <div class="card teal"><div class="card-title">실측값이 나왔다면</div><ul><li>results_summary.md를 먼저 실측값으로 갱신</li><li>본문의 모든 수치를 실측값으로 일괄 교체</li></ul></div>
+    </div>
+  </div>
+
+  <!-- S8 -->
+  <div class="slide">
+    <div class="slide-label">실습 3</div>
+    <h2 class="slide-title">Figure/Table LaTeX 삽입</h2>
+    <div class="code-block">
+      <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      <span class="cmd">\begin</span>{figure}[htbp]<br>
+      &nbsp;&nbsp;<span class="cmd">\centering</span><br>
+      &nbsp;&nbsp;<span class="cmd">\includegraphics</span>[width=0.85<span class="kw">\textwidth</span>]{figures/seasonal_boxplot.png}<br>
+      &nbsp;&nbsp;<span class="cmd">\caption</span>{docs/draft/results.md에서 생성한 캡션}<br>
+      &nbsp;&nbsp;<span class="cmd">\label</span>{fig:seasonal}<br>
+      <span class="cmd">\end</span>{figure}
+    </div>
+  </div>
+
+  <!-- S9 -->
+  <div class="slide">
+    <div class="slide-label">서식</div>
+    <h2 class="slide-title">안양대 대학원 논문 서식 적용</h2>
+    <div class="card-grid cols-2">
+      <div class="card"><div class="card-title">규정</div><ul><li>A4, 여백 상30 하25 좌30 우25mm</li><li>본문 신명조 11pt, 줄간격 200%</li></ul></div>
+      <div class="card yellow"><div class="card-title">Overleaf 설정</div><div style="margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent3);line-height:1.9;">\usepackage[left=30mm,right=25mm,<br>&nbsp;&nbsp;top=30mm,bottom=25mm]{geometry}<br>\linespread{2.0}</div></div>
+    </div>
+  </div>
+
+  <!-- S10 -->
+  <div class="slide">
+    <div class="slide-label">최종 점검</div>
+    <h2 class="slide-title">3단계 파이프라인 최종 체크리스트</h2>
+    <div class="final-card">
+      <h3>구조 → 본문 → 인용/서식이 모두 연결됐는가</h3>
+      <div class="final-row"><div class="final-num">S4</div><div class="final-content"><h4>구조</h4><p>thesis_outline.md의 모든 절이 draft 파일과 1:1로 대응하는가</p></div></div>
+      <div class="final-row"><div class="final-num">S4-5</div><div class="final-content"><h4>본문</h4><p>draft의 수치가 results_summary.md와 정확히 일치하는가</p></div></div>
+      <div class="final-row"><div class="final-num">S5</div><div class="final-content"><h4>인용/서식</h4><p>[CITATION NEEDED]가 0개이고, PDF가 안양대 서식대로 컴파일되는가</p></div></div>
+    </div>
+  </div>
+
+  <!-- S11 -->
+  <div class="slide">
+    <div class="slide-label">전체 흐름 정리</div>
+    <h2 class="slide-title">pm25-thesis(S3) → 목차(S4) → 초안(S4-5) → PDF(S5)</h2>
+    <div class="step-list">
+      <div class="step-item"><div class="step-num">S3</div><div class="step-content"><h4>Claude Code</h4><p>분석 코드·그림·표 생성 — pm25-thesis 저장소 완성</p></div></div>
+      <div class="step-item"><div class="step-num">S4</div><div class="step-content"><h4>Codex</h4><p>산출물을 읽고 thesis_outline.md로 구조화</p></div></div>
+      <div class="step-item"><div class="step-num">S4-5</div><div class="step-content"><h4>Codex</h4><p>목차를 근거로 docs/draft/*.md 본문 초안 작성</p></div></div>
+      <div class="step-item"><div class="step-num">S5</div><div class="step-content"><h4>Overleaf</h4><p>인용·서식을 채워 PDF 초안 완성</p></div></div>
+    </div>
+  </div>
+
+  <!-- S12 -->
+  <div class="slide">
+    <div class="slide-label">최종 과제</div>
+    <h2 class="slide-title">Session 5 신규 최종 과제</h2>
+    <div class="assignment">
+      <h3>📝 최종 과제 (수료 조건)</h3>
+      <ol>
+        <li><strong>Overleaf PDF 컴파일 완성</strong><span>안양대 서식(여백/줄간격) 반영</span></li>
+        <li><strong>[CITATION NEEDED] 0개</strong><span>모든 인용이 references.bib의 실제 항목과 연결</span></li>
+        <li><strong>남은 [TODO] 목록 문서화</strong><span>docs/draft_todo_list.md에 여전히 예시값인 항목을 명시</span></li>
+        <li><strong>GitHub PR 생성</strong><span>PR 제목: [완성] pm25-thesis 논문 초안 (구조+본문+인용)</span></li>
+      </ol>
+    </div>
+  </div>
+
+</div>
+<div id="keyboard-hint">← → 키 또는 버튼으로 이동 &nbsp;|&nbsp; 스와이프 지원</div>
+<script>
+const slides=document.querySelectorAll('.slide'),total=slides.length;let current=0;
+function goTo(n){
+  slides[current].classList.remove('active');
+  slides[current].classList.add('exit');
+  const p=current;
+  current=(n+total)%total;
+  setTimeout(()=>slides[p].classList.remove('exit'),500);
+  slides[current].classList.add('active');
+  document.getElementById('slide-counter').textContent=(current+1)+' / '+total;
+  document.getElementById('progress-bar').style.width=((current+1)/total*100)+'%';
+}
+document.getElementById('btn-next').onclick=()=>goTo(current+1);
+document.getElementById('btn-prev').onclick=()=>goTo(current-1);
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown')goTo(current+1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp')goTo(current-1);
+});
+let tx=0;
+document.addEventListener('touchstart',e=>tx=e.touches[0].clientX);
+document.addEventListener('touchend',e=>{
+  const dx=tx-e.changedTouches[0].clientX;
+  if(Math.abs(dx)>50)goTo(current+(dx>0?1:-1));
+});
+function copyCode(btn){
+  const t=btn.parentElement.innerText.replace('copy\n','').replace('copy\n','').trim();
+  navigator.clipboard.writeText(t);
+  const orig=btn.textContent;
+  btn.textContent='✓ 복사됨';
+  setTimeout(()=>btn.textContent=orig,2000);
+}
+document.getElementById('progress-bar').style.width=(1/total*100)+'%';
+</script>
+</body>
+</html>

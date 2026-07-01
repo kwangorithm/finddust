@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Codex로 본문 초안 채우기 | 신규 통합 실습</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&family=Bebas+Neue&display=swap');
+  :root{--bg:#140f18;--surface:#1d1420;--card:#25182a;--accent:#ffb300;--accent2:#f48fb1;--accent3:#80cbc4;--text:#fff7ed;--muted:#d8b4c8;--border:rgba(244,143,177,0.22);}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Noto Sans KR',sans-serif;background:radial-gradient(circle at 20% 20%,rgba(255,179,0,.11),transparent 28%),radial-gradient(circle at 80% 80%,rgba(244,143,177,.13),transparent 30%),var(--bg);color:var(--text);height:100vh;overflow:hidden;user-select:none;}
+  #progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));transition:width .4s;z-index:100;}
+  #session-badge{position:fixed;top:16px;left:20px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:2px;z-index:100;}
+  #slide-counter{position:fixed;top:16px;right:20px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);z-index:100;}
+  .nav-btn{position:fixed;top:50%;transform:translateY(-50%);background:rgba(244,143,177,.08);border:1px solid var(--border);color:var(--accent2);width:44px;height:44px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:100;}
+  .nav-btn:hover{background:rgba(255,179,0,.16);color:var(--accent);} #btn-prev{left:16px;}#btn-next{right:16px;}
+  #slides{width:100%;height:100vh;position:relative;}
+  .slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px 80px;opacity:0;transform:translateX(40px);transition:all .5s cubic-bezier(.4,0,.2,1);pointer-events:none;}
+  .slide.active{opacity:1;transform:translateX(0);pointer-events:all;}.slide.exit{opacity:0;transform:translateX(-40px);}
+  .slide::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,179,0,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(244,143,177,.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
+  .slide-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--accent);margin-bottom:18px;text-transform:uppercase;}
+  h1.title{font-family:'Bebas Neue',sans-serif;font-size:clamp(42px,6.5vw,82px);line-height:1;letter-spacing:2px;text-align:center;margin-bottom:16px;}
+  h2.slide-title{font-size:clamp(24px,3vw,38px);font-weight:800;margin-bottom:24px;line-height:1.3;text-align:center;}
+  p.subtitle{font-size:16px;color:var(--muted);font-weight:300;max-width:760px;text-align:center;line-height:1.8;}
+  .card-grid{display:grid;gap:14px;width:100%;max-width:940px;}.cols-2{grid-template-columns:1fr 1fr;}.cols-3{grid-template-columns:1fr 1fr 1fr;}.cols-4{grid-template-columns:repeat(4,1fr);}
+  .card{background:rgba(37,24,42,.9);border:1px solid var(--border);border-radius:14px;padding:19px;position:relative;overflow:hidden;}
+  .card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);} .card.pink::after{background:linear-gradient(90deg,var(--accent2),transparent);} .card.teal::after{background:linear-gradient(90deg,var(--accent3),transparent);}
+  .card-icon{font-size:26px;margin-bottom:10px;}.card-title{font-weight:800;font-size:14px;color:var(--accent);margin-bottom:8px;}.pink .card-title{color:var(--accent2)}.teal .card-title{color:var(--accent3)}
+  .card p,.card li{font-size:13px;color:var(--muted);line-height:1.7;}.card ul{list-style:none;}.card li::before{content:'▸ ';color:var(--accent);}
+  .step-list{width:100%;max-width:900px;display:flex;flex-direction:column;gap:11px;}.step-item{display:flex;gap:14px;background:rgba(37,24,42,.88);border:1px solid var(--border);border-radius:12px;padding:14px 18px;}.step-num{width:30px;height:30px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono';font-size:12px;font-weight:700;color:#120b13;flex-shrink:0;}.step-content h4{font-size:14px;margin-bottom:4px;}.step-content p{font-size:12.5px;color:var(--muted);line-height:1.6;}
+  .code-block{background:#100a13;border:1px solid rgba(244,143,177,.18);border-radius:10px;padding:18px 22px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.85;width:100%;max-width:900px;position:relative;overflow-x:auto;}.comment{color:#7c6170}.cmd{color:var(--accent)}.kw{color:var(--accent3)}.str{color:#f8bbd0}.output{color:#b0bec5}
+  .copy-btn{position:absolute;top:10px;right:10px;background:rgba(244,143,177,.1);border:1px solid var(--border);color:var(--accent2);padding:3px 10px;border-radius:6px;font-size:11px;font-family:'JetBrains Mono';cursor:pointer;}.copy-btn:hover{background:rgba(244,143,177,.2)}
+  .highlight-box{background:rgba(255,179,0,.07);border:1px solid rgba(255,179,0,.24);border-left:4px solid var(--accent);border-radius:9px;padding:15px 18px;width:100%;max-width:900px;font-size:14px;line-height:1.7;}.highlight-box strong{color:var(--accent)}
+  .highlight-box.teal{background:rgba(128,203,196,.07);border-color:rgba(128,203,196,.24);border-left-color:var(--accent3);}.highlight-box.teal strong{color:var(--accent3)}
+  .big-icon{font-size:64px;margin-bottom:20px;filter:drop-shadow(0 0 18px rgba(244,143,177,.45));}.title-meta{display:flex;gap:14px;margin-top:28px;flex-wrap:wrap;justify-content:center;}.meta-chip{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:9px 16px;font-size:13px;}.meta-chip span{color:var(--muted);}.meta-chip strong{color:var(--accent);}
+  .assignment{background:linear-gradient(135deg,rgba(244,143,177,.12),rgba(0,96,100,.12));border:1px solid rgba(244,143,177,.3);border-radius:16px;padding:26px 30px;width:100%;max-width:900px;}
+  .assignment h3{font-size:18px;font-weight:700;color:var(--accent3);margin-bottom:14px;}
+  .assignment ol{padding-left:20px;}.assignment ol li{font-size:14px;color:var(--text);line-height:1.8;margin-bottom:8px;}.assignment ol li span{color:var(--muted);font-size:12px;display:block;}
+  #keyboard-hint{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);font-size:11px;color:rgba(216,180,200,.45);font-family:'JetBrains Mono';letter-spacing:1px;}
+</style>
+</head>
+<body>
+<div id="progress-bar"></div><div id="session-badge">SPECIAL WORKSHOP (신규) / SESSION 04→05 · PIPELINE STEP 2</div><div id="slide-counter">1 / 12</div><button class="nav-btn" id="btn-prev">‹</button><button class="nav-btn" id="btn-next">›</button>
+<div id="slides">
+  <div class="slide active"><div class="big-icon">✍️</div><div class="slide-label">통합 실습 · 신규</div><h1 class="title">CODEX로<br>본문 초안 채우기</h1><p class="subtitle">Session 4에서 완성한 <strong>docs/thesis_outline.md</strong>를 실제 문장으로 채우는 단계입니다. 수치는 만들어내지 않고, 근거가 없는 문장은 표시해서 남깁니다.</p><div class="title-meta"><div class="meta-chip"><span>입력</span> <strong>thesis_outline.md + pm25-thesis 산출물</strong></div><div class="meta-chip"><span>출력</span> <strong>docs/draft/*.md</strong></div></div></div>
+
+  <div class="slide"><div class="slide-label">오늘의 목표</div><h2 class="slide-title">목차의 각 절을 문단으로</h2><div class="card-grid cols-3"><div class="card"><div class="card-icon">🧪</div><div class="card-title">연구방법 문단</div><p><code>analysis/pm25_analysis.py</code>의 실제 절차만 근거로 4문장을 작성합니다.</p></div><div class="card pink"><div class="card-icon">📊</div><div class="card-title">결과 문단</div><p><code>docs/results_summary.md</code>의 표·수치를 그대로 인용해 작성합니다.</p></div><div class="card teal"><div class="card-icon">💬</div><div class="card-title">고찰 문단</div><p>목차의 Research Gap 자리를 참고해 문헌 비교 문단의 골격을 만듭니다.</p></div></div></div>
+
+  <div class="slide"><div class="slide-label">Workflow</div><h2 class="slide-title">outline → 섹션별 프롬프트 → docs/draft/*.md</h2><div class="step-list"><div class="step-item"><div class="step-num">1</div><div class="step-content"><h4>목차 다시 열기</h4><p>Session 4에서 만든 thesis_outline.md를 절 단위로 나눠서 봅니다.</p></div></div><div class="step-item"><div class="step-num">2</div><div class="step-content"><h4>절마다 따로 Codex에게 요청</h4><p>한 번에 전체를 요청하지 않고, Methods → Results → Discussion 순서로 나눠 요청합니다.</p></div></div><div class="step-item"><div class="step-num">3</div><div class="step-content"><h4>docs/draft/*.md에 저장</h4><p>각 절의 초안을 별도 파일로 저장해 다음 세션(Overleaf 조립)에서 그대로 가져다 씁니다.</p></div></div></div></div>
+
+  <div class="slide"><div class="slide-label">원칙</div><h2 class="slide-title">Codex는 빈 칸을 채우는 도구가 아닙니다</h2><div class="card-grid cols-2"><div class="card"><div class="card-title">나쁜 요청</div><ul><li>결과 문단 써줘</li><li>고찰 문단 멋있게 써줘</li><li>결론도 그냥 지어서 써줘</li></ul></div><div class="card teal"><div class="card-title">좋은 요청</div><ul><li>results_summary.md의 표 값을 그대로 인용해서 써줘</li><li>불확실하거나 근거 없는 부분은 [TODO]로 남겨줘</li><li>코드에 없는 절차는 언급하지 마</li></ul></div></div><div class="highlight-box" style="margin-top:16px">오늘의 산출물은 <strong>완성된 논문이 아니라 검토 가능한 초안</strong>입니다. TODO가 남아있는 것이 정상입니다.</div></div>
+
+  <div class="slide"><div class="slide-label">실습 1 · 연구방법</div><h2 class="slide-title">Methods 문단 채우기</h2><div class="code-block"><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="str">"analysis/pm25_analysis.py의 처리 절차를 바탕으로</span><br><span class="str">&nbsp;연구방법 절 초안 4문장을 docs/draft/methods.md에 써줘.</span><br><span class="str">&nbsp;코드에 실제로 없는 절차는 언급하지 말고,</span><br><span class="str">&nbsp;파라미터 값(예: pm25_threshold=15)은 코드에서 그대로 가져와줘."</span></div></div>
+
+  <div class="slide"><div class="slide-label">실습 2 · 결과</div><h2 class="slide-title">Results 문단 채우기</h2><div class="code-block"><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="str">"docs/results_summary.md의 표와 문장을 바탕으로</span><br><span class="str">&nbsp;결과 절 초안을 docs/draft/results.md에 써줘.</span><br><span class="str">&nbsp;⚠ 표시된 예시값은 그대로 '예시'라고 표시하고,</span><br><span class="str">&nbsp;아직 실측 전이라는 점을 문장에 남겨줘."</span></div><div class="highlight-box teal" style="margin-top:14px">실측 데이터가 이미 있다면 ⚠ 문구를 지우고 실제 결과 문장으로 바로 이어서 요청합니다.</div></div>
+
+  <div class="slide"><div class="slide-label">실습 3 · 고찰</div><h2 class="slide-title">Discussion 문단 채우기</h2><div class="code-block"><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="str">"thesis_outline.md의 이론적 배경 절에 있는 [TODO] 선행연구 자리를 참고해서,</span><br><span class="str">&nbsp;고찰 절에 '선행연구와의 비교' 문단 골격을 docs/draft/discussion.md에 써줘.</span><br><span class="str">&nbsp;실제 문헌이 없는 부분은 [CITATION NEEDED]로 표시해줘."</span></div></div>
+
+  <div class="slide"><div class="slide-label">실습 4 · Figure/Table</div><h2 class="slide-title">캡션과 본문 참조 문장 생성</h2><div class="card-grid cols-3"><div class="card"><div class="card-icon">🖼️</div><div class="card-title">Figure 캡션</div><p>seasonal_boxplot.png의 축·단위·기간을 정확히 반영한 캡션 1문장.</p></div><div class="card pink"><div class="card-icon">📋</div><div class="card-title">Table 캡션</div><p>summary_stats 표의 산출 방법을 밝히는 캡션 1문장.</p></div><div class="card teal"><div class="card-icon">🔗</div><div class="card-title">본문 참조</div><p>"Fig. 1에서 볼 수 있듯이..." 형태의 본문 연결 문장.</p></div></div></div>
+
+  <div class="slide"><div class="slide-label">검증</div><h2 class="slide-title">초안 검증 체크리스트</h2><div class="card-grid cols-2"><div class="card"><div class="card-title">수치 대조</div><ul><li>docs/draft의 모든 숫자가 results_summary.md와 일치하는가</li><li>단위(µg/m³)와 기준값(15)이 정확한가</li></ul></div><div class="card pink"><div class="card-title">TODO 목록화</div><ul><li>[TODO], [CITATION NEEDED]를 모두 모아 개수를 세었는가</li><li>다음 세션에서 채울 목록이 정리됐는가</li></ul></div></div></div>
+
+  <div class="slide"><div class="slide-label">다음 단계 예고</div><h2 class="slide-title">Session 5에서 이어집니다</h2><div class="highlight-box" style="margin-top:0">오늘 남긴 <strong>[TODO]</strong>와 <strong>[CITATION NEEDED]</strong> 자리에, Session 5에서 실제 BibTeX 인용과 안양대 서식을 채워 Overleaf PDF로 조립합니다.</div></div>
+
+  <div class="slide"><div class="slide-label">세션 정리</div><h2 class="slide-title">오늘 만든 것</h2><div class="card-grid cols-3"><div class="card"><div class="card-icon">📄</div><div class="card-title">docs/draft/methods.md</div><p>코드 절차 기반 초안</p></div><div class="card pink"><div class="card-icon">📄</div><div class="card-title">docs/draft/results.md</div><p>수치 기반 초안</p></div><div class="card teal"><div class="card-icon">📄</div><div class="card-title">docs/draft/discussion.md</div><p>TODO 표시된 고찰 골격</p></div></div></div>
+
+  <div class="slide"><div class="slide-label">과제</div><h2 class="slide-title">본문 초안 과제</h2><div class="assignment"><h3>📝 과제 (다음 세션 전까지)</h3><ol><li><strong>docs/draft/ 폴더 전체 완성</strong><span>methods.md, results.md, discussion.md 각각 초안 제출</span></li><li><strong>TODO / CITATION NEEDED 목록 정리</strong><span>docs/draft_todo_list.md에 남은 항목을 모아서 정리</span></li><li><strong>수치 대조 확인</strong><span>초안의 모든 숫자가 results_summary.md와 일치하는지 스스로 점검</span></li><li><strong>GitHub PR 생성</strong><span>PR 제목: [초안] pm25-thesis 본문 draft (methods/results/discussion)</span></li></ol></div></div>
+</div>
+<div id="keyboard-hint">← → 키 또는 버튼으로 이동 &nbsp;|&nbsp; copy 버튼으로 실습 코드 복사</div>
+<script>
+const slides=document.querySelectorAll('.slide'),total=slides.length;let current=0;
+function goTo(n){slides[current].classList.remove('active');slides[current].classList.add('exit');const p=current;current=(n+total)%total;setTimeout(()=>slides[p].classList.remove('exit'),500);slides[current].classList.add('active');document.getElementById('slide-counter').textContent=(current+1)+' / '+total;document.getElementById('progress-bar').style.width=((current+1)/total*100)+'%';}
+document.getElementById('btn-next').onclick=()=>goTo(current+1);document.getElementById('btn-prev').onclick=()=>goTo(current-1);document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowDown')goTo(current+1);if(e.key==='ArrowLeft'||e.key==='ArrowUp')goTo(current-1);});let tx=0;document.addEventListener('touchstart',e=>tx=e.touches[0].clientX);document.addEventListener('touchend',e=>{const dx=tx-e.changedTouches[0].clientX;if(Math.abs(dx)>50)goTo(current+(dx>0?1:-1));});function copyCode(btn){const t=btn.parentElement.innerText.replace('copy\n','').trim();navigator.clipboard.writeText(t);btn.textContent='✓ 복사됨';setTimeout(()=>btn.textContent='copy',2000);}document.getElementById('progress-bar').style.width=(1/total*100)+'%';
+</script>
+</body>
+</html>
