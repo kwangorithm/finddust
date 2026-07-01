@@ -119,7 +119,7 @@
       <tr>
         <td><strong style="color:var(--accent2)">OpenAI Codex</strong></td>
         <td>OpenAI</td>
-        <td>API 기반 코드 생성, GPT-4o 내장, ChatGPT</td>
+        <td>프로젝트 폴더를 읽고 코드·그림·표·문서 초안 생성</td>
         <td><span class="badge red">★★★★☆</span> 빠른 코드 초안</td>
       </tr>
       <tr>
@@ -143,7 +143,7 @@
   <!-- S3: OpenAI Codex / ChatGPT 활용 -->
   <div class="slide">
     <div class="slide-label">OpenAI 활용</div>
-    <h2 class="slide-title">ChatGPT / OpenAI Codex — 빠른 코드 초안</h2>
+    <h2 class="slide-title">ChatGPT / Codex — 논문 코드 초안과 산출물 연결</h2>
     <div class="card-grid cols-2" style="max-width:860px">
       <div class="card">
         <div class="card-icon">💬</div>
@@ -157,12 +157,12 @@
       </div>
       <div class="card red">
         <div class="card-icon">⚡</div>
-        <div class="card-title">OpenAI Codex API</div>
+        <div class="card-title">Codex/ChatGPT 기반 연구 보조</div>
         <ul>
-          <li>코드 생성에 특화된 모델</li>
-          <li>GitHub Copilot의 기반 엔진</li>
-          <li>자동화 파이프라인에 통합 가능</li>
-          <li>대규모 코드 처리</li>
+          <li>논문 코드 초안과 산출물 생성 지원</li>
+          <li>프로젝트 폴더 맥락을 바탕으로 수정 제안</li>
+          <li>그림·표·문서 초안까지 연결 가능</li>
+          <li>연구자가 검증 가능한 변경 단위로 처리</li>
         </ul>
       </div>
     </div>
@@ -421,10 +421,10 @@
   <!-- S11: API 직접 활용 -->
   <div class="slide">
     <div class="slide-label">고급 기능</div>
-    <h2 class="slide-title">API 직접 호출 — 연구 자동화 심화</h2>
+    <h2 class="slide-title">연구 보조 에이전트 — 문서화 자동화 심화</h2>
     <div class="code-block">
       <button class="copy-btn" onclick="copyCode(this)">copy</button>
-      <span class="comment"># OpenAI API로 PM2.5 데이터 자동 리포트 생성</span><br>
+      <span class="comment"># 프로젝트 폴더를 읽고 PM2.5 데이터 리포트 초안 생성</span><br>
       <span class="kw">import</span> openai, pandas <span class="kw">as</span> pd<br><br>
       <span class="kw">def</span> generate_pm25_report(data_path):<br>
       &nbsp;&nbsp;&nbsp;&nbsp;df = pd.read_csv(data_path)<br>

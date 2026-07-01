@@ -15,6 +15,7 @@
 | 2 | GitHub 협업 | [`session2-slides.html`](session2-slides.html) |
 | 3 | Claude Code | [`session3-slides.html`](session3-slides.html) |
 | 4 | OpenAI Codex & 고급 AI 도구 | [`session4-slides.html`](session4-slides.html) |
+| 통합 실습 | Codex와 Overleaf로 논문 초안 완성하기 | [`session4-5-codex-overleaf-workshop.html`](session4-5-codex-overleaf-workshop.html) |
 | 5 | Overleaf & 참고문헌 관리 | [`session5-slides.html`](session5-slides.html) |
 
 ## 논문 방법론 보조자료

@@ -21,18 +21,21 @@
   .s3{background:linear-gradient(135deg,#150d24,#100a1c);border:1px solid rgba(206,147,216,0.25);}
   .s4{background:linear-gradient(135deg,#1a1200,#150e00);border:1px solid rgba(255,179,0,0.25);}
   .s5{background:linear-gradient(135deg,#150d1c,#0e0a18);border:1px solid rgba(244,143,177,0.25);}
+  .s45{background:linear-gradient(135deg,#211400,#210f22);border:1px solid rgba(255,179,0,0.32);box-shadow:0 0 0 1px rgba(244,143,177,0.12),0 18px 42px rgba(0,0,0,0.18);}
   .session-num{font-family:'Bebas Neue',sans-serif;font-size:56px;line-height:1;margin-bottom:12px;opacity:0.15;position:absolute;top:16px;right:20px;}
   .s1 .session-num{color:#4fc3f7;}
   .s2 .session-num{color:#66bb6a;}
   .s3 .session-num{color:#ce93d8;}
   .s4 .session-num{color:#ffb300;}
   .s5 .session-num{color:#f48fb1;}
+  .s45 .session-num{color:#ffb300;}
   .session-badge{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;padding:3px 10px;border-radius:20px;display:inline-block;margin-bottom:14px;}
   .s1 .session-badge{background:rgba(79,195,247,0.12);color:#4fc3f7;border:1px solid rgba(79,195,247,0.3);}
   .s2 .session-badge{background:rgba(102,187,106,0.12);color:#66bb6a;border:1px solid rgba(102,187,106,0.3);}
   .s3 .session-badge{background:rgba(206,147,216,0.12);color:#ce93d8;border:1px solid rgba(206,147,216,0.3);}
   .s4 .session-badge{background:rgba(255,179,0,0.12);color:#ffb300;border:1px solid rgba(255,179,0,0.3);}
   .s5 .session-badge{background:rgba(244,143,177,0.12);color:#f48fb1;border:1px solid rgba(244,143,177,0.3);}
+  .s45 .session-badge{background:linear-gradient(90deg,rgba(255,179,0,0.14),rgba(244,143,177,0.14));color:#ffe082;border:1px solid rgba(255,179,0,0.32);}
   .session-title{font-size:20px;font-weight:700;margin-bottom:8px;}
   .session-sub{font-size:13px;color:var(--muted);margin-bottom:16px;}
   .topic-list{list-style:none;}
@@ -42,6 +45,7 @@
   .s3 .topic-list li::before{content:'▸';position:absolute;left:0;color:#ce93d8;}
   .s4 .topic-list li::before{content:'▸';position:absolute;left:0;color:#ffb300;}
   .s5 .topic-list li::before{content:'▸';position:absolute;left:0;color:#f48fb1;}
+  .s45 .topic-list li::before{content:'▸';position:absolute;left:0;color:#ffb300;}
   .course-link{display:block;margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:11px;text-decoration:none;padding:8px 14px;border-radius:8px;text-align:center;transition:all 0.2s;}
   .s1 .course-link{background:rgba(79,195,247,0.1);color:#4fc3f7;border:1px solid rgba(79,195,247,0.3);}
   .s1 .course-link:hover{background:rgba(79,195,247,0.2);}
@@ -53,6 +57,8 @@
   .s4 .course-link:hover{background:rgba(255,179,0,0.2);}
   .s5 .course-link{background:rgba(244,143,177,0.1);color:#f48fb1;border:1px solid rgba(244,143,177,0.3);}
   .s5 .course-link:hover{background:rgba(244,143,177,0.2);}
+  .s45 .course-link{background:linear-gradient(90deg,rgba(255,179,0,0.12),rgba(244,143,177,0.12));color:#ffe082;border:1px solid rgba(255,179,0,0.34);}
+  .s45 .course-link:hover{background:linear-gradient(90deg,rgba(255,179,0,0.2),rgba(244,143,177,0.2));}
   /* 연계 과목 */
   .course-section{max-width:1100px;margin:0 auto 60px;}
   .course-section h2{font-size:22px;font-weight:700;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid rgba(121,134,203,0.2);}
@@ -156,6 +162,22 @@
     <a class="course-link" href="session4-slides.html">슬라이드 열기 →</a>
   </div>
 
+  <div class="session-card s45">
+    <div class="session-num">4.5</div>
+    <div class="session-badge">내일 특강용 통합 실습</div>
+    <div class="session-title">Codex → Overleaf 논문 초안 완성 워크숍</div>
+    <div class="session-sub">2시간 안에 코드·그림·표·PDF 초안까지 연결</div>
+    <ul class="topic-list">
+      <li>GitHub 프로젝트 폴더 구조 준비</li>
+      <li>Codex로 분석 파이프라인 생성</li>
+      <li>Figure/Table/Results 산출물 만들기</li>
+      <li>Overleaf 파일 업로드 방식 조립</li>
+      <li>LaTeX Figure/Table/Citation 컴파일</li>
+      <li>최종 제출: GitHub URL + PDF 초안</li>
+    </ul>
+    <a class="course-link" href="session4-5-codex-overleaf-workshop.html">워크숍 슬라이드 열기 →</a>
+  </div>
+
   <div class="session-card s5">
     <div class="session-num">05</div>
     <div class="session-badge">SESSION 05</div>
@@ -167,7 +189,7 @@
       <li>참고문헌 자동 번호 & 정렬</li>
       <li>분석 그래프 논문 통합</li>
       <li>안양대 논문 서식 적용</li>
-      <li>교수님 공동 편집 & GitHub 연동</li>
+      <li>교수님 공동 편집 & 파일 업로드 조립</li>
     </ul>
     <a class="course-link" href="session5-slides.html">슬라이드 열기 →</a>
   </div>

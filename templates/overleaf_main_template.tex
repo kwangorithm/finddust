@@ -1,0 +1,58 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{kotex}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{hyperref}
+
+\geometry{margin=1in}
+\onehalfspacing
+
+\title{PM2.5 Concentration Trend Analysis Using a Reproducible Research Pipeline}
+\author{Your Name \\
+Department of Environmental Engineering, Anyang University}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This draft demonstrates how a reproducible analysis pipeline can connect PM2.5 data processing, figure generation, table generation, and manuscript writing. Replace this paragraph with a concise summary of the research question, data period, method, key result, and implication.
+\end{abstract}
+
+\section{Introduction}
+Fine particulate matter (PM2.5) is associated with adverse health and environmental outcomes. This paper draft uses a small PM2.5 dataset to demonstrate a reproducible workflow from data analysis to manuscript preparation. Add background literature and the specific research gap here \cite{who2021airquality}.
+
+\section{Methods}
+The analysis used \texttt{data/sample\_pm25.csv} as the input dataset. A Python script, \texttt{src/analyze\_pm25.py}, cleaned the date and PM2.5 concentration fields, calculated monthly mean concentrations, and exported manuscript-ready outputs. The same script generated the trend figure, the summary statistics table, and a short results summary document.
+
+\section{Results}
+Figure~\ref{fig:pm25-monthly-trend} shows the monthly trend of PM2.5 concentration. Replace this sentence with the verified result paragraph from \texttt{docs/result\_summary.md}. Table~\ref{tab:summary-stats} summarizes the distribution of observed PM2.5 concentrations.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figures/pm25_monthly_trend.png}
+    \caption{Monthly mean PM2.5 concentration calculated from the sample dataset. Verify the date range and units before submission.}
+    \label{fig:pm25-monthly-trend}
+\end{figure}
+
+\begin{table}[htbp]
+    \centering
+    \caption{Summary statistics for PM2.5 concentration.}
+    \label{tab:summary-stats}
+    \input{tables/summary_stats.tex}
+\end{table}
+
+\section{Discussion}
+Discuss whether the observed trend is consistent with previous studies, seasonal patterns, or policy expectations. Clearly distinguish verified findings from hypotheses. Also describe limitations such as sample size, monitoring location coverage, missing values, and the need for additional meteorological covariates.
+
+\section*{AI Use Disclosure}
+AI tools were used to assist with code drafting, figure/table pipeline construction, and manuscript structure. All numerical results, citations, and interpretations must be verified by the researcher before submission.
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}
